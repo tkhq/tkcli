@@ -22,7 +22,7 @@ $ goreleaser release --rm-dist
 ## Installing the CLI
 
 ```
-brew tap tkhq/taps
+brew tap tkhq/tap
 brew install tk
 ```
 
