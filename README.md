@@ -11,9 +11,12 @@ $ goreleaser release --snapshot --rm-dist
 
 To release:
 ```
+# Generate a Github token with "write:packages"
+# ==> https://github.com/settings/tokens
+$ export GITHUB_TOKEN=<your token>
 $ git tag -a vx.y.z -m "New Release: x.y.z"
 $ git push origin vx.y.z
-$ goreleaser release
+$ goreleaser release --rm-dist
 ```
 
 ## Installing the CLI
