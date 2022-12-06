@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/tkhq/tkcli/cmd/tk/internal/display"
 	"github.com/tkhq/tkcli/internal/apikey"
+	"github.com/tkhq/tkcli/internal/display"
 	"github.com/urfave/cli/v2"
 )
 

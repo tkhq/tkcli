@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tkhq/tkcli/cmd/tk/internal/display"
+	"github.com/tkhq/tkcli/internal/display"
 )
 
 func TestDisplayResponse(t *testing.T) {
