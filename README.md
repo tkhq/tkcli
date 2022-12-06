@@ -1,17 +1,26 @@
-# TK CLI
+# Turnkey CLI
 
-Draft of what a Turnkey CLI could look like right now it supports only a few operations:
+## Building the CLI
 
-## Building the CLI locally
+We use [GoReleaser](https://goreleaser.com/) to build and release our binaries.
 
+To build locally:
 ```
-make
+$ goreleaser release --snapshot --rm-dist
+```
+
+To release:
+```
+$ git tag -a vx.y.z -m "New Release: x.y.z"
+$ git push origin vx.y.z
+$ goreleaser release
 ```
 
 ## Installing the CLI
 
 ```
-go get github.com/tkhq/mono/go/tkcli/cmd/tk
+brew tap tkhq/taps
+brew install tk
 ```
 
 ## Usage
