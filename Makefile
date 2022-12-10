@@ -3,11 +3,11 @@ all: build
 
 .PHONY: build
 build:
-	go build -o build/tk cmd/tk/main.go
+	goreleaser release --snapshot --rm-dist
 
 .PHONY: clean
 clean:
-	rm -rf build/
+	rm -rf dist/
 
 .PHONY: test
 test:

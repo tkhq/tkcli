@@ -7,8 +7,8 @@ builds:
     goos:
       - linux
       - darwin
-    binary: tk
-    id: tk
+    binary: turnkey
+    id: turnkey
 archives:
   - replacements:
       amd64: 64bit
@@ -18,7 +18,7 @@ archives:
       darwin: macOS
       linux: Linux
       windows: Windows
-    name_template: tk_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}
+    name_template: turnkey_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -26,7 +26,7 @@ snapshot:
 
 brews:
   -
-    name: tk
+    name: turnkey
     tap:
       owner: tkhq
       name: homebrew-tap
