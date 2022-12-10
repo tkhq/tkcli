@@ -61,7 +61,7 @@ func main() {
 						err = os.MkdirAll(tkDirPath, os.ModePerm)
 						if err != nil {
 							log.Fatalln(err)
-							return cli.Exit("Could not create .tk directory in your home directory", 1)
+							return cli.Exit(fmt.Sprintf("Could not create directory %s", tkDirPath), 1)
 						}
 
 						publicKeyFile := fmt.Sprintf("%s/%s.public", tkDirPath, apiKeyName)

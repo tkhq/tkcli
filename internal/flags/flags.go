@@ -22,7 +22,7 @@ func Key() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:     "key",
 		Aliases:  []string{"k"},
-		Usage:    "Private key to sign with. Provide a name to lookup the private key in your ~/.tk directory (e.g. \"my_api_key\" will use \"~/.tk/my_api_key.private\"), or a full path to a valid private key (e.g. \"/path/to/key.private\")",
+		Usage:    "Private key to sign with. Provide a name to lookup the private key in your turnkey/keys directory (e.g. \"my_api_key\" will use \"~/.config/turnkey/keys/my_api_key.private\"), or a full path to a valid private key (e.g. \"/path/to/key.private\")",
 		Required: true,
 	}
 }
@@ -62,7 +62,7 @@ func Path() *cli.StringFlag {
 func Body() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:     "body",
-		Usage:    "HTTP body, only relevant for POST requests. For example: {\"message\": \"hello from TKHQ\"}",
+		Usage:    "HTTP body, only relevant for POST requests. For example: {\"message\": \"Hello, world!\"}",
 		Required: true,
 	}
 }
