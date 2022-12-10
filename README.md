@@ -1,10 +1,17 @@
 # Turnkey CLI
 
+![Go Build Status](https://github.com/tkhq/tkcli/actions/workflows/go-build.yml/badge.svg)
+
 ## Building the CLI
+
+If you simply want to build a binary locally, run
+```sh
+$ make build/turnkey
+```
 
 We use [GoReleaser](https://goreleaser.com/) to build and release our binaries.
 
-To build locally:
+To build a release locally:
 ```
 $ goreleaser release --snapshot --rm-dist
 ```

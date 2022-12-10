@@ -14,5 +14,6 @@
 # Apple folder files
 .DS_Store
 
-# Dist folder
+# Dist/build folder
 dist/
+build/
