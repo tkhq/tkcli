@@ -7,19 +7,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/user"
 	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/tkhq/tkcli/internal/apikey"
 	"github.com/tkhq/tkcli/internal/display"
+	"github.com/tkhq/tkcli/internal/flags"
 	"github.com/urfave/cli/v2"
-)
-
-const (
-	TK_FOLDER_NAME = ".tk"
-	DEFAULT_HOST   = "coordinator.tkhq.xyz"
 )
 
 func main() {
@@ -32,20 +27,12 @@ func main() {
 				Aliases: []string{"gen"},
 				Usage:   "generate a new Turnkey API key",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:     "name",
-						Usage:    "Name of the API key. Will be used to create <folder>/<name>.public and <folder>/<name>.private. If you do not want to write files, use --name -",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "folder",
-						Usage:    "Folder in which to put the API key. Defaults to `~/.tk`.",
-						Required: false,
-					},
+					flags.CreateKeyName(),
+					flags.KeysFolder(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					apiKeyName := cCtx.String("name")
-					folder := cCtx.String("folder")
+					folder := cCtx.String("keys-folder")
 
 					apiKey, err := apikey.NewTkApiKey()
 					if err != nil {
@@ -64,8 +51,14 @@ func main() {
 						fmt.Println(string(jsonBytes))
 						return nil
 					} else {
-						tkDirPath := getTkDirPath(folder)
-						err := os.MkdirAll(tkDirPath, os.ModePerm)
+						tkDirPath, err := getKeyDirPath(folder)
+						if err != nil {
+							log.Fatalln(err)
+							return cli.Exit("Could not create determine key directory location", 1)
+
+						}
+
+						err = os.MkdirAll(tkDirPath, os.ModePerm)
 						if err != nil {
 							log.Fatalln(err)
 							return cli.Exit("Could not create .tk directory in your home directory", 1)
@@ -95,33 +88,11 @@ func main() {
 				Usage:     "make a request",
 				UsageText: "generate an approval and make an HTTP(s) request",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:     "host",
-						Usage:    "HTTP host _without_ protocol. For example: api.turnkey.io",
-						Required: false,
-						Value:    DEFAULT_HOST,
-					},
-					&cli.StringFlag{
-						Name:     "method",
-						Usage:    "HTTP Method. Should be \"GET\" or \"POST\"",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "path",
-						Usage:    "Path, including the leading \"/\" and query string if any. For example: /api/v1/keys?curve=ed25519",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "body",
-						Usage:    "HTTP body, only relevant for POST requests. For example: {\"message\": \"hello from TKHQ\"}",
-						Required: false,
-					},
-					&cli.StringFlag{
-						Name:     "key",
-						Aliases:  []string{"k"},
-						Usage:    "Private key to sign with. Provide a name to lookup the private key in your ~/.tk directory (e.g. \"my_api_key\" will use \"~/.tk/my_api_key.private\"), or a full path to a valid private key (e.g. \"/path/to/key.private\")",
-						Required: true,
-					},
+					flags.Host(),
+					flags.Method(),
+					flags.Path(),
+					flags.Body(),
+					flags.Key(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					method := cCtx.String("method")
@@ -178,33 +149,11 @@ func main() {
 				Usage:     "approve a request",
 				UsageText: "generate an approval over an HTTP request",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:     "host",
-						Usage:    "HTTP host _without_ protocol. For example: api.turnkey.io",
-						Required: false,
-						Value:    DEFAULT_HOST,
-					},
-					&cli.StringFlag{
-						Name:     "method",
-						Usage:    "HTTP Method. Should be \"GET\" or \"POST\"",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "path",
-						Usage:    "Path, including the leading \"/\" and query string if any. For example: /api/v1/keys?curve=ed25519",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "body",
-						Usage:    "HTTP body, only relevant for POST requests. For example: {\"message\": \"hello from TKHQ\"}",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "key",
-						Aliases:  []string{"k"},
-						Usage:    "Private key to sign with. Provide a name to lookup the private key in your ~/.tk directory (e.g. \"my_api_key\" will use \"~/.tk/my_api_key.private\"), or a full path to a valid private key (e.g. \"/path/to/key.private\")",
-						Required: true,
-					},
+					flags.Host(),
+					flags.Method(),
+					flags.Path(),
+					flags.Body(),
+					flags.KeysFolder(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					method := cCtx.String("method")
@@ -245,25 +194,22 @@ func main() {
 				Aliases: []string{"s"},
 				Usage:   "sign an arbitrary message",
 				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:     "message",
-						Usage:    "Message to sign",
-						Required: true,
-					},
-					&cli.StringFlag{
-						Name:     "key",
-						Aliases:  []string{"k"},
-						Usage:    "Private key to sign with. Provide a name to lookup the private key in your ~/.tk directory (e.g. \"my_api_key\" will use \"~/.tk/my_api_key.private\"), or a full path to a valid private key (e.g. \"/path/to/key.private\")",
-						Required: true,
-					},
+					flags.Message(),
+					flags.Key(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					message := cCtx.String("message")
 
 					key := cCtx.String("key")
+
 					var keyPath string
 					if !strings.Contains(key, "/") && !strings.Contains(key, ".") {
-						keyPath = fmt.Sprintf("%s/%s.private", getTkDirPath(""), key)
+						keysDirectory, err := getKeyDirPath("")
+						if err != nil {
+							log.Fatalln(err)
+							return cli.Exit("Could not load keys directory path", 1)
+						}
+						keyPath = fmt.Sprintf("%s/%s.private", keysDirectory, key)
 					} else {
 						// We have a full file path. Try loading it directly
 						keyPath = key
@@ -305,20 +251,26 @@ func main() {
 	}
 }
 
-func getTkDirPath(folder string) string {
-	if folder == "" {
-		usr, _ := user.Current()
-		folder = usr.HomeDir + "/" + TK_FOLDER_NAME
-		return folder
+// Given a user-specified directory, return the path.
+// The logic is in the case where users do not specify a folder.
+// If the folder isn't specified, we default to $XDG_CONFIG_HOME/.config/turnkey/keys.
+// If this env var isn't set, we default to $HOME/.config/turnkey/keys
+// If $HOME isn't set, this function returns an error.
+func getKeyDirPath(userSpecifiedPath string) (string, error) {
+	if userSpecifiedPath == "" {
+		userConfigDir, err := os.UserConfigDir()
+		if err != nil {
+			return "", nil
+		}
+		return userConfigDir + "turnkey/keys", nil
 	} else {
-		// Check that the directory exists
-		if _, err := os.Stat(folder); !os.IsNotExist(err) {
-			return folder
+		if _, err := os.Stat(userSpecifiedPath); !os.IsNotExist(err) {
+			return userSpecifiedPath, nil
 		} else {
-			log.Fatalf("Cannot put key files in %s: %v", folder, err)
-			return ""
+			return "", errors.Errorf("Cannot put key files in %s: %v", userSpecifiedPath, err)
 		}
 	}
+
 }
 
 func createFile(path string, content string, mode fs.FileMode) error {
@@ -336,7 +288,11 @@ func getFileContent(path string) (string, error) {
 func getApiKey(key string) (*apikey.ApiKey, error) {
 	var keyPath string
 	if !strings.Contains(key, "/") && !strings.Contains(key, ".") {
-		keyPath = fmt.Sprintf("%s/%s.private", getTkDirPath(""), key)
+		keysDirectory, err := getKeyDirPath("")
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to get keys directory path")
+		}
+		keyPath = fmt.Sprintf("%s/%s.private", keysDirectory, key)
 	} else {
 		// We have a full file path. Try loading it directly
 		keyPath = key
