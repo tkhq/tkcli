@@ -3,6 +3,7 @@ package main_test
 import (
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -23,6 +24,9 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 
 	cmd := exec.Command(path.Join(currentDir, "build", TURNKEY_BINARY_NAME), args...)
 	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	return string(output), err
 }
