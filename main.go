@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -12,8 +11,10 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/tkhq/tkcli/internal/apikey"
+	"github.com/tkhq/tkcli/internal/clifs"
 	"github.com/tkhq/tkcli/internal/display"
 	"github.com/tkhq/tkcli/internal/flags"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -51,7 +52,7 @@ func main() {
 						fmt.Println(string(jsonBytes))
 						return nil
 					} else {
-						tkDirPath, err := getKeyDirPath(folder)
+						tkDirPath, err := clifs.GetKeyDirPath(folder)
 						if err != nil {
 							log.Fatalln(err)
 							return cli.Exit("Could not create determine key directory location", 1)
@@ -66,8 +67,8 @@ func main() {
 
 						publicKeyFile := fmt.Sprintf("%s/%s.public", tkDirPath, apiKeyName)
 						privateKeyFile := fmt.Sprintf("%s/%s.private", tkDirPath, apiKeyName)
-						createFile(publicKeyFile, apiKey.TkPublicKey, 0755)
-						createFile(privateKeyFile, apiKey.TkPrivateKey, 0700)
+						clifs.CreateFile(publicKeyFile, apiKey.TkPublicKey, 0755)
+						clifs.CreateFile(privateKeyFile, apiKey.TkPrivateKey, 0700)
 
 						jsonBytes, err := json.MarshalIndent(map[string]interface{}{
 							"publicKeyFile":  publicKeyFile,
@@ -108,7 +109,7 @@ func main() {
 					signaturePayload := apikey.SerializeRequest(method, host, path, body)
 
 					key := cCtx.String("key")
-					apiKey, err := getApiKey(key)
+					apiKey, err := clifs.GetApiKey(key)
 					if err != nil {
 						log.Fatalf("Unable to retrieve API key: %v", err)
 					}
@@ -164,7 +165,7 @@ func main() {
 					signaturePayload := apikey.SerializeRequest(method, host, path, body)
 
 					key := cCtx.String("key")
-					apiKey, err := getApiKey(key)
+					apiKey, err := clifs.GetApiKey(key)
 					if err != nil {
 						log.Fatalf("Unable to retrieve API key: %v", err)
 					}
@@ -204,7 +205,7 @@ func main() {
 
 					var keyPath string
 					if !strings.Contains(key, "/") && !strings.Contains(key, ".") {
-						keysDirectory, err := getKeyDirPath("")
+						keysDirectory, err := clifs.GetKeyDirPath("")
 						if err != nil {
 							log.Fatalln(err)
 							return cli.Exit("Could not load keys directory path", 1)
@@ -214,7 +215,7 @@ func main() {
 						// We have a full file path. Try loading it directly
 						keyPath = key
 					}
-					bytes, err := getFileContent(keyPath)
+					bytes, err := clifs.GetFileContent(keyPath)
 					if err != nil {
 						log.Fatalln(err)
 						return cli.Exit("Could load private key", 1)
@@ -249,65 +250,6 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-}
-
-// Given a user-specified directory, return the path.
-// The logic is in the case where users do not specify a folder.
-// If the folder isn't specified, we default to $XDG_CONFIG_HOME/.config/turnkey/keys.
-// If this env var isn't set, we default to $HOME/.config/turnkey/keys
-// If $HOME isn't set, this function returns an error.
-func getKeyDirPath(userSpecifiedPath string) (string, error) {
-	if userSpecifiedPath == "" {
-		userConfigDir, err := os.UserConfigDir()
-		if err != nil {
-			return "", nil
-		}
-		return userConfigDir + "turnkey/keys", nil
-	} else {
-		if _, err := os.Stat(userSpecifiedPath); !os.IsNotExist(err) {
-			return userSpecifiedPath, nil
-		} else {
-			return "", errors.Errorf("Cannot put key files in %s: %v", userSpecifiedPath, err)
-		}
-	}
-
-}
-
-func createFile(path string, content string, mode fs.FileMode) error {
-	return os.WriteFile(path, []byte(content), mode)
-}
-
-func getFileContent(path string) (string, error) {
-	bytes, err := os.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
-}
-
-func getApiKey(key string) (*apikey.ApiKey, error) {
-	var keyPath string
-	if !strings.Contains(key, "/") && !strings.Contains(key, ".") {
-		keysDirectory, err := getKeyDirPath("")
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to get keys directory path")
-		}
-		keyPath = fmt.Sprintf("%s/%s.private", keysDirectory, key)
-	} else {
-		// We have a full file path. Try loading it directly
-		keyPath = key
-	}
-
-	bytes, err := getFileContent(keyPath)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to load private key:")
-	}
-
-	apiKey, err := apikey.FromTkPrivateKey(string(bytes))
-	if err != nil {
-		return nil, errors.Wrap(err, "could recover API key from private key file content:")
-	}
-	return apiKey, nil
 }
 
 func generateCurlCommand(apiKey *apikey.ApiKey, method, host, path, body, signature string) string {
