@@ -5,9 +5,13 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math/big"
+
+	"github.com/pkg/errors"
 )
 
 // Struct to hold both serialized and ecdsa lib friendly version of a public/private key pair
@@ -17,6 +21,17 @@ type ApiKey struct {
 	// Underlying ECDSA keypair
 	privateKey *ecdsa.PrivateKey
 	publicKey  *ecdsa.PublicKey
+}
+
+const TURNKEY_API_SIGNATURE_SCHEME = "SIGNATURE_SCHEME_TK_API_P256"
+
+type ApiStamp struct {
+	// API public key, hex-encoded
+	PublicKey string `json:"publicKey"`
+	// P-256 signature bytes, hex-coded
+	Signature string `json:"signature"`
+	// Signature scheme. Must be set to "SIGNATURE_SCHEME_TK_API_P256"
+	Scheme string `json:"scheme"`
 }
 
 // Create a new Turnkey API key
@@ -126,12 +141,26 @@ func DecodeTKPublicKey(encodedPublicKey string) (*ecdsa.PublicKey, error) {
 	return publicKey, nil
 }
 
-func Sign(message string, apiKey *ApiKey) (string, error) {
+// / Takes a message and returns the proper API stamp
+// / This value should be inserted in a "X-Stamp" header
+func Stamp(message string, apiKey *ApiKey) (string, error) {
 	hash := sha256.Sum256([]byte(message))
 
 	sigBytes, err := ecdsa.SignASN1(rand.Reader, apiKey.privateKey, hash[:])
 	if err != nil {
 		return "", err
 	}
-	return hex.EncodeToString(sigBytes), nil
+	sigHex := hex.EncodeToString(sigBytes)
+
+	stamp := ApiStamp{
+		PublicKey: apiKey.TkPublicKey,
+		Signature: sigHex,
+		Scheme:    TURNKEY_API_SIGNATURE_SCHEME,
+	}
+	jsonStamp, err := json.Marshal(stamp)
+	if err != nil {
+		return "", errors.Wrap(err, "cannot marshall API stamp to JSON")
+	}
+	encodedStamp := base64.RawURLEncoding.EncodeToString(jsonStamp)
+	return encodedStamp, nil
 }

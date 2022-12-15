@@ -1,8 +1,10 @@
 package main_test
 
 import (
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -11,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tkhq/tkcli/internal/apikey"
 )
 
 const TURNKEY_BINARY_NAME = "turnkey"
@@ -60,20 +63,53 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	assert.Equal(t, parsedOut["privateKeyFile"], tmpDir+"/mykey.private")
 }
 
-func TestSign(t *testing.T) {
-
-	out, err := RunCliWithArgs(t, []string{"sign", "--key", "fixtures/testkey.private", "--message", "hello!"})
+func TestStamp(t *testing.T) {
+	out, err := RunCliWithArgs(t, []string{"stamp", "--key", "fixtures/testkey.private", "--message", "hello!"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
 	err = json.Unmarshal([]byte(out), &parsedOut)
 	assert.Nil(t, err)
-	signature := parsedOut["signature"]
+	stamp := parsedOut["stamp"]
+
+	pubkeyBytes, err := os.ReadFile("fixtures/testkey.public")
+	assert.Nil(t, err)
+	ensureValidStamp(t, stamp, string(pubkeyBytes))
+}
+
+func TestApproveRequest(t *testing.T) {
+	out, err := RunCliWithArgs(t, []string{"approve-request", "--host", "api.turnkey.io", "--key", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
+	assert.Nil(t, err)
+
+	var parsedOut map[string]string
+	err = json.Unmarshal([]byte(out), &parsedOut)
+	assert.Nil(t, err)
+
+	stamp := parsedOut["stamp"]
+	pubkeyBytes, err := os.ReadFile("fixtures/testkey.public")
+	assert.Nil(t, err)
+	ensureValidStamp(t, stamp, string(pubkeyBytes))
+
+	assert.Equal(t, "{\"some\": \"field\"}", parsedOut["message"])
+
+	assert.Contains(t, parsedOut["curlCommand"], "curl -X POST -d'{\"some\": \"field\"}'")
+	assert.Contains(t, parsedOut["curlCommand"], fmt.Sprintf("-H'X-Stamp: %s'", stamp))
+	assert.Contains(t, parsedOut["curlCommand"], "https://api.turnkey.io/some/endpoint")
+}
+
+func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {
+	stampBytes, err := base64.RawURLEncoding.DecodeString(stamp)
+	assert.Nil(t, err)
+
+	var parsedStamp *apikey.ApiStamp
+	json.Unmarshal(stampBytes, &parsedStamp)
+
+	assert.Equal(t, expectedPublicKey, parsedStamp.PublicKey)
 
 	// All signatures start with 30....
-	assert.True(t, strings.HasPrefix(signature, "30"))
+	assert.True(t, strings.HasPrefix(parsedStamp.Signature, "30"))
 
-	_, err = hex.DecodeString(signature)
+	_, err = hex.DecodeString(parsedStamp.Signature)
 	// Ensure there is no issue decoding the signature as a hexadecimal string
 	assert.Nil(t, err)
 }
