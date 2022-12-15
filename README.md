@@ -21,7 +21,7 @@ To release:
 # Generate a Github token with "write:packages"
 # ==> https://github.com/settings/tokens
 $ export GITHUB_TOKEN=<your token>
-$ git tag -a vx.y.z -m "New Release: x.y.z"
+$ git tag -a vx.y.z -m "New release: x.y.z"
 $ git push origin vx.y.z
 $ goreleaser release --rm-dist
 ```
@@ -38,19 +38,20 @@ brew install turnkey
 Create a new API key:
 
 ```sh
-turnkey gen --name rno
-Creating /Users/rno/.tk/rno.public
-Creating /Users/rno/.tk/rno.private
+$ turnkey gen --name my-test-key
+{
+    "privateKeyFile": "/Users/rno/.config/turnkey/keys/my-test-key.private",
+    "publicKeyFile": "/Users/rno/.config/turnkey/keys/my-test-key.public"
+}
 ```
 
 Sign a request:
 
 ```sh
-turnkey approve-request --method POST --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=rno
-Raw signature: 3046022100a99781a6b1d7ff7c4ce3951ded09a7757c74f1c6d7c7e1a2e617ac2921d74674022100f75d167abe426eb8f89884afe5e864cb965c6370611566f50b46690209b3a95b
-Approval header: X-Approved-By-035acbc8b7751b7703736ae16cb22112451372f7b77717bbecdfa8300d4038432: 3046022100a99781a6b1d7ff7c4ce3951ded09a7757c74f1c6d7c7e1a2e617ac2921d74674022100f75d167abe426eb8f89884afe5e864cb965c6370611566f50b46690209b3a95b
---------
-To make this request with curl:
-        curl -X POST -d {"payload": "hello from TKHQ"} -H'X-Approved-By-035acbc8b7751b7703736ae16cb22112451372f7b77717bbecdfa8300d4038432: 3046022100a99781a6b1d7ff7c4ce3951ded09a7757c74f1c6d7c7e1a2e617ac2921d74674022100f75d167abe426eb8f89884afe5e864cb965c6370611566f50b46690209b3a95b' -v 'https://api.turnkey.io/api/v1/sign'
---------
+$ turnkey approve-request --host api.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
+{
+    "curlCommand": "curl -X POST -d'{\"payload\": \"hello from TKHQ\"}' -H'X-Stamp: eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ' -v 'https://api.turnkey.io/api/v1/sign'",
+    "message": "{\"payload\": \"hello from TKHQ\"}",
+    "stamp": "eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ"
+}
 ```

@@ -90,13 +90,11 @@ func main() {
 				UsageText: "generate an approval and make an HTTP(s) request",
 				Flags: []cli.Flag{
 					flags.Host(),
-					flags.Method(),
 					flags.Path(),
 					flags.Body(),
 					flags.Key(),
 				},
 				Action: func(cCtx *cli.Context) error {
-					method := cCtx.String("method")
 					host := cCtx.String("host")
 					path := cCtx.String("path")
 					body := cCtx.String("body")
@@ -106,33 +104,21 @@ func main() {
 						protocol = "http"
 					}
 
-					signaturePayload := apikey.SerializeRequest(method, host, path, body)
-
 					key := cCtx.String("key")
 					apiKey, err := clifs.GetApiKey(key)
 					if err != nil {
 						log.Fatalf("Unable to retrieve API key: %v", err)
 					}
 
-					signature, err := apikey.Sign(signaturePayload, apiKey)
+					stamp, err := apikey.Stamp(body, apiKey)
 					if err != nil {
 						log.Fatalln(err)
-						return cli.Exit("Failed to produce a valid signature", 1)
+						return cli.Exit("Failed to produce a valid API stamp", 1)
 					}
 
-					var response *http.Response
-					if method == "GET" {
-						response, err = get(apiKey, protocol, host, path, signature)
-						if err != nil {
-							log.Fatalln(err)
-						}
-					} else if method == "POST" {
-						response, err = post(apiKey, protocol, host, path, body, signature)
-						if err != nil {
-							log.Fatalln(err)
-						}
-					} else {
-						return cli.Exit("Invalid method", 1)
+					response, err := post(protocol, host, path, body, stamp)
+					if err != nil {
+						log.Fatalln(err)
 					}
 
 					displayResponse, err := display.DisplayResponse(response)
@@ -150,19 +136,15 @@ func main() {
 				Usage:     "approve a request",
 				UsageText: "generate an approval over an HTTP request",
 				Flags: []cli.Flag{
+					flags.Key(),
 					flags.Host(),
-					flags.Method(),
 					flags.Path(),
 					flags.Body(),
-					flags.KeysFolder(),
 				},
 				Action: func(cCtx *cli.Context) error {
-					method := cCtx.String("method")
 					host := cCtx.String("host")
 					path := cCtx.String("path")
 					body := cCtx.String("body")
-
-					signaturePayload := apikey.SerializeRequest(method, host, path, body)
 
 					key := cCtx.String("key")
 					apiKey, err := clifs.GetApiKey(key)
@@ -170,17 +152,16 @@ func main() {
 						log.Fatalf("Unable to retrieve API key: %v", err)
 					}
 
-					signature, err := apikey.Sign(signaturePayload, apiKey)
+					stamp, err := apikey.Stamp(body, apiKey)
 					if err != nil {
 						log.Fatalln(err)
-						return cli.Exit("Failed to produce a valid signature", 1)
+						return cli.Exit("Failed to produce a valid stamp", 1)
 					}
 
 					jsonBytes, err := json.MarshalIndent(map[string]interface{}{
-						"message":        fmt.Sprintf("%q", signaturePayload),
-						"signature":      signature,
-						"approvalHeader": approvalHeader(apiKey, signature),
-						"curlCommand":    generateCurlCommand(apiKey, method, host, path, body, signature),
+						"message":     body,
+						"stamp":       stamp,
+						"curlCommand": generateCurlCommand(host, path, body, stamp),
 					}, "", "    ")
 					if err != nil {
 						log.Fatalf("Unable to serialize output to JSON: %v", err)
@@ -191,9 +172,9 @@ func main() {
 				},
 			},
 			{
-				Name:    "sign",
+				Name:    "stamp",
 				Aliases: []string{"s"},
-				Usage:   "sign an arbitrary message",
+				Usage:   "sign an arbitrary message and produce a valid API Stamp",
 				Flags: []cli.Flag{
 					flags.Message(),
 					flags.Key(),
@@ -226,15 +207,15 @@ func main() {
 						log.Fatalln(err)
 						return cli.Exit("Could recover API key from private key file content", 1)
 					}
-					signature, err := apikey.Sign(message, apiKey)
+					stamp, err := apikey.Stamp(message, apiKey)
 					if err != nil {
 						log.Fatalln(err)
-						return cli.Exit("Failed to produce a valid signature", 1)
+						return cli.Exit("Failed to produce a valid stamp", 1)
 					}
 
 					jsonBytes, err := json.MarshalIndent(map[string]interface{}{
-						"message":   fmt.Sprintf("%q", message),
-						"signature": signature,
+						"message": fmt.Sprintf("%q", message),
+						"stamp":   stamp,
 					}, "", "    ")
 					if err != nil {
 						log.Fatalf("Unable to serialize output to JSON: %v", err)
@@ -252,42 +233,22 @@ func main() {
 	}
 }
 
-func generateCurlCommand(apiKey *apikey.ApiKey, method, host, path, body, signature string) string {
-	if method == "POST" {
-		return fmt.Sprintf("curl -X POST -d'%s' -H'%s' -v 'https://%s%s'", body, approvalHeader(apiKey, signature), host, path)
-	} else {
-		return fmt.Sprintf("curl -H'%s' -v 'https://%s%s'", approvalHeader(apiKey, signature), host, path)
-	}
+func generateCurlCommand(host, path, body, stamp string) string {
+	return fmt.Sprintf("curl -X POST -d'%s' -H'%s' -v 'https://%s%s'", body, stampHeader(stamp), host, path)
 }
 
-func approvalHeader(apiKey *apikey.ApiKey, signature string) string {
-	return fmt.Sprintf("X-Approved-By-%s: %s", apiKey.TkPublicKey, signature)
+func stampHeader(stamp string) string {
+	return fmt.Sprintf("X-Stamp: %s", stamp)
 }
 
-func get(key *apikey.ApiKey, protocol string, host string, path string, signature string) (*http.Response, error) {
-	url := fmt.Sprintf("%s://%s%s", protocol, host, path)
-	req, _ := http.NewRequest("GET", url, nil)
-
-	headerName := fmt.Sprintf("X-Approved-By-%s", key.TkPublicKey)
-	req.Header.Set(headerName, signature)
-
-	client := http.Client{}
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	return response, nil
-}
-
-func post(key *apikey.ApiKey, protocol string, host string, path string, body string, signature string) (*http.Response, error) {
+func post(protocol string, host string, path string, body string, stamp string) (*http.Response, error) {
 	url := fmt.Sprintf("%s://%s%s", protocol, host, path)
 	req, err := http.NewRequest("POST", url, strings.NewReader(body))
 	if err != nil {
 		return nil, errors.Wrap(err, "error while creating HTTP POST request")
 	}
 
-	headerName := fmt.Sprintf("X-Approved-By-%s", key.TkPublicKey)
-	req.Header.Set(headerName, signature)
+	req.Header.Set("X-Stamp", stamp)
 	client := http.Client{}
 	response, err := client.Do(req)
 	if err != nil {
