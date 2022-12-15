@@ -44,7 +44,6 @@ func Test_FromTkPrivateKey(t *testing.T) {
 
 func Test_Sign(t *testing.T) {
 	tkPrivateKey := "487f361ddfd73440e707f4daa6775b376859e8a3c9f29b3bb694a12927c0213c"
-	//tkPublicKey := "02f739f8c77b32f4d5f13265861febd76e7a9c61a1140d296b8c16302508870316"
 
 	apiKey, err := apikey.FromTkPrivateKey(tkPrivateKey)
 	assert.Nil(t, err)
