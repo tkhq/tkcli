@@ -3,7 +3,9 @@ package apikey_test
 import (
 	"crypto/ecdsa"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -42,17 +44,27 @@ func Test_FromTkPrivateKey(t *testing.T) {
 
 func Test_Sign(t *testing.T) {
 	tkPrivateKey := "487f361ddfd73440e707f4daa6775b376859e8a3c9f29b3bb694a12927c0213c"
-	tkPublicKey := "02f739f8c77b32f4d5f13265861febd76e7a9c61a1140d296b8c16302508870316"
+	//tkPublicKey := "02f739f8c77b32f4d5f13265861febd76e7a9c61a1140d296b8c16302508870316"
 
 	apiKey, err := apikey.FromTkPrivateKey(tkPrivateKey)
 	assert.Nil(t, err)
 
-	sig, err := apikey.Sign("hello", apiKey)
-	assert.Nil(t, err)
-	sigBytes, err := hex.DecodeString(sig)
+	stampHeader, err := apikey.Stamp("hello", apiKey)
 	assert.Nil(t, err)
 
-	publicKey, err := apikey.DecodeTKPublicKey(tkPublicKey)
+	decodedHeaderBytes, err := base64.RawURLEncoding.DecodeString(stampHeader)
+	assert.Nil(t, err)
+
+	var stamp *apikey.ApiStamp
+	err = json.Unmarshal(decodedHeaderBytes, &stamp)
+	assert.Nil(t, err)
+	assert.Equal(t, stamp.PublicKey, "02f739f8c77b32f4d5f13265861febd76e7a9c61a1140d296b8c16302508870316")
+	assert.Equal(t, stamp.Scheme, "SIGNATURE_SCHEME_TK_API_P256")
+
+	sigBytes, err := hex.DecodeString(stamp.Signature)
+	assert.Nil(t, err)
+
+	publicKey, err := apikey.DecodeTKPublicKey(stamp.PublicKey)
 	assert.Nil(t, err)
 
 	// Verify the soundness of the hash:
