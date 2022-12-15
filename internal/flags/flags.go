@@ -43,14 +43,6 @@ func Host() *cli.StringFlag {
 	}
 }
 
-func Method() *cli.StringFlag {
-	return &cli.StringFlag{
-		Name:     "method",
-		Usage:    "HTTP Method. Should be \"GET\" or \"POST\"",
-		Required: true,
-	}
-}
-
 func Path() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:     "path",
