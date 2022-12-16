@@ -71,6 +71,7 @@ func main() {
 						clifs.CreateFile(privateKeyFile, apiKey.TkPrivateKey, 0700)
 
 						jsonBytes, err := json.MarshalIndent(map[string]interface{}{
+							"publicKey":      apiKey.TkPublicKey,
 							"publicKeyFile":  publicKeyFile,
 							"privateKeyFile": privateKeyFile,
 						}, "", "    ")

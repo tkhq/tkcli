@@ -56,9 +56,13 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	assert.FileExists(t, tmpDir+"/mykey.public")
 	assert.FileExists(t, tmpDir+"/mykey.private")
 
+	publicKeyData, err := os.ReadFile(tmpDir + "/mykey.public")
+	assert.Nil(t, err)
+
 	var parsedOut map[string]string
 	err = json.Unmarshal([]byte(out), &parsedOut)
 	assert.Nil(t, err)
+	assert.Equal(t, parsedOut["publicKey"], string(publicKeyData))
 	assert.Equal(t, parsedOut["publicKeyFile"], tmpDir+"/mykey.public")
 	assert.Equal(t, parsedOut["privateKeyFile"], tmpDir+"/mykey.private")
 }
