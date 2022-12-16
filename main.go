@@ -71,6 +71,7 @@ func main() {
 						clifs.CreateFile(privateKeyFile, apiKey.TkPrivateKey, 0700)
 
 						jsonBytes, err := json.MarshalIndent(map[string]interface{}{
+							"publicKey":      apiKey.TkPublicKey,
 							"publicKeyFile":  publicKeyFile,
 							"privateKeyFile": privateKeyFile,
 						}, "", "    ")
@@ -78,7 +79,6 @@ func main() {
 							log.Fatalf("Unable to serialize output to JSON: %v", err)
 						}
 						fmt.Println(string(jsonBytes))
-						fmt.Printf("\nYour public key for Turnkey is:\n%s\n", apiKey.TkPublicKey)
 					}
 
 					return nil
