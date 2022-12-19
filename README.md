@@ -5,18 +5,21 @@
 ## Building the CLI
 
 If you simply want to build a binary locally, run
+
 ```sh
-$ make build/turnkey
+$ make build
 ```
 
 We use [GoReleaser](https://goreleaser.com/) to build and release our binaries.
 
 To build a release locally:
+
 ```
 $ goreleaser release --snapshot --rm-dist
 ```
 
 To release:
+
 ```
 # Generate a Github token with "write:packages"
 # ==> https://github.com/settings/tokens
