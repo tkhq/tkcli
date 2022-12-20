@@ -8,14 +8,29 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
+	"github.com/urfave/cli/v2"
 )
 
 type Formatter int64
 
 const (
-	FormatterJSON Formatter = iota
+	FormatterUnknown Formatter = iota
 	FormatterPretty
+	FormatterJSON
 )
+
+func ParseFormatter(cCtx *cli.Context) (Formatter, error) {
+	input := cCtx.String("formatter")
+
+	switch input {
+	case "json":
+		return FormatterJSON, nil
+	case "pretty":
+		return FormatterPretty, nil
+	default:
+		return FormatterUnknown, errors.Errorf("Unknown formatter %s", input)
+	}
+}
 
 func FormatResponse(response *http.Response, formatter Formatter) (string, error) {
 	responseBytes, err := io.ReadAll(response.Body)

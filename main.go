@@ -29,11 +29,15 @@ func main() {
 				Flags: []cli.Flag{
 					flags.CreateKeyName(),
 					flags.KeysFolder(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					apiKeyName := cCtx.String("name")
 					folder := cCtx.String("keys-folder")
-					formatter := display.FormatterJSON
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
 
 					apiKey, err := apikey.NewTkApiKey()
 					if err != nil {
@@ -94,12 +98,17 @@ func main() {
 					flags.Path(),
 					flags.Body(),
 					flags.Key(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
+
 					host := cCtx.String("host")
 					path := cCtx.String("path")
 					body := cCtx.String("body")
-					formatter := display.FormatterJSON
 					protocol := "https"
 
 					if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(host) {
@@ -142,12 +151,16 @@ func main() {
 					flags.Host(),
 					flags.Path(),
 					flags.Body(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					host := cCtx.String("host")
 					path := cCtx.String("path")
 					body := cCtx.String("body")
-					formatter := display.FormatterJSON
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
 
 					key := cCtx.String("key")
 					apiKey, err := clifs.GetApiKey(key)
@@ -181,10 +194,14 @@ func main() {
 				Flags: []cli.Flag{
 					flags.Message(),
 					flags.Key(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					message := cCtx.String("message")
-					formatter := display.FormatterJSON
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
 
 					key := cCtx.String("key")
 
