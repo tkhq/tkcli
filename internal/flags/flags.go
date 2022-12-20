@@ -58,3 +58,12 @@ func Body() *cli.StringFlag {
 		Required: true,
 	}
 }
+
+func Formatter() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:     "formatter",
+		Usage:    `Output format for the CLI. Options are "--formatter pretty" and "--formatter json".`,
+		Required: false,
+		Value:    "json",
+	}
+}
