@@ -6,10 +6,11 @@ local-release:
 	goreleaser release --snapshot --rm-dist
 
 .PHONY: test
-test: build/turnkey
+test: build
 	go test ./...
 
-build/turnkey: main.go internal/
+.PHONY: build
+build:
 	go build -o build/turnkey main.go
 
 .PHONY: clean

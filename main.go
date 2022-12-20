@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,10 +29,15 @@ func main() {
 				Flags: []cli.Flag{
 					flags.CreateKeyName(),
 					flags.KeysFolder(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					apiKeyName := cCtx.String("name")
 					folder := cCtx.String("keys-folder")
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
 
 					apiKey, err := apikey.NewTkApiKey()
 					if err != nil {
@@ -42,14 +46,14 @@ func main() {
 					}
 
 					if apiKeyName == "-" {
-						jsonBytes, err := json.MarshalIndent(map[string]interface{}{
+						displayMessage, err := display.FormatStruct(map[string]interface{}{
 							"publicKey":  apiKey.TkPublicKey,
 							"privateKey": apiKey.TkPrivateKey,
-						}, "", "    ")
+						}, formatter)
 						if err != nil {
-							log.Fatalf("Unable to serialize output to JSON: %v", err)
+							log.Fatalf("Unable to format output: %v", err)
 						}
-						fmt.Println(string(jsonBytes))
+						fmt.Println(displayMessage)
 						return nil
 					} else {
 						tkDirPath, err := clifs.GetKeyDirPath(folder)
@@ -70,15 +74,15 @@ func main() {
 						clifs.CreateFile(publicKeyFile, apiKey.TkPublicKey, 0755)
 						clifs.CreateFile(privateKeyFile, apiKey.TkPrivateKey, 0700)
 
-						jsonBytes, err := json.MarshalIndent(map[string]interface{}{
+						displayMessage, err := display.FormatStruct(map[string]interface{}{
 							"publicKey":      apiKey.TkPublicKey,
 							"publicKeyFile":  publicKeyFile,
 							"privateKeyFile": privateKeyFile,
-						}, "", "    ")
+						}, formatter)
 						if err != nil {
-							log.Fatalf("Unable to serialize output to JSON: %v", err)
+							log.Fatalf("Unable to format output: %v", err)
 						}
-						fmt.Println(string(jsonBytes))
+						fmt.Println(displayMessage)
 					}
 
 					return nil
@@ -94,8 +98,14 @@ func main() {
 					flags.Path(),
 					flags.Body(),
 					flags.Key(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
+
 					host := cCtx.String("host")
 					path := cCtx.String("path")
 					body := cCtx.String("body")
@@ -122,7 +132,7 @@ func main() {
 						log.Fatalln(err)
 					}
 
-					displayResponse, err := display.DisplayResponse(response)
+					displayResponse, err := display.FormatResponse(response, formatter)
 					if err != nil {
 						log.Fatalf("unable to display response: %v", err)
 					}
@@ -141,11 +151,16 @@ func main() {
 					flags.Host(),
 					flags.Path(),
 					flags.Body(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					host := cCtx.String("host")
 					path := cCtx.String("path")
 					body := cCtx.String("body")
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
 
 					key := cCtx.String("key")
 					apiKey, err := clifs.GetApiKey(key)
@@ -159,15 +174,15 @@ func main() {
 						return cli.Exit("Failed to produce a valid stamp", 1)
 					}
 
-					jsonBytes, err := json.MarshalIndent(map[string]interface{}{
+					displayMessage, err := display.FormatStruct(map[string]interface{}{
 						"message":     body,
 						"stamp":       stamp,
 						"curlCommand": generateCurlCommand(host, path, body, stamp),
-					}, "", "    ")
+					}, formatter)
 					if err != nil {
-						log.Fatalf("Unable to serialize output to JSON: %v", err)
+						log.Fatalf("Unable to format output: %v", err)
 					}
-					fmt.Println(string(jsonBytes))
+					fmt.Println(displayMessage)
 
 					return nil
 				},
@@ -179,9 +194,14 @@ func main() {
 				Flags: []cli.Flag{
 					flags.Message(),
 					flags.Key(),
+					flags.Formatter(),
 				},
 				Action: func(cCtx *cli.Context) error {
 					message := cCtx.String("message")
+					formatter, err := display.ParseFormatter(cCtx)
+					if err != nil {
+						log.Fatalln(err)
+					}
 
 					key := cCtx.String("key")
 
@@ -214,15 +234,15 @@ func main() {
 						return cli.Exit("Failed to produce a valid stamp", 1)
 					}
 
-					jsonBytes, err := json.MarshalIndent(map[string]interface{}{
+					displayMessage, err := display.FormatStruct(map[string]interface{}{
 						"message": fmt.Sprintf("%q", message),
 						"stamp":   stamp,
-					}, "", "    ")
+					}, formatter)
 					if err != nil {
-						log.Fatalf("Unable to serialize output to JSON: %v", err)
+						log.Fatalf("Unable to format output: %v", err)
 					}
 
-					fmt.Println(string(jsonBytes))
+					fmt.Println(displayMessage)
 					return nil
 				},
 			},
