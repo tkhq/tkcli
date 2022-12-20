@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/goccy/go-yaml"
 	"github.com/pkg/errors"
 )
 
@@ -13,6 +14,7 @@ type Formatter int64
 
 const (
 	FormatterJSON Formatter = iota
+	FormatterPretty
 )
 
 func FormatResponse(response *http.Response, formatter Formatter) (string, error) {
@@ -49,6 +51,12 @@ func FormatStruct(input map[string]interface{}, formatter Formatter) (string, er
 		}
 
 		return string(jsonBytes), nil
+	case FormatterPretty:
+		bytes, err := yaml.MarshalWithOptions(input, yaml.Indent(4))
+		if err != nil {
+			return "", errors.Wrap(err, "unable to serialize output to YAML")
+		}
+		return string(bytes), nil
 	default:
 		return "", errors.Errorf("Unknown formatter %v", formatter)
 	}
@@ -64,7 +72,27 @@ func formatJSONBytes(input []byte, formatter Formatter) (string, error) {
 		}
 
 		return prettyJSON.String(), nil
+	case FormatterPretty:
+		output, err := JSONToYAML(input)
+		if err != nil { // Not a JSON
+			return string(input), nil
+		}
+
+		return string(output), nil
 	default:
 		return "", errors.Errorf("Unknown formatter %v", formatter)
 	}
+}
+
+// https://github.com/goccy/go-yaml/blob/894a764b31ce8c62a845a1e626cd43c6bb475a7a/yaml.go#L240 with custom formatting options
+func JSONToYAML(bytes []byte) ([]byte, error) {
+	var v interface{}
+	if err := yaml.UnmarshalWithOptions(bytes, &v, yaml.UseOrderedMap()); err != nil {
+		return nil, errors.Wrapf(err, "failed to unmarshal from json bytes")
+	}
+	out, err := yaml.MarshalWithOptions(v, yaml.Indent(4))
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to marshal")
+	}
+	return out, nil
 }
