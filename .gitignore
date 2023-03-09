@@ -17,3 +17,6 @@
 # Dist/build folder
 dist/
 build/
+
+# Vscode-related configs
+.vscode

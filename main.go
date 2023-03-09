@@ -67,6 +67,21 @@ func main() {
 
 						publicKeyFile := fmt.Sprintf("%s/%s.public", tkDirPath, apiKeyName)
 						privateKeyFile := fmt.Sprintf("%s/%s.private", tkDirPath, apiKeyName)
+
+						pubExists, err := clifs.CheckFileExists(publicKeyFile)
+						if err != nil {
+							log.Fatalln(err)
+							return cli.Exit("Error checking for pre-existing keys", 1)
+						}
+						privExists, err := clifs.CheckFileExists(privateKeyFile)
+						if err != nil {
+							log.Fatalln(err)
+							return cli.Exit("Error checking for pre-existing keys", 1)
+						}
+						if pubExists || privExists {
+							return cli.Exit("A keypair with that name already exists! Exiting...", 1)
+						}
+
 						clifs.CreateFile(publicKeyFile, apiKey.TkPublicKey, 0755)
 						clifs.CreateFile(privateKeyFile, apiKey.TkPrivateKey, 0700)
 
