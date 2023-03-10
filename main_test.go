@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -46,8 +45,9 @@ func TestKeygenArgValidation(t *testing.T) {
 }
 
 func TestKeygenInTmpFolder(t *testing.T) {
-	tmpDir, err := ioutil.TempDir("/tmp", "keys")
+	tmpDir, err := os.MkdirTemp("/tmp", "keys")
 	defer os.RemoveAll(tmpDir)
+
 	assert.Nil(t, err)
 
 	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--name", "mykey"})
@@ -65,6 +65,26 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	assert.Equal(t, parsedOut["publicKey"], string(publicKeyData))
 	assert.Equal(t, parsedOut["publicKeyFile"], tmpDir+"/mykey.public")
 	assert.Equal(t, parsedOut["privateKeyFile"], tmpDir+"/mykey.private")
+}
+
+func TestKeygenDetectExistingKey(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("/tmp", "keys")
+	defer os.RemoveAll(tmpDir)
+
+	assert.Nil(t, err)
+
+	err = os.WriteFile(tmpDir+"/myexistingkey.public", []byte("mykey.public"), 0755)
+	assert.Nil(t, err)
+
+	err = os.WriteFile(tmpDir+"/myexistingkey.private", []byte("mykey.private"), 0755)
+	assert.Nil(t, err)
+
+	assert.FileExists(t, tmpDir+"/myexistingkey.public")
+	assert.FileExists(t, tmpDir+"/myexistingkey.private")
+
+	_, err = RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--name", "myexistingkey"})
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "exit status 1")
 }
 
 func TestStamp(t *testing.T) {

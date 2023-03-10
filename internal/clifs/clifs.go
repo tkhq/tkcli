@@ -50,6 +50,19 @@ func GetFileContent(path string) (string, error) {
 	return string(bytes), nil
 }
 
+func CheckFileExists(path string) (bool, error) {
+	_, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 func GetApiKey(key string) (*apikey.ApiKey, error) {
 	var keyPath string
 	if !strings.Contains(key, "/") && !strings.Contains(key, ".") {
