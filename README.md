@@ -21,7 +21,8 @@ To release:
 # Generate a Github token with "write:packages"
 # ==> https://github.com/settings/tokens
 $ export GITHUB_TOKEN=<your token>
-$ git tag -a vx.y.z -m "New release: x.y.z"
+$ git tag -s -a vx.y.z -m "New release: x.y.z" # create a signed tag
+$ git tag -v vx.y.z # verify the tag
 $ git push origin vx.y.z
 $ goreleaser release --rm-dist
 ```
