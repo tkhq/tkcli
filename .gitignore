@@ -15,8 +15,12 @@
 .DS_Store
 
 # Dist/build folder
-dist/
 build/
 
 # Vscode-related configs
 .vscode
+
+# Toolchain
+cache
+out
+.*
