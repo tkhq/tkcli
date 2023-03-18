@@ -4,34 +4,46 @@
 
 ## Building the CLI
 
-If you simply want to build a binary locally, run
-```sh
-$ make build/turnkey
+If you simply want to build binaries locally, run
 ```
-
-We use [GoReleaser](https://goreleaser.com/) to build and release our binaries.
-
-To build a release locally:
-```
-$ goreleaser release --snapshot --rm-dist
+$ make
 ```
 
 To release:
 ```
-# Generate a Github token with "write:packages"
-# ==> https://github.com/settings/tokens
-$ export GITHUB_TOKEN=<your token>
-$ git tag -a vx.y.z -m "New release: x.y.z"
-$ git push origin vx.y.z
-$ goreleaser release --rm-dist
+make dist
 ```
 
 ## Installing the CLI
 
-```
-brew tap tkhq/tap
-brew install turnkey
-```
+1. Clone repo
+    ```
+    git clone https://github.com/tkhq/tkcli
+    cd tkcli
+    ```
+
+2. Review source
+    * Ideal: Review of the entire supply chain is recommended for high risk uses
+    * Minimal: review the "attest" "sign" and "verify" targets in the Makefile
+
+3. Review binaries
+    * Ideal: ```make sign```
+        * Sign binaries yourself you manually verified are what you expect
+    * Recommended: ```make attest```
+        * Prove published source code matches pubished binaries
+    * Minimal: ```make verify```
+        * Prove multiple people signed binaries
+        * Ensure signatures are by people whose reputations you trust
+
+4. Install binary
+
+    Replace "linux" and "amd64" with your preferred architecture:
+
+    ```
+    mkdir -p ~/.local/bin
+    cp tkhq/dist/turnkey.linux.amd64 ~/.local/bin/turnkey
+    chmod +x ~/.local/bin/turnkey
+    ```
 
 ## Usage
 
