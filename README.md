@@ -27,8 +27,9 @@ make dist
     * Minimal: review the "attest" "sign" and "verify" targets in the Makefile
 
 3. Review binaries
-    * Ideal: ```make sign```
-        * Sign binaries yourself you manually verified are what you expect
+    * Ideal: ```make attest sign```
+        * Reproduce and sign binaries yourself
+	* We welcome PRs with external verification signatures
     * Recommended: ```make attest```
         * Prove published source code matches pubished binaries
     * Minimal: ```make verify```
@@ -41,7 +42,7 @@ make dist
 
     ```
     mkdir -p ~/.local/bin
-    cp tkhq/dist/turnkey.linux.amd64 ~/.local/bin/turnkey
+    cp tkcli/dist/turnkey.linux.amd64 ~/.local/bin/turnkey
     chmod +x ~/.local/bin/turnkey
     ```
 
