@@ -17,6 +17,14 @@ default: \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
 
+.PHONY: test
+test: $(OUT_DIR)/turnkey.linux-amd64
+	$(call toolchain,' \
+		GOCACHE=/home/build/$(CACHE_DIR) \
+		GOPATH=/home/build/$(CACHE_DIR) \
+		env -C $(SRC_DIR) go test -v ./... \
+	')
+
 .PHONY: sign
 sign: $(DIST_DIR)/manifest.txt
 	set -e; \
