@@ -15,7 +15,7 @@ import (
 	"github.com/tkhq/tkcli/internal/apikey"
 )
 
-const TURNKEY_BINARY_NAME = "turnkey"
+const TURNKEY_BINARY_NAME = "turnkey.linux-amd64"
 
 func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 	currentDir, err := os.Getwd()
@@ -23,7 +23,7 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command(path.Join(currentDir, "build", TURNKEY_BINARY_NAME), args...)
+	cmd := exec.Command(path.Join(currentDir, "../out/", TURNKEY_BINARY_NAME), args...)
 	output, err := cmd.CombinedOutput()
 
 	return string(output), err
