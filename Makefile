@@ -1,5 +1,10 @@
 include $(PWD)/src/toolchain/Makefile
 
+KEYS := \
+	6B61ECD76088748C70590D55E90A401336C8AAA9 \
+	A8864A8303994E3A18ACD1760CAB4418C834B102 \
+	66039AA59D823C8BD68DB062D3EC673DF9843E7B
+
 ifneq ("$(wildcard $(ROOT)/src/toolchain)","")
 	clone := $(shell git submodule update --init --recursive)
 endif
@@ -9,6 +14,7 @@ endif
 default: \
 	toolchain \
 	$(DEFAULT_GOAL) \
+	$(patsubst %,$(KEY_DIR)/%.asc,$(KEYS)) \
 	$(OUT_DIR)/turnkey.linux-386 \
 	$(OUT_DIR)/turnkey.linux-amd64 \
 	$(OUT_DIR)/turnkey.linux-arm64 \
@@ -44,6 +50,7 @@ sign: $(DIST_DIR)/manifest.txt
 .PHONY: verify
 verify: $(DIST_DIR)/manifest.txt
 	set -e; \
+	gpg --import $(KEY_DIR)/*; \
 	for file in $(DIST_DIR)/manifest.*.asc; do \
 		echo "\nVerifying: $${file}\n"; \
 		gpg --verify $${file} $(DIST_DIR)/manifest.txt; \
@@ -53,6 +60,9 @@ verify: $(DIST_DIR)/manifest.txt
 .PHONY: clean
 clean: toolchain-clean
 	git clean -dfx $(SRC_DIR)
+
+$(KEY_DIR)/%.asc:
+	$(call fetch_pgp_key,$(basename $(notdir $@)))
 
 $(OUT_DIR)/turnkey.%:
 	$(call toolchain,' \
