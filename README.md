@@ -10,6 +10,8 @@ Please check our work to whatever extent appropriate for your use case.
 
 ### Blind Trust
 
+> :warning: Before you copy/paste, note that these are /low/ security options
+
 If you are on an untrusted machine and are only evaluating our tools, we offer
 easy low security install paths common in the industry.
 
@@ -110,9 +112,9 @@ to attempt to force one or more of us to tamper with the software.
 
 5. Upload signature
 
-While this step is totally optional, if you took the time to verify our
-binaries we would welcome you signing them and submitting your signature so we
-have public evidence third parties are checking our work.
+    While this step is totally optional, if you took the time to verify our
+    binaries we would welcome you signing them and submitting your signature so
+    we have public evidence third parties are checking our work.
 
     ```
     gh repo fork
@@ -122,6 +124,7 @@ have public evidence third parties are checking our work.
     git push origin main
     gh pr create
     ```
+
 
 ## Usage
 
