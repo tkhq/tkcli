@@ -88,19 +88,17 @@ func FromEcdsaPrivateKey(privateKey *ecdsa.PrivateKey) (*ApiKey, error) {
 		return nil, err
 	}
 
-	tkApiKey := ApiKey{
+	return &ApiKey{
 		TkPublicKey:  tkPublicKey,
 		TkPrivateKey: tkPrivateKey,
 		publicKey:    publicKey,
 		privateKey:   privateKey,
-	}
-
-	return &tkApiKey, nil
+	}, nil
 }
 
 // Takes a TK-encoded private key and creates an ECDSA private key
 func FromTkPrivateKey(encodedPrivateKey []byte) (*ApiKey, error) {
-   bytes := make([]byte, hex.DecodedLen(len(encodedPrivateKey)))
+	bytes := make([]byte, hex.DecodedLen(len(encodedPrivateKey)))
 
 	_, err := hex.Decode(bytes, encodedPrivateKey)
 	if err != nil {
@@ -128,10 +126,10 @@ func FromTkPrivateKey(encodedPrivateKey []byte) (*ApiKey, error) {
 
 // Takes a TK-encoded public key and creates an ECDSA public key
 func DecodeTKPublicKey(encodedPublicKey []byte) (*ecdsa.PublicKey, error) {
-   bytes := make([]byte, hex.DecodedLen(len(encodedPublicKey)))
+	bytes := make([]byte, hex.DecodedLen(len(encodedPublicKey)))
 
 	n, err := hex.Decode(bytes, encodedPublicKey)
-   if err != nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -151,14 +149,14 @@ func DecodeTKPublicKey(encodedPublicKey []byte) (*ecdsa.PublicKey, error) {
 // Signature signs the given message with the given API key.
 // The resulting signature should be added as the "X-Stamp" header of an API request.
 func Signature(message []byte, apiKey *ApiKey) (out []byte, err error) {
-   hash := sha256.Sum256(message)
+	hash := sha256.Sum256(message)
 
 	sigBytes, err := ecdsa.SignASN1(rand.Reader, apiKey.privateKey, hash[:])
 	if err != nil {
 		return nil, err
 	}
 
-   sigHex := make([]byte, hex.EncodedLen(len(sigBytes)))
+	sigHex := make([]byte, hex.EncodedLen(len(sigBytes)))
 
 	hex.Encode(sigHex, sigBytes)
 
@@ -173,9 +171,9 @@ func Signature(message []byte, apiKey *ApiKey) (out []byte, err error) {
 		return nil, errors.Wrap(err, "cannot marshall API stamp to JSON")
 	}
 
-   out = make([]byte, base64.RawURLEncoding.EncodedLen(len(jsonStamp)))
+	out = make([]byte, base64.RawURLEncoding.EncodedLen(len(jsonStamp)))
 
-   base64.RawURLEncoding.Encode(out, jsonStamp)
+	base64.RawURLEncoding.Encode(out, jsonStamp)
 
 	return out, nil
 }

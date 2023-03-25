@@ -51,10 +51,10 @@ func Test_Sign(t *testing.T) {
 	stampHeader, err := apikey.Signature([]byte("hello"), apiKey)
 	assert.Nil(t, err)
 
-   testStamp := make([]byte, base64.RawURLEncoding.DecodedLen(len(stampHeader)))
+	testStamp := make([]byte, base64.RawURLEncoding.DecodedLen(len(stampHeader)))
 
-   _, err = base64.RawURLEncoding.Decode(testStamp, stampHeader)
-   assert.Nil(t, err)
+	_, err = base64.RawURLEncoding.Decode(testStamp, stampHeader)
+	assert.Nil(t, err)
 
 	var stamp *apikey.ApiStamp
 
@@ -63,7 +63,7 @@ func Test_Sign(t *testing.T) {
 	assert.Equal(t, stamp.PublicKey, []byte("02f739f8c77b32f4d5f13265861febd76e7a9c61a1140d296b8c16302508870316"))
 	assert.Equal(t, stamp.Scheme, "SIGNATURE_SCHEME_TK_API_P256")
 
-   sigBytes := make([]byte, hex.DecodedLen(len(stamp.Signature)))
+	sigBytes := make([]byte, hex.DecodedLen(len(stamp.Signature)))
 
 	_, err = hex.Decode(sigBytes, stamp.Signature)
 	assert.Nil(t, err)

@@ -25,9 +25,11 @@ var (
 func init() {
 	makeRequest.Flags().StringVar(&requestHost, "host", "coordinator-beta.turnkey.io", "hostname of the API server")
 	makeRequest.Flags().StringVar(&requestPath, "path", "", "path for the API request")
-	makeRequest.Flags().StringVar(&requestPath, "body", "", "body of the request, which can be '-' to indicate stdin or be prefixed with '@' to indicate a source filename")
+	makeRequest.Flags().StringVar(&requestBody, "body", "-", "body of the request, which can be '-' to indicate stdin or be prefixed with '@' to indicate a source filename")
 	makeRequest.Flags().BoolVar(&requestNoPost, "no-post", false, "only provide the signature, do not post the request to the API server")
 	makeRequest.Flags().BoolVar(&requestShowCurlCommand, "show-curl", false, "only provide the signature, do not post the request to the API server")
+
+	rootCmd.AddCommand(makeRequest)
 }
 
 var makeRequest = &cobra.Command{
@@ -40,12 +42,7 @@ var makeRequest = &cobra.Command{
 			protocol = "http"
 		}
 
-		keyName, err := cmd.PersistentFlags().GetString("key")
-		if err != nil {
-			return errors.Wrap(err, "failed to read key name parameter")
-		}
-
-		apiKey, err := clifs.LoadKeypair(keyName)
+		apiKey, err := clifs.LoadKeypair(KeyName)
 		if err != nil {
 			return errors.Wrap(err, "failed to get API key")
 		}
@@ -69,13 +66,13 @@ var makeRequest = &cobra.Command{
 		enc.SetIndent("", "   ")
 
 		if requestNoPost {
-			ret := map[string][]byte{
-				"message": body,
-				"stamp":   stamp,
+			ret := map[string]string{
+				"message": string(body),
+				"stamp":   string(stamp),
 			}
 
 			if requestShowCurlCommand {
-				ret["curlCommand"] = []byte(generateCurlCommand(requestHost, requestPath, body, stamp))
+				ret["curlCommand"] = generateCurlCommand(requestHost, requestPath, body, stamp)
 			}
 
 			return enc.Encode(ret)
@@ -116,13 +113,7 @@ func processRequestBody(bodyParam string) (io.Reader, error) {
 		return os.Open(strings.TrimPrefix(bodyParam, "@"))
 	}
 
-	buf := new(bytes.Buffer)
-
-	if _, err := buf.WriteString(bodyParam); err != nil {
-		return nil, errors.Wrap(err, "failed to read from body parameter")
-	}
-
-	return buf, nil
+	return bytes.NewReader([]byte(bodyParam)), nil
 }
 
 func generateCurlCommand(host, path string, body, stamp []byte) string {
