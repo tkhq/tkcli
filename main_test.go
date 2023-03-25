@@ -131,9 +131,12 @@ func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {
 	assert.Equal(t, expectedPublicKey, parsedStamp.PublicKey)
 
 	// All signatures start with 30....
-	assert.True(t, strings.HasPrefix(parsedStamp.Signature, "30"))
+	assert.True(t, strings.HasPrefix(string(parsedStamp.Signature), "30"))
 
-	_, err = hex.DecodeString(parsedStamp.Signature)
+   var testVal []byte
+
+	_, err = hex.Decode(testVal, parsedStamp.Signature)
+
 	// Ensure there is no issue decoding the signature as a hexadecimal string
 	assert.Nil(t, err)
 }
