@@ -25,7 +25,7 @@ const (
 )
 
 func createFile(path string, content []byte, mode fs.FileMode) error {
-	return os.WriteFile(path, []byte(content), mode)
+	return os.WriteFile(path, content, mode)
 }
 
 // checkFileExists checks that the given file exists and has a non-zero size.
@@ -51,7 +51,7 @@ func PublicKeyFile(name string) string {
 		name = DefaultKeyName
 	}
 
-	return path.Join(keysDirectory, fmt.Sprintf("%s.%s", name, privateKeyExtension))
+	return path.Join(keysDirectory, fmt.Sprintf("%s.%s", name, publicKeyExtension))
 }
 
 // PrivateKeyFile returns the filename for the private key of the given name.
@@ -60,20 +60,20 @@ func PrivateKeyFile(name string) string {
 		name = DefaultKeyName
 	}
 
-	return path.Join(keysDirectory, fmt.Sprintf("%s.%s", name, publicKeyExtension))
+	return path.Join(keysDirectory, fmt.Sprintf("%s.%s", name, privateKeyExtension))
 }
 
 // DefaultKeysDir returns the default directory for key storage for the user's system.
 func DefaultKeysDir() string {
 	cfgDir, err := os.UserConfigDir()
 	if err != nil {
-      homeDir, err := os.UserHomeDir()
-      if err != nil {
-         cfgDir = "."
-      } else {
-         cfgDir = path.Join(homeDir, ".config")
-      }
-   }
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			cfgDir = "."
+		} else {
+			cfgDir = path.Join(homeDir, ".config")
+		}
+	}
 
 	return path.Join(cfgDir, turnkeyDirectoryName, keysDirectoryName)
 }
@@ -81,22 +81,24 @@ func DefaultKeysDir() string {
 // SetKeysDirectory sets the clifs root directory, ensuring its existence and writability.
 func SetKeysDirectory(keysPath string) (err error) {
 	if keysPath == "" || keysPath == DefaultKeysDir() {
-      keysPath = DefaultKeysDir()
+		keysPath = DefaultKeysDir()
 
-      // NB: we only attempt to create the default directory; never a user-supplied one.
-      if err = os.MkdirAll(keysPath, os.ModePerm); err != nil {
-         return errors.Wrapf(err, "failed to create key store location %q", keysPath)
-      }
+		// NB: we only attempt to create the default directory; never a user-supplied one.
+		if err = os.MkdirAll(keysPath, os.ModePerm); err != nil {
+			return errors.Wrapf(err, "failed to create key store location %q", keysPath)
+		}
 	}
 
-   stat, err := os.Stat(keysPath)
-   if err != nil {
-      return err
-   }
+	stat, err := os.Stat(keysPath)
+	if err != nil {
+		return err
+	}
 
-   if !stat.IsDir() {
-      return errors.Errorf("keys directory %q is not a directory", keysPath)
-   }
+	if !stat.IsDir() {
+		return errors.Errorf("keys directory %q is not a directory", keysPath)
+	}
+
+	keysDirectory = keysPath
 
 	return nil
 }

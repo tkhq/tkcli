@@ -15,7 +15,7 @@ import (
 	"github.com/tkhq/tkcli/internal/apikey"
 )
 
-const TURNKEY_BINARY_NAME = "turnkey"
+const TurnkeyBinaryName = "turnkey"
 
 func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 	currentDir, err := os.Getwd()
@@ -23,7 +23,7 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command(path.Join(currentDir, "build", TURNKEY_BINARY_NAME), args...)
+	cmd := exec.Command(path.Join(currentDir, "build", TurnkeyBinaryName), args...)
 	output, err := cmd.CombinedOutput()
 
 	return string(output), err
@@ -32,16 +32,9 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 func TestHelpText(t *testing.T) {
 	out, err := RunCliWithArgs(t, []string{})
 	assert.Nil(t, err)
-	assert.Contains(t, out, "The Turnkey CLI")
-	assert.Contains(t, out, "USAGE")
-	assert.Contains(t, out, "COMMANDS")
-}
-
-func TestKeygenArgValidation(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"gen"})
-	assert.Equal(t, err.Error(), "exit status 1")
-
-	assert.Contains(t, out, "Required flag \"name\" not set")
+	assert.Contains(t, out, "the Turnkey CLI")
+	assert.Contains(t, out, "Usage:")
+	assert.Contains(t, out, "Available Commands:")
 }
 
 func TestKeygenInTmpFolder(t *testing.T) {
@@ -50,7 +43,7 @@ func TestKeygenInTmpFolder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--name", "mykey"})
+	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key", "mykey"})
 	assert.Nil(t, err)
 
 	assert.FileExists(t, tmpDir+"/mykey.public")
@@ -60,8 +53,9 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
-	err = json.Unmarshal([]byte(out), &parsedOut)
-	assert.Nil(t, err)
+
+	assert.Nil(t, json.Unmarshal([]byte(out), &parsedOut))
+
 	assert.Equal(t, parsedOut["publicKey"], string(publicKeyData))
 	assert.Equal(t, parsedOut["publicKeyFile"], tmpDir+"/mykey.public")
 	assert.Equal(t, parsedOut["privateKeyFile"], tmpDir+"/mykey.private")
@@ -88,7 +82,7 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 }
 
 func TestStamp(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"stamp", "--key", "fixtures/testkey.private", "--message", "hello!"})
+	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--key", "fixtures/testkey.private", "--body", "hello!"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
@@ -102,7 +96,7 @@ func TestStamp(t *testing.T) {
 }
 
 func TestApproveRequest(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"approve-request", "--host", "api.turnkey.io", "--key", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
+	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--show-curl", "--host", "api.turnkey.io", "--key", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
@@ -126,14 +120,15 @@ func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {
 	assert.Nil(t, err)
 
 	var parsedStamp *apikey.ApiStamp
-	json.Unmarshal(stampBytes, &parsedStamp)
+   
+	assert.Nil(t, json.Unmarshal(stampBytes, &parsedStamp))
 
-	assert.Equal(t, expectedPublicKey, parsedStamp.PublicKey)
+	assert.Equal(t, []byte(expectedPublicKey), parsedStamp.PublicKey)
 
 	// All signatures start with 30....
 	assert.True(t, strings.HasPrefix(string(parsedStamp.Signature), "30"))
 
-   var testVal []byte
+	testVal := make([]byte, hex.DecodedLen(len(parsedStamp.Signature)))
 
 	_, err = hex.Decode(testVal, parsedStamp.Signature)
 

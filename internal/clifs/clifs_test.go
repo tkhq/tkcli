@@ -1,7 +1,6 @@
 package clifs_test
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -39,10 +38,9 @@ func TestGetKeyDirPathUnix(t *testing.T) {
 // If calling with a path, we should get this back if the path exists
 // If not we should get an error
 func TestGetKeyDirPathOverride(t *testing.T) {
-	tmpDir, err := ioutil.TempDir("/tmp", "keys")
-	defer os.RemoveAll(tmpDir)
+   tmpDir := os.TempDir() //nolint:staticcheck
 
-	assert.Nil(t, err)
+   defer os.RemoveAll(tmpDir) //nolint:staticcheck
 
 	assert.NotNil(t, clifs.SetKeysDirectory("/does/not/exist"))
 

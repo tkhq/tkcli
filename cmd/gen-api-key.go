@@ -9,12 +9,16 @@ import (
 	"github.com/tkhq/tkcli/internal/clifs"
 )
 
+func init() {
+	rootCmd.AddCommand(genApiKey)
+}
+
 var genApiKey = &cobra.Command{
 	Use:     "generate-api-key generates a Turnkey API key",
 	Short:   "generate-api-key generates a Turnkey API key",
 	Aliases: []string{"g", "gen"},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		name, err := cmd.PersistentFlags().GetString("key")
+		name, err := cmd.Flags().GetString("key")
 		if err != nil {
 			return errors.Wrap(err, "failed to read key name")
 		}
@@ -28,9 +32,9 @@ var genApiKey = &cobra.Command{
 		}
 
 		if name == "-" {
-			return enc.Encode(map[string]interface{}{
-				"publicKey":  apiKey.TkPublicKey,
-				"privateKey": apiKey.TkPrivateKey,
+			return enc.Encode(map[string]string{
+				"publicKey":  string(apiKey.TkPublicKey),
+				"privateKey": string(apiKey.TkPrivateKey),
 			})
 		}
 
@@ -38,8 +42,8 @@ var genApiKey = &cobra.Command{
 			return errors.Wrap(err, "failed to store new keypair")
 		}
 
-		return enc.Encode(map[string]interface{}{
-			"publicKey":      apiKey.TkPublicKey,
+		return enc.Encode(map[string]string{
+			"publicKey":      string(apiKey.TkPublicKey),
 			"publicKeyFile":  clifs.PublicKeyFile(name),
 			"privateKeyFile": clifs.PrivateKeyFile(name),
 		})

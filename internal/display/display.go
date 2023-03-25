@@ -11,5 +11,5 @@ type ErrorResponse struct {
 }
 
 func (r *ErrorResponse) Error() string {
-   return fmt.Sprintf("%d: %s", r.Code, r.Text)
+	return fmt.Sprintf("%d: %s", r.Code, r.Text)
 }
