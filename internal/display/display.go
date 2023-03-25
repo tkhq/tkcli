@@ -1,35 +1,15 @@
 package display
 
 import (
-	"bytes"
-	"encoding/json"
-	"io"
-	"net/http"
-
-	"github.com/pkg/errors"
+	"fmt"
 )
 
-func DisplayResponse(response *http.Response) (string, error) {
-	responseBytes, err := io.ReadAll(response.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "cannot read response body")
-	}
-	if response.StatusCode == 200 {
-		var prettyJSON bytes.Buffer
-		err := json.Indent(&prettyJSON, responseBytes, "", "    ")
-		if err != nil { // Not a JSON
-			return string(responseBytes), nil
-		}
+// ErrorResponse is a structured format to display an HTTP error response.
+type ErrorResponse struct {
+	Code int    `json:"responseCode"`
+	Text string `json:"responseBody"`
+}
 
-		return prettyJSON.String(), nil
-	}
-
-	jsonBytes, err := json.MarshalIndent(map[string]interface{}{
-		"responseCode": response.StatusCode,
-		"responseBody": string(responseBytes),
-	}, "", "    ")
-	if err != nil {
-		return "", errors.Wrap(err, "unable to serialize output to JSON")
-	}
-	return string(jsonBytes), nil
+func (r *ErrorResponse) Error() string {
+   return fmt.Sprintf("%d: %s", r.Code, r.Text)
 }
