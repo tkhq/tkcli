@@ -13,9 +13,9 @@ func main() {
 		enc := json.NewEncoder(os.Stderr)
 		enc.SetIndent("", "   ")
 
-      if encErr := enc.Encode(err); encErr != nil {
-         fmt.Print(err)
-      }
+		if encErr := enc.Encode(err); encErr != nil {
+			fmt.Print(err)
+		}
 
 		os.Exit(1)
 	}

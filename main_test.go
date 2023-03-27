@@ -43,7 +43,7 @@ func TestKeygenInTmpFolder(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key", "mykey"})
+	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "mykey"})
 	assert.Nil(t, err)
 
 	assert.FileExists(t, tmpDir+"/mykey.public")
@@ -76,13 +76,13 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 	assert.FileExists(t, tmpDir+"/myexistingkey.public")
 	assert.FileExists(t, tmpDir+"/myexistingkey.private")
 
-	_, err = RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--name", "myexistingkey"})
+	_, err = RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit status 1")
 }
 
 func TestStamp(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--key", "fixtures/testkey.private", "--body", "hello!"})
+	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--key-name", "fixtures/testkey.private", "--body", "hello!"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
@@ -96,7 +96,7 @@ func TestStamp(t *testing.T) {
 }
 
 func TestApproveRequest(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--show-curl", "--host", "api.turnkey.io", "--key", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
+	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--host", "api.turnkey.io", "--key-name", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
@@ -120,17 +120,15 @@ func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {
 	assert.Nil(t, err)
 
 	var parsedStamp *apikey.ApiStamp
-   
+
 	assert.Nil(t, json.Unmarshal(stampBytes, &parsedStamp))
 
-	assert.Equal(t, []byte(expectedPublicKey), parsedStamp.PublicKey)
+	assert.Equal(t, expectedPublicKey, parsedStamp.PublicKey)
 
 	// All signatures start with 30....
 	assert.True(t, strings.HasPrefix(string(parsedStamp.Signature), "30"))
 
-	testVal := make([]byte, hex.DecodedLen(len(parsedStamp.Signature)))
-
-	_, err = hex.Decode(testVal, parsedStamp.Signature)
+	_, err = hex.DecodeString(parsedStamp.Signature)
 
 	// Ensure there is no issue decoding the signature as a hexadecimal string
 	assert.Nil(t, err)

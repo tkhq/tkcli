@@ -16,8 +16,8 @@ import (
 
 // Struct to hold both serialized and ecdsa lib friendly version of a public/private key pair
 type ApiKey struct {
-	TkPrivateKey []byte
-	TkPublicKey  []byte
+	TkPrivateKey string
+	TkPublicKey  string
 
 	// Underlying ECDSA keypair
 	privateKey *ecdsa.PrivateKey
@@ -28,10 +28,10 @@ const TURNKEY_API_SIGNATURE_SCHEME = "SIGNATURE_SCHEME_TK_API_P256"
 
 type ApiStamp struct {
 	// API public key, hex-encoded
-	PublicKey []byte `json:"publicKey"`
+	PublicKey string `json:"publicKey"`
 
-	// Signature is the P-256 signature bytes, hex-coded
-	Signature []byte `json:"signature"`
+	// Signature is the P-256 signature bytes, hex-encoded
+	Signature string `json:"signature"`
 
 	// Signature scheme. Must be set to "SIGNATURE_SCHEME_TK_API_P256"
 	Scheme string `json:"scheme"`
@@ -52,13 +52,13 @@ func NewTkApiKey() (*ApiKey, error) {
 
 // Encode an ECDSA private key into the Turnkey format
 // For now, "Turnkey format" = raw DER form
-func EncodePrivateKey(privateKey *ecdsa.PrivateKey) []byte {
-	return []byte(fmt.Sprintf("%064x", privateKey.D))
+func EncodePrivateKey(privateKey *ecdsa.PrivateKey) string {
+	return fmt.Sprintf("%064x", privateKey.D)
 }
 
 // Encode an ECDSA public key into the Turnkey format.
 // For now, "Turnkey format" = standard compressed form for ECDSA keys
-func EncodePublicKey(publicKey *ecdsa.PublicKey) ([]byte, error) {
+func EncodePublicKey(publicKey *ecdsa.PublicKey) string {
 	// ANSI X9.62 point encoding
 	var prefix string
 	if publicKey.Y.Bit(0) == 0 {
@@ -70,10 +70,7 @@ func EncodePublicKey(publicKey *ecdsa.PublicKey) ([]byte, error) {
 	}
 
 	// Encode the public key X coordinate as 64 hexadecimal characters, padded with zeroes as necessary
-	encodedX := fmt.Sprintf("%064x", publicKey.X)
-	compressedPubKey := prefix + encodedX
-
-	return []byte(compressedPubKey), nil
+	return fmt.Sprintf("%s%064x", prefix, publicKey.X)
 }
 
 // Takes an ECDSA private key and create a new TkApiKey.
@@ -81,26 +78,17 @@ func EncodePublicKey(publicKey *ecdsa.PublicKey) ([]byte, error) {
 func FromEcdsaPrivateKey(privateKey *ecdsa.PrivateKey) (*ApiKey, error) {
 	publicKey := &privateKey.PublicKey
 
-	tkPrivateKey := EncodePrivateKey(privateKey)
-
-	tkPublicKey, err := EncodePublicKey(publicKey)
-	if err != nil {
-		return nil, err
-	}
-
 	return &ApiKey{
-		TkPublicKey:  tkPublicKey,
-		TkPrivateKey: tkPrivateKey,
+		TkPrivateKey: EncodePrivateKey(privateKey),
+		TkPublicKey:  EncodePublicKey(publicKey),
 		publicKey:    publicKey,
 		privateKey:   privateKey,
 	}, nil
 }
 
 // Takes a TK-encoded private key and creates an ECDSA private key
-func FromTkPrivateKey(encodedPrivateKey []byte) (*ApiKey, error) {
-	bytes := make([]byte, hex.DecodedLen(len(encodedPrivateKey)))
-
-	_, err := hex.Decode(bytes, encodedPrivateKey)
+func FromTkPrivateKey(encodedPrivateKey string) (*ApiKey, error) {
+	bytes, err := hex.DecodeString(encodedPrivateKey)
 	if err != nil {
 		return nil, err
 	}
@@ -125,55 +113,45 @@ func FromTkPrivateKey(encodedPrivateKey []byte) (*ApiKey, error) {
 }
 
 // Takes a TK-encoded public key and creates an ECDSA public key
-func DecodeTKPublicKey(encodedPublicKey []byte) (*ecdsa.PublicKey, error) {
-	bytes := make([]byte, hex.DecodedLen(len(encodedPublicKey)))
-
-	n, err := hex.Decode(bytes, encodedPublicKey)
+func DecodeTKPublicKey(encodedPublicKey string) (*ecdsa.PublicKey, error) {
+	bytes, err := hex.DecodeString(encodedPublicKey)
 	if err != nil {
 		return nil, err
 	}
 
-	if n != 33 {
+	if len(bytes) != 33 {
 		return nil, fmt.Errorf("expected a 33-bytes-long public key (compressed). Got %d bytes", len(bytes))
 	}
 
 	x, y := elliptic.UnmarshalCompressed(elliptic.P256(), bytes)
-	publicKey := new(ecdsa.PublicKey)
-	publicKey.Curve = elliptic.P256()
-	publicKey.X = x
-	publicKey.Y = y
 
-	return publicKey, nil
+	return &ecdsa.PublicKey{
+		Curve: elliptic.P256(),
+		X:     x,
+		Y:     y,
+	}, nil
 }
 
-// Signature signs the given message with the given API key.
-// The resulting signature should be added as the "X-Stamp" header of an API request.
-func Signature(message []byte, apiKey *ApiKey) (out []byte, err error) {
+// Stamp generates a signing stamp for the given message with the given API key.
+// The resulting stamp should be added as the "X-Stamp" header of an API request.
+func Stamp(message []byte, apiKey *ApiKey) (out string, err error) {
 	hash := sha256.Sum256(message)
 
 	sigBytes, err := ecdsa.SignASN1(rand.Reader, apiKey.privateKey, hash[:])
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	sigHex := make([]byte, hex.EncodedLen(len(sigBytes)))
-
-	hex.Encode(sigHex, sigBytes)
-
 	stamp := ApiStamp{
-		PublicKey: []byte(apiKey.TkPublicKey),
-		Signature: sigHex,
+		PublicKey: apiKey.TkPublicKey,
+		Signature: hex.EncodeToString(sigBytes),
 		Scheme:    TURNKEY_API_SIGNATURE_SCHEME,
 	}
 
 	jsonStamp, err := json.Marshal(stamp)
 	if err != nil {
-		return nil, errors.Wrap(err, "cannot marshall API stamp to JSON")
+		return "", errors.Wrap(err, "failed to encode API stamp as JSON")
 	}
 
-	out = make([]byte, base64.RawURLEncoding.EncodedLen(len(jsonStamp)))
-
-	base64.RawURLEncoding.Encode(out, jsonStamp)
-
-	return out, nil
+	return base64.RawURLEncoding.EncodeToString(jsonStamp), nil
 }

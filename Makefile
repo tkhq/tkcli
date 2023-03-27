@@ -1,5 +1,5 @@
 .PHONY: all
-all: build
+all: fmt lint build
 
 .PHONY: local-release
 local-release:
@@ -10,6 +10,14 @@ test: build/turnkey
 	go test ./...
 
 build: build/turnkey
+
+.PHONY: fmt
+fmt:
+	go fmt ./...
+
+.PHONY: lint
+lint:
+	go vet ./...
 
 .PHONY: build/turnkey
 build/turnkey: main.go internal/
