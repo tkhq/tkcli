@@ -139,7 +139,7 @@ func Stamp(message []byte, apiKey *ApiKey) (out string, err error) {
 
 	sigBytes, err := ecdsa.SignASN1(rand.Reader, apiKey.privateKey, hash[:])
 	if err != nil {
-		return
+		return "", errors.Wrap(err, "failed to generate signature")
 	}
 
 	stamp := ApiStamp{
