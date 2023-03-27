@@ -38,9 +38,9 @@ func TestGetKeyDirPathUnix(t *testing.T) {
 // If calling with a path, we should get this back if the path exists
 // If not we should get an error
 func TestGetKeyDirPathOverride(t *testing.T) {
-   tmpDir := os.TempDir() //nolint:staticcheck
+	tmpDir := os.TempDir() //nolint:staticcheck
 
-   defer os.RemoveAll(tmpDir) //nolint:staticcheck
+	defer os.RemoveAll(tmpDir) //nolint:staticcheck
 
 	assert.NotNil(t, clifs.SetKeysDirectory("/does/not/exist"))
 

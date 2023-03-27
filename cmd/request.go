@@ -19,21 +19,20 @@ import (
 
 var (
 	requestHost, requestPath, requestBody string
-	requestNoPost, requestShowCurlCommand bool
+	requestNoPost                         bool
 )
 
 func init() {
 	makeRequest.Flags().StringVar(&requestHost, "host", "coordinator-beta.turnkey.io", "hostname of the API server")
 	makeRequest.Flags().StringVar(&requestPath, "path", "", "path for the API request")
 	makeRequest.Flags().StringVar(&requestBody, "body", "-", "body of the request, which can be '-' to indicate stdin or be prefixed with '@' to indicate a source filename")
-	makeRequest.Flags().BoolVar(&requestNoPost, "no-post", false, "only provide the signature, do not post the request to the API server")
-	makeRequest.Flags().BoolVar(&requestShowCurlCommand, "show-curl", false, "only provide the signature, do not post the request to the API server")
+	makeRequest.Flags().BoolVar(&requestNoPost, "no-post", false, "generates the stamp and displays the cURL command to use in order to perform this action, but does NOT post the request to the API server")
 
 	rootCmd.AddCommand(makeRequest)
 }
 
 var makeRequest = &cobra.Command{
-	Use:     "request takes a request body, generates a stamp for the given request and optionally sends it to the Turnkey API server",
+	Use:     "request takes a request body, generates a stamp for the given request, and sends it to the Turnkey API server.  See options for alternate behaviour, such as not sending the request.",
 	Short:   "request makes a basic API request",
 	Aliases: []string{"req", "r"},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -57,7 +56,7 @@ var makeRequest = &cobra.Command{
 			return errors.Wrap(err, "failed to read message body")
 		}
 
-		stamp, err := apikey.Signature(body, apiKey)
+		stamp, err := apikey.Stamp(body, apiKey)
 		if err != nil {
 			return errors.Wrap(err, "failed to produce a valid API stamp")
 		}
@@ -67,12 +66,9 @@ var makeRequest = &cobra.Command{
 
 		if requestNoPost {
 			ret := map[string]string{
-				"message": string(body),
-				"stamp":   string(stamp),
-			}
-
-			if requestShowCurlCommand {
-				ret["curlCommand"] = generateCurlCommand(requestHost, requestPath, body, stamp)
+				"message":     string(body),
+				"stamp":       stamp,
+				"curlCommand": generateCurlCommand(requestHost, requestPath, body, stamp),
 			}
 
 			return enc.Encode(ret)
@@ -116,15 +112,15 @@ func processRequestBody(bodyParam string) (io.Reader, error) {
 	return bytes.NewReader([]byte(bodyParam)), nil
 }
 
-func generateCurlCommand(host, path string, body, stamp []byte) string {
+func generateCurlCommand(host, path string, body []byte, stamp string) string {
 	return fmt.Sprintf("curl -X POST -d'%s' -H'%s' -v 'https://%s%s'", body, stampHeader(stamp), host, path)
 }
 
-func stampHeader(stamp []byte) string {
-	return fmt.Sprintf("X-Stamp: %s", string(stamp))
+func stampHeader(stamp string) string {
+	return fmt.Sprintf("X-Stamp: %s", stamp)
 }
 
-func post(protocol string, host string, path string, body []byte, stamp []byte) (*http.Response, error) {
+func post(protocol string, host string, path string, body []byte, stamp string) (*http.Response, error) {
 	url := fmt.Sprintf("%s://%s%s", protocol, host, path)
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(body))

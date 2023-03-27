@@ -18,7 +18,7 @@ var genApiKey = &cobra.Command{
 	Short:   "generate-api-key generates a Turnkey API key",
 	Aliases: []string{"g", "gen"},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		name, err := cmd.Flags().GetString("key")
+		name, err := cmd.Flags().GetString("key-name")
 		if err != nil {
 			return errors.Wrap(err, "failed to read key name")
 		}

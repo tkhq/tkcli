@@ -24,8 +24,8 @@ const (
 	privateKeyExtension  = "private"
 )
 
-func createFile(path string, content []byte, mode fs.FileMode) error {
-	return os.WriteFile(path, content, mode)
+func createKeyFile(path string, content string, mode fs.FileMode) error {
+	return os.WriteFile(path, []byte(content), mode)
 }
 
 // checkFileExists checks that the given file exists and has a non-zero size.
@@ -119,11 +119,11 @@ func StoreKeypair(name string, keypair *apikey.ApiKey) error {
 		return errors.Errorf("a keypair named %q already exists! Exiting...", name)
 	}
 
-	if err = createFile(PublicKeyFile(name), keypair.TkPublicKey, 0o0644); err != nil {
+	if err = createKeyFile(PublicKeyFile(name), keypair.TkPublicKey, 0o0644); err != nil {
 		return errors.Wrap(err, "failed to store public key to file")
 	}
 
-	if err = createFile(PrivateKeyFile(name), keypair.TkPrivateKey, 0o0600); err != nil {
+	if err = createKeyFile(PrivateKeyFile(name), keypair.TkPrivateKey, 0o0600); err != nil {
 		return errors.Wrap(err, "failed to store private key to file")
 	}
 
@@ -154,7 +154,7 @@ func LoadKeypair(keyname string) (*apikey.ApiKey, error) {
 		return nil, fmt.Errorf("failed to read from %q", keyPath)
 	}
 
-	apiKey, err := apikey.FromTkPrivateKey(bytes)
+	apiKey, err := apikey.FromTkPrivateKey(string(bytes))
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to recover API key from private key file %q", keyPath)
 	}
