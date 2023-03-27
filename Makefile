@@ -15,6 +15,11 @@ build: build/turnkey
 fmt:
 	go fmt ./...
 
+.PHONY: api
+api:
+	swagger generate client -f https://raw.githubusercontent.com/tkhq/sdk/main/packages/http/src/__generated__/services/coordinator/public/v1/public_api.swagger.json -t api
+	go mod tidy
+
 .PHONY: lint
 lint:
 	go vet ./...
