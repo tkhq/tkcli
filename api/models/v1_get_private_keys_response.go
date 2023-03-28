@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1GetPrivateKeysResponse v1 get private keys response
@@ -20,6 +21,7 @@ import (
 type V1GetPrivateKeysResponse struct {
 
 	// A list of Private Keys.
+	// Required: true
 	PrivateKeys []*V1PrivateKey `json:"privateKeys"`
 }
 
@@ -38,8 +40,9 @@ func (m *V1GetPrivateKeysResponse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *V1GetPrivateKeysResponse) validatePrivateKeys(formats strfmt.Registry) error {
-	if swag.IsZero(m.PrivateKeys) { // not required
-		return nil
+
+	if err := validate.Required("privateKeys", "body", m.PrivateKeys); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.PrivateKeys); i++ {

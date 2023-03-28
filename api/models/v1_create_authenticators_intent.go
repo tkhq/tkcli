@@ -23,6 +23,7 @@ type V1CreateAuthenticatorsIntent struct {
 	// @inject_tag: validate:"dive,required"
 	//
 	// A list of Authenticators.
+	// Required: true
 	Authenticators []*V1AuthenticatorParams `json:"authenticators"`
 
 	// @inject_tag: validate:"required,uuid"
@@ -51,8 +52,9 @@ func (m *V1CreateAuthenticatorsIntent) Validate(formats strfmt.Registry) error {
 }
 
 func (m *V1CreateAuthenticatorsIntent) validateAuthenticators(formats strfmt.Registry) error {
-	if swag.IsZero(m.Authenticators) { // not required
-		return nil
+
+	if err := validate.Required("authenticators", "body", m.Authenticators); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.Authenticators); i++ {
