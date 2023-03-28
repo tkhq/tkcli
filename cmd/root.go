@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/tkcli/internal/clifs"
@@ -27,6 +29,10 @@ var rootCmd = &cobra.Command{
 	Use:   "turnkey interacts with the Turnkey API",
 	Short: "turnkey is the Turnkey CLI",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+      // No non-JSON-formatted output should flow over stdin; thus change
+      // output for usage messages to stderr.
+      cmd.SetOut(os.Stderr)
+
 		if err := clifs.SetKeysDirectory(rootKeysDirectory); err != nil {
 			return errors.Wrap(err, "failed to obtain key storage location")
 		}
