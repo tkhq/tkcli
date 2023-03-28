@@ -38,8 +38,7 @@ type V1CreateOrganizationIntent struct {
 	// @inject_tag: validate:"uuid"
 	//
 	// Unique identifier for the root user object.
-	// Required: true
-	RootUserID *string `json:"rootUserId"`
+	RootUserID string `json:"rootUserId,omitempty"`
 }
 
 // Validate validates this v1 create organization intent
@@ -55,10 +54,6 @@ func (m *V1CreateOrganizationIntent) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRootEmail(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRootUserID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,15 +95,6 @@ func (m *V1CreateOrganizationIntent) validateRootAuthenticator(formats strfmt.Re
 func (m *V1CreateOrganizationIntent) validateRootEmail(formats strfmt.Registry) error {
 
 	if err := validate.Required("rootEmail", "body", m.RootEmail); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *V1CreateOrganizationIntent) validateRootUserID(formats strfmt.Registry) error {
-
-	if err := validate.Required("rootUserId", "body", m.RootUserID); err != nil {
 		return err
 	}
 

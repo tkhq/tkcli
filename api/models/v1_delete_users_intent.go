@@ -8,8 +8,10 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1DeleteUsersIntent v1 delete users intent
@@ -20,11 +22,30 @@ type V1DeleteUsersIntent struct {
 	// @inject_tag: validate:"required,dive,required,uuid"
 	//
 	// A list of User IDs.
+	// Required: true
 	UserIds []string `json:"userIds"`
 }
 
 // Validate validates this v1 delete users intent
 func (m *V1DeleteUsersIntent) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateUserIds(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1DeleteUsersIntent) validateUserIds(formats strfmt.Registry) error {
+
+	if err := validate.Required("userIds", "body", m.UserIds); err != nil {
+		return err
+	}
+
 	return nil
 }
 

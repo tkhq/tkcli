@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1GetActivitiesResponse v1 get activities response
@@ -20,6 +21,7 @@ import (
 type V1GetActivitiesResponse struct {
 
 	// A list of Activities.
+	// Required: true
 	Activities []*V1Activity `json:"activities"`
 }
 
@@ -38,8 +40,9 @@ func (m *V1GetActivitiesResponse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *V1GetActivitiesResponse) validateActivities(formats strfmt.Registry) error {
-	if swag.IsZero(m.Activities) { // not required
-		return nil
+
+	if err := validate.Required("activities", "body", m.Activities); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.Activities); i++ {

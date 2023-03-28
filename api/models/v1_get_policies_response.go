@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1GetPoliciesResponse v1 get policies response
@@ -20,6 +21,7 @@ import (
 type V1GetPoliciesResponse struct {
 
 	// A list of Policies.
+	// Required: true
 	Policies []*V1Policy `json:"policies"`
 }
 
@@ -38,8 +40,9 @@ func (m *V1GetPoliciesResponse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *V1GetPoliciesResponse) validatePolicies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Policies) { // not required
-		return nil
+
+	if err := validate.Required("policies", "body", m.Policies); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.Policies); i++ {
