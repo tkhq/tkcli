@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -35,7 +34,7 @@ var makeRequest = &cobra.Command{
 	Use:     "request takes a request body, generates a stamp for the given request, and sends it to the Turnkey API server.  See options for alternate behaviour, such as not sending the request.",
 	Short:   "request makes a basic API request",
 	Aliases: []string{"req", "r"},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		protocol := "https"
 		if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(requestHost) {
 			protocol = "http"
@@ -43,60 +42,55 @@ var makeRequest = &cobra.Command{
 
 		apiKey, err := clifs.LoadKeypair(KeyName)
 		if err != nil {
-			return errors.Wrap(err, "failed to get API key")
+			OutputError(errors.Wrap(err, "failed to get API key"))
 		}
 
 		bodyReader, err := processRequestBody(requestBody)
 		if err != nil {
-			return errors.Wrap(err, "failed to process request body")
+			OutputError(errors.Wrap(err, "failed to process request body"))
 		}
 
 		body, err := io.ReadAll(bodyReader)
 		if err != nil {
-			return errors.Wrap(err, "failed to read message body")
+			OutputError(errors.Wrap(err, "failed to read message body"))
 		}
 
 		stamp, err := apikey.Stamp(body, apiKey)
 		if err != nil {
-			return errors.Wrap(err, "failed to produce a valid API stamp")
+			OutputError( errors.Wrap(err, "failed to produce a valid API stamp"))
 		}
 
-		enc := json.NewEncoder(cmd.OutOrStdout())
-		enc.SetIndent("", "   ")
-
 		if requestNoPost {
-			ret := map[string]string{
+			Output(map[string]string{
 				"message":     string(body),
 				"stamp":       stamp,
 				"curlCommand": generateCurlCommand(requestHost, requestPath, body, stamp),
-			}
-
-			return enc.Encode(ret)
+			})
 		}
 
 		response, err := post(protocol, requestHost, requestPath, body, stamp)
 		if err != nil {
-			return errors.Wrap(err, "failed to post request")
+         OutputError(errors.Wrap(err, "failed to post request"))
 		}
 
 		defer response.Body.Close()
 
 		responseBodyBytes, err := io.ReadAll(response.Body)
 		if err != nil {
-			return &display.ErrorResponse{
+			OutputError(&display.ErrorResponse{
 				Code: response.StatusCode,
 				Text: response.Status,
-			}
+			})
 		}
 
 		if response.StatusCode != http.StatusOK {
-			return &display.ErrorResponse{
+			OutputError(&display.ErrorResponse{
 				Code: response.StatusCode,
 				Text: string(responseBodyBytes),
-			}
+			})
 		}
 
-		return enc.Encode(responseBodyBytes)
+      Output(responseBodyBytes)
 	},
 }
 
