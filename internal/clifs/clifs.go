@@ -2,6 +2,7 @@
 package clifs
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"os"
@@ -22,10 +23,24 @@ const (
 	keysDirectoryName    = "keys"
 	publicKeyExtension   = "public"
 	privateKeyExtension  = "private"
+	metadataExtension    = "meta"
 )
+
+func init() {
+	keysDirectory = DefaultKeysDir()
+}
 
 func createKeyFile(path string, content string, mode fs.FileMode) error {
 	return os.WriteFile(path, []byte(content), mode)
+}
+
+func createMetadataFile(path string, key *apikey.ApiKey, mode fs.FileMode) error {
+	f, err := os.Create(path)
+	if err != nil {
+		return errors.Wrap(err, "failed to create metadata file")
+	}
+
+	return json.NewEncoder(f).Encode(key)
 }
 
 // checkFileExists checks that the given file exists and has a non-zero size.
@@ -61,6 +76,15 @@ func PrivateKeyFile(name string) string {
 	}
 
 	return path.Join(keysDirectory, fmt.Sprintf("%s.%s", name, privateKeyExtension))
+}
+
+// MetadataFile returns the filename for the metadata of the given key name.
+func MetadataFile(name string) string {
+	if name == "" {
+		name = DefaultKeyName
+	}
+
+	return path.Join(keysDirectory, fmt.Sprintf("%s.%s", name, metadataExtension))
 }
 
 // DefaultKeysDir returns the default directory for key storage for the user's system.
@@ -127,6 +151,10 @@ func StoreKeypair(name string, keypair *apikey.ApiKey) error {
 		return errors.Wrap(err, "failed to store private key to file")
 	}
 
+	if err = createMetadataFile(MetadataFile(name), keypair, 0o0600); err != nil {
+		return errors.Wrap(err, "failed to store api key metadata")
+	}
+
 	return nil
 }
 
@@ -144,14 +172,14 @@ func LoadKeypair(keyname string) (*apikey.ApiKey, error) {
 
 			exists, _ = checkFileExists(keyPath)
 			if !exists {
-				return nil, fmt.Errorf("failed to load key %q", keyname)
+				return nil, errors.Errorf("failed to load key %q", keyname)
 			}
 		}
 	}
 
 	bytes, err := os.ReadFile(keyPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read from %q", keyPath)
+		return nil, errors.Wrapf(err, "failed to read from %q", keyPath)
 	}
 
 	apiKey, err := apikey.FromTkPrivateKey(string(bytes))
@@ -159,5 +187,31 @@ func LoadKeypair(keyname string) (*apikey.ApiKey, error) {
 		return nil, errors.Wrapf(err, "failed to recover API key from private key file %q", keyPath)
 	}
 
+	if ok, _ := checkFileExists(MetadataFile(keyname)); ok {
+		metadata, err := loadMetadata(MetadataFile(keyname))
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to load key metadata from metadata file %q", MetadataFile(keyname))
+		}
+
+		if err := apiKey.MergeMetadata(metadata); err != nil {
+			return nil, errors.Wrap(err, "failed to merge key metadata with key")
+		}
+	}
+
 	return apiKey, nil
+}
+
+func loadMetadata(fn string) (*apikey.Metadata, error) {
+	f, err := os.Open(fn)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to open metadata file")
+	}
+
+	md := new(apikey.Metadata)
+
+	if err := json.NewDecoder(f).Decode(md); err != nil {
+		return nil, errors.Wrap(err, "failed to decode metadata file")
+	}
+
+	return md, nil
 }

@@ -24,9 +24,13 @@ api:
 lint:
 	go vet ./...
 
+.PHONT: install
+install: all
+	go install ./cmd/turnkey
+
 .PHONY: build/turnkey
-build/turnkey: main.go internal/
-	go build -o build/turnkey .
+build/turnkey: cmd/turnkey/ internal/
+	go build -o build/turnkey ./cmd/turnkey
 
 .PHONY: clean
 clean:

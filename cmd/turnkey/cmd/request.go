@@ -57,7 +57,7 @@ var makeRequest = &cobra.Command{
 
 		stamp, err := apikey.Stamp(body, apiKey)
 		if err != nil {
-			OutputError( errors.Wrap(err, "failed to produce a valid API stamp"))
+			OutputError(errors.Wrap(err, "failed to produce a valid API stamp"))
 		}
 
 		if requestNoPost {
@@ -70,7 +70,7 @@ var makeRequest = &cobra.Command{
 
 		response, err := post(protocol, requestHost, requestPath, body, stamp)
 		if err != nil {
-         OutputError(errors.Wrap(err, "failed to post request"))
+			OutputError(errors.Wrap(err, "failed to post request"))
 		}
 
 		defer response.Body.Close()
@@ -90,7 +90,7 @@ var makeRequest = &cobra.Command{
 			})
 		}
 
-      Output(responseBodyBytes)
+		Output(responseBodyBytes)
 	},
 }
 

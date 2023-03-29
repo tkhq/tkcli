@@ -14,14 +14,37 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Metadata stores non-secret metadata about the API key.
+type Metadata struct {
+	Name          string   `json:"name"`
+	Organizations []string `json:"organizations"`
+
+	PublicKey string `json:"public_key"`
+}
+
 // Struct to hold both serialized and ecdsa lib friendly version of a public/private key pair
 type ApiKey struct {
-	TkPrivateKey string
-	TkPublicKey  string
+	Metadata
+
+	TkPrivateKey string `json:"-"` // do not store the private key in the metadata file
+	TkPublicKey  string `json:"public_key"`
 
 	// Underlying ECDSA keypair
 	privateKey *ecdsa.PrivateKey
 	publicKey  *ecdsa.PublicKey
+}
+
+// MergeMetadata merges the given metadata with the api key.
+func (k *ApiKey) MergeMetadata(md *Metadata) error {
+	if k.TkPublicKey != md.PublicKey {
+		return errors.Errorf("metadata public key %q does not match ApiKey public key %q", md.PublicKey, k.TkPublicKey)
+	}
+
+	k.Metadata.Name = md.Name
+	k.Metadata.Organizations = md.Organizations
+	k.Metadata.PublicKey = md.PublicKey
+
+	return nil
 }
 
 const TURNKEY_API_SIGNATURE_SCHEME = "SIGNATURE_SCHEME_TK_API_P256"
