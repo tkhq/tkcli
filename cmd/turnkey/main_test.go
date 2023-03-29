@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/tkhq/tkcli/internal/apikey"
 )
@@ -23,7 +24,7 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command(path.Join(currentDir, "build", TurnkeyBinaryName), args...)
+	cmd := exec.Command(path.Join(currentDir, "..", "..", "build", TurnkeyBinaryName), args...)
 	output, err := cmd.CombinedOutput()
 
 	return string(output), err
@@ -38,12 +39,14 @@ func TestHelpText(t *testing.T) {
 }
 
 func TestKeygenInTmpFolder(t *testing.T) {
+	orgID := uuid.Must(uuid.NewV4())
+
 	tmpDir, err := os.MkdirTemp("/tmp", "keys")
 	defer os.RemoveAll(tmpDir)
 
 	assert.Nil(t, err)
 
-	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "mykey"})
+	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "mykey", "--organization", orgID.String()})
 	assert.Nil(t, err)
 
 	assert.FileExists(t, tmpDir+"/mykey.public")
@@ -62,6 +65,8 @@ func TestKeygenInTmpFolder(t *testing.T) {
 }
 
 func TestKeygenDetectExistingKey(t *testing.T) {
+	orgID := uuid.Must(uuid.NewV4())
+
 	tmpDir, err := os.MkdirTemp("/tmp", "keys")
 	defer os.RemoveAll(tmpDir)
 
@@ -76,7 +81,7 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 	assert.FileExists(t, tmpDir+"/myexistingkey.public")
 	assert.FileExists(t, tmpDir+"/myexistingkey.private")
 
-	_, err = RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
+	_, err = RunCliWithArgs(t, []string{"gen", "--organization", orgID.String(), "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit status 1")
 }
