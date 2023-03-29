@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tkhq/tkcli/cmd"
+	"github.com/tkhq/tkcli/cmd/turnkey/cmd"
 )
 
 func main() {

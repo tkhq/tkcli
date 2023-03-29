@@ -23,10 +23,10 @@ func init() {
 func getEncoder() encoder {
 	switch outputFormat {
 	case "yaml":
-      enc := yaml.NewEncoder(os.Stdout)
-      enc.SetIndent(2)
+		enc := yaml.NewEncoder(os.Stdout)
+		enc.SetIndent(2)
 
-      return enc
+		return enc
 	default: // JSON is the default
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "   ")
