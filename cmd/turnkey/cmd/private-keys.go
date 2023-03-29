@@ -26,6 +26,7 @@ func init() {
 	privateKeysCreateCmd.Flags().StringSliceVar(&privateKeysCreateTags, "tag", make([]string, 0), "tag(s) to be applied to the private key")
 
 	privateKeysCmd.AddCommand(privateKeysCreateCmd)
+	privateKeysCmd.AddCommand(privateKeysListCmd)
 
 	rootCmd.AddCommand(privateKeysCmd)
 }
@@ -91,6 +92,10 @@ var privateKeysCreateCmd = &cobra.Command{
 			Type:        &activity,
 		})
 
+		if err := params.Body.Validate(nil); err != nil {
+			OutputError(errors.Wrap(err, "request validation failed"))
+		}
+
 		resp, err := client.Default.PrivateKeys.PublicAPIServiceCreatePrivateKeys(params, new(Authenticator))
 		if err != nil {
 			OutputError(errors.Wrap(err, "request failed"))
@@ -98,6 +103,33 @@ var privateKeysCreateCmd = &cobra.Command{
 
 		if !resp.IsSuccess() {
 			OutputError(errors.Errorf("failed to create private key: %d: %s", resp.Code(), resp.Error()))
+		}
+
+		Output(resp.Payload)
+	},
+}
+
+var privateKeysListCmd = &cobra.Command{
+	Use:   "list private keys",
+	Short: "list private keys for the organization",
+	Run: func(cmd *cobra.Command, args []string) {
+		params := private_keys.NewPublicAPIServiceGetPrivateKeysParams()
+
+		params.SetBody(&models.V1GetPrivateKeysRequest{
+			OrganizationID: &Organization,
+		})
+
+		if err := params.Body.Validate(nil); err != nil {
+			OutputError(errors.Wrap(err, "request validation failed"))
+		}
+
+		resp, err := client.Default.PrivateKeys.PublicAPIServiceGetPrivateKeys(params, new(Authenticator))
+		if err != nil {
+			OutputError(errors.Wrap(err, "request failed"))
+		}
+
+		if !resp.IsSuccess() {
+			OutputError(errors.Errorf("failed to list private keys: %d: %s", resp.Code(), resp.Error()))
 		}
 
 		Output(resp.Payload)
