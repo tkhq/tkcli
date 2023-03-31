@@ -55,20 +55,15 @@ more information on these practices.
     cd tkcli
     ```
 
-2. Review verification process
-
-    Review the "make verify" target in the Makefile to ensure it simply
-    verifies multiple pgp signatures on our released artifacts.
-
-3. Review binary signatures
+2. Review binary signatures
 
     ```
-    make verify
+    git sig verify
     ```
 
     Note: See Trust section below for expected keys/signers
 
-4. Install binary
+3. Install binary
 
     ```
     make install
@@ -118,13 +113,12 @@ to attempt to force one or more of us to tamper with the software.
 
     ```
     gh repo fork
-    make sign
     git add dist/*
     git commit -m "add signature"
+    git sig add
     git push origin main
     gh pr create
     ```
-
 
 ## Usage
 
@@ -198,7 +192,7 @@ To address both problems we take the following steps:
 
 To learn who signed the current release run:
 
-```make verify```
+```git sig verify --threshold 2```
 
 Commits will be signed by at least one of the keys under the signers section
 below.
