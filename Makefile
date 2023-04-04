@@ -77,6 +77,9 @@ $(OUT_DIR)/turnkey.%:
 		GOARCH="$(call altarch,$(word 2,$(subst -, ,$(word 2,$(subst ., ,$@)))))" \
 		GOCACHE=/home/build/$(CACHE_DIR) \
 		GOPATH=/home/build/$(CACHE_DIR) \
+		CGO_ENABLED=0 \
 		env -C $(SRC_DIR) \
-		go build -o /home/build/$@ main.go \
+		go build \
+			-trimpath \
+			-o /home/build/$@ main.go \
 	')
