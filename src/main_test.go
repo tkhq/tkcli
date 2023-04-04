@@ -15,7 +15,7 @@ import (
 	"github.com/tkhq/tkcli/internal/apikey"
 )
 
-const TURNKEY_BINARY_NAME = "turnkey.linux-amd64"
+const TURNKEY_BINARY_NAME = "turnkey.linux-x86_64"
 
 func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 	currentDir, err := os.Getwd()

@@ -16,16 +16,20 @@ default: \
 	toolchain \
 	$(DEFAULT_GOAL) \
 	$(patsubst %,$(KEY_DIR)/%.asc,$(KEYS)) \
-	$(OUT_DIR)/turnkey.linux-386 \
-	$(OUT_DIR)/turnkey.linux-amd64 \
-	$(OUT_DIR)/turnkey.linux-arm64 \
-	$(OUT_DIR)/turnkey.darwin-amd64 \
-	$(OUT_DIR)/turnkey.darwin-arm64 \
+	$(OUT_DIR)/turnkey.linux-x86_64 \
+	$(OUT_DIR)/turnkey.linux-aarch64 \
+	$(OUT_DIR)/turnkey.darwin-x86_64 \
+	$(OUT_DIR)/turnkey.darwin-aarch64 \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
 
+.PHONY: install
+install: default
+	mkdir -p ~/.local/bin
+	cp $(OUT_DIR)/turnkey.$(HOST_OS)-$(HOST_ARCH) ~/.local/bin/turnkey
+
 .PHONY: test
-test: $(OUT_DIR)/turnkey.linux-amd64
+test: $(OUT_DIR)/turnkey.linux-x86_64
 	$(call toolchain,' \
 		GOCACHE=/home/build/$(CACHE_DIR) \
 		GOPATH=/home/build/$(CACHE_DIR) \
@@ -70,7 +74,7 @@ $(OUT_DIR)/turnkey.%:
 		GOHOSTOS="linux" \
 		GOHOSTARCH="amd64" \
 		GOOS="$(word 1,$(subst -, ,$(word 2,$(subst ., ,$@))))" \
-		GOARCH="$(word 2,$(subst -, ,$(word 2,$(subst ., ,$@))))" \
+		GOARCH="$(call altarch,$(word 2,$(subst -, ,$(word 2,$(subst ., ,$@)))))" \
 		GOCACHE=/home/build/$(CACHE_DIR) \
 		GOPATH=/home/build/$(CACHE_DIR) \
 		env -C $(SRC_DIR) \
