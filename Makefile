@@ -36,31 +36,6 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 		env -C $(SRC_DIR) go test -v ./... \
 	')
 
-.PHONY: sign
-sign: $(DIST_DIR)/manifest.txt
-	set -e; \
-	git config --get user.signingkey 2>&1 >/dev/null || { \
-		echo "Error: git user.signingkey is not defined"; \
-		exit 1; \
-	}; \
-	fingerprint=$$(\
-		git config --get user.signingkey \
-		| sed 's/.*\([A-Z0-9]\{16\}\).*/\1/g' \
-	); \
-	gpg --armor \
-		--detach-sig  \
-		--output $(DIST_DIR)/manifest.$${fingerprint}.asc \
-		$(DIST_DIR)/manifest.txt
-
-.PHONY: verify
-verify: $(DIST_DIR)/manifest.txt
-	set -e; \
-	gpg --import $(KEY_DIR)/*; \
-	for file in $(DIST_DIR)/manifest.*.asc; do \
-		echo "\nVerifying: $${file}\n"; \
-		gpg --verify $${file} $(DIST_DIR)/manifest.txt; \
-	done;
-
 # Clean repo back to initial clone state
 .PHONY: clean
 clean: toolchain-clean
