@@ -21,3 +21,12 @@ func Curves() (out []Externaldatav1Curve) {
 
 	return
 }
+
+// TransactionTypes returns the set of transaction types supported by the API.
+func TransactionTypes() (out []Immutableactivityv1TransactionType) {
+	for _, t := range immutableactivityv1TransactionTypeEnum {
+		out = append(out, t.(Immutableactivityv1TransactionType))
+	}
+
+	return
+}
