@@ -21,6 +21,6 @@ build/
 .vscode
 
 # Toolchain
-cache
-out
+/cache
+/out
 .*
