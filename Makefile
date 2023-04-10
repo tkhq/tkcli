@@ -9,6 +9,7 @@ local-release:
 test: build/turnkey
 	go test ./...
 
+.PHONY: build/turnkey
 build/turnkey: main.go internal/
 	go build -o build/turnkey main.go
 
