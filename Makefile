@@ -1,5 +1,5 @@
 .PHONY: all
-all: build
+all: build/turnkey
 
 .PHONY: local-release
 local-release:
