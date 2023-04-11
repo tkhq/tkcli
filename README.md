@@ -40,7 +40,7 @@ make install
 #### Brew
 
 ```
-brew tap tkhq/tap
+brew tap tkhq/tkcli https://github.com/tkhq/tkcli/dist
 brew install turnkey
 ```
 
