@@ -20,6 +20,7 @@ default: \
 	$(OUT_DIR)/turnkey.linux-aarch64 \
 	$(OUT_DIR)/turnkey.darwin-x86_64 \
 	$(OUT_DIR)/turnkey.darwin-aarch64 \
+	$(OUT_DIR)/Formula/turnkey.rb \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
 
@@ -43,6 +44,22 @@ clean: toolchain-clean
 
 $(KEY_DIR)/%.asc:
 	$(call fetch_pgp_key,$(basename $(notdir $@)))
+
+$(OUT_DIR)/Formula/turnkey.rb: \
+	$(OUT_DIR)/turnkey.darwin-x86_64 \
+	$(OUT_DIR)/turnkey.darwin-aarch64
+	mkdir -p $(OUT_DIR)/Formula
+	export \
+		VERSION="$(VERSION)" \
+		DARWIN_X86_64_SHA256="$(shell \
+			openssl sha256 -r $(OUT_DIR)/turnkey.darwin-x86_64 \
+			| sed -e 's/ \*out\// /g' -e 's/ \.\// /g' -e 's/ .*//g' \
+		)" \
+		DARWIN_AARCH64_SHA256="$(shell \
+			openssl sha256 -r $(OUT_DIR)/turnkey.darwin-aarch64 \
+			| sed -e 's/ \*out\// /g' -e 's/ \.\// /g' -e 's/ .*//g' \
+		)"; \
+	cat $(SRC_DIR)/brew/formula.rb | envsubst > $@
 
 $(OUT_DIR)/turnkey.%:
 	$(call toolchain,' \
