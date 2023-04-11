@@ -20,7 +20,16 @@ giving a third party full permission to execute any code they want on your
 system. Github accounts, CDNs, and package repository accounts get compromised
 all the time.
 
-#### Universal
+#### Download
+
+| OS    | Architecture | Download                                             |
+|-------|--------------|------------------------------------------------------|
+| Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.linux-x86_64)    |
+| Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.linux-aarch64)  |
+| MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.darwin-x86_64)  |
+| MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.darwin-aarch64)|
+
+#### Git
 
 ```
 git clone https://github.com/thkq/tkcli
@@ -47,6 +56,15 @@ process.
 
 See the [Reproducible Builds](https://reproducible-builds.org/) project for
 more information on these practices.
+
+We use git for all development, releases, and signing. Unfortunately git has no
+native method for large file storage or multi-signature workflows so some git
+add-ons are required.
+
+To follow these steps please install [git-lfs][gl] and [git-sig][gs].
+
+[gs]: https://codeberg.org/distrust/git-sig
+[gl]: https://git-lfs.com
 
 1. Clone repo
 
