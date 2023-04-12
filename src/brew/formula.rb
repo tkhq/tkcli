@@ -9,7 +9,7 @@ class Turnkey < Formula
     sha256 "$DARWIN_AARCH64_SHA256"
 
     def install
-      bin.install "turnkey"
+      bin.install "turnkey.darwin-aarch64" => "turnkey"
     end
   end
   if Hardware::CPU.intel?
@@ -17,7 +17,7 @@ class Turnkey < Formula
     sha256 "$DARWIN_X86_64_SHA256"
 
     def install
-      bin.install "turnkey"
+      bin.install "turnkey.darwin-x86_64" => "turnkey"
     end
   end
 
