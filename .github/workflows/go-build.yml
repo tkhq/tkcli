@@ -24,6 +24,5 @@ jobs:
           GOARCH: amd64
         run: |
           cd src
-          go build -o ../out/turnkey.linux-amd64 main.go
+          go build -o ../out/turnkey.linux-x86_64 main.go
           go test -v ./...
-          
