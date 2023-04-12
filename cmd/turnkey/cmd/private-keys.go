@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/tkcli/api/client"
@@ -9,6 +10,8 @@ import (
 )
 
 var (
+	signingKeyID string
+
 	privateKeysOrgID string
 
 	privateKeysCreateAddressFormats []string
@@ -33,9 +36,7 @@ var privateKeysCmd = &cobra.Command{
 	Use:   "private-keys interacts with private keys stored in Turnkey",
 	Short: "private-keys interacts with private keys",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if err := LoadKeypair(""); err != nil {
-			OutputError(errors.Wrap(err, "failed to load API key"))
-		}
+		LoadKeypair("")
 	},
 	Aliases: []string{"pk"},
 }
@@ -130,4 +131,47 @@ var privateKeysListCmd = &cobra.Command{
 
 		Output(resp.Payload)
 	},
+}
+
+// LoadSigningKey require-loads a signing key
+func LoadSigningKey(name string) {
+	if name != "" {
+		signingKeyID = name
+	}
+
+	if _, err := uuid.Parse(signingKeyID); err != nil {
+		signingKeyID, err = lookupPrivateKeyByName(signingKeyID)
+		if err != nil {
+			OutputError(errors.Wrap(err, "provided private key was not a UUID and lookup by name failed"))
+		}
+	}
+}
+
+func lookupPrivateKeyByName(name string) (string, error) {
+	params := private_keys.NewPublicAPIServiceGetPrivateKeysParams()
+
+	params.SetBody(&models.V1GetPrivateKeysRequest{
+		OrganizationID: &Organization,
+	})
+
+	if err := params.Body.Validate(nil); err != nil {
+		return "", errors.Wrap(err, "formulation of a lookup by name request failed")
+	}
+
+	resp, err := client.Default.PrivateKeys.PublicAPIServiceGetPrivateKeys(params, new(Authenticator))
+	if err != nil {
+		return "", errors.Wrap(err, "lookup by name failed")
+	}
+
+	if !resp.IsSuccess() {
+		return "", errors.Errorf("lookup by name failed: %d: %s", resp.Code(), resp.Error())
+	}
+
+	for _, k := range resp.Payload.PrivateKeys {
+		if *k.PrivateKeyName == name {
+			return *k.PrivateKeyID, nil
+		}
+	}
+
+	return "", errors.Errorf("private key name %q not found in list of private keys", name)
 }
