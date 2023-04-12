@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"regexp"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -45,7 +43,7 @@ var makeRequest = &cobra.Command{
 			OutputError(errors.Wrap(err, "failed to get API key"))
 		}
 
-		bodyReader, err := processRequestBody(requestBody)
+		bodyReader, err := ParameterToReader(requestBody)
 		if err != nil {
 			OutputError(errors.Wrap(err, "failed to process request body"))
 		}
@@ -92,18 +90,6 @@ var makeRequest = &cobra.Command{
 
 		Output(responseBodyBytes)
 	},
-}
-
-func processRequestBody(bodyParam string) (io.Reader, error) {
-	if bodyParam == "-" {
-		return os.Stdin, nil
-	}
-
-	if strings.HasPrefix(bodyParam, "@") {
-		return os.Open(strings.TrimPrefix(bodyParam, "@"))
-	}
-
-	return bytes.NewReader([]byte(bodyParam)), nil
 }
 
 func generateCurlCommand(host, path string, body []byte, stamp string) string {

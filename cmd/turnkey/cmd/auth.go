@@ -11,19 +11,19 @@ import (
 // APIKeypair is the loaded API Keypair
 var APIKeypair *apikey.ApiKey
 
-// LoadKeypair loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
-func LoadKeypair(name string) error {
+// LoadKeypair require-loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
+func LoadKeypair(name string) {
 	if name == "" {
 		name = KeyName
 	}
 
 	apiKey, err := clifs.LoadKeypair(name)
 	if err != nil {
-		return err
+		OutputError(err)
 	}
 
 	if apiKey == nil {
-		return errors.New("API key not loaded")
+		OutputError(errors.New("API key not loaded"))
 	}
 
 	APIKeypair = apiKey
@@ -40,10 +40,8 @@ func LoadKeypair(name string) error {
 
 	// If org is _still_ empty, the API key is not usable.
 	if Organization == "" {
-		return errors.New("failed to associate the API key with an organization.  Please manually specify the organization ID.")
+		OutputError(errors.New("failed to associate the API key with an organization.  Please manually specify the organization ID."))
 	}
-
-	return nil
 }
 
 // Authenticator provides a runtime.ClientAuthInfoWriter for use with the swagger API client.
