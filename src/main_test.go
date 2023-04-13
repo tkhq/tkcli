@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tkhq/tkcli/internal/apikey"
+	"github.com/tkhq/tkcli/src/internal/apikey"
 )
 
 const TURNKEY_BINARY_NAME = "turnkey.linux-x86_64"
