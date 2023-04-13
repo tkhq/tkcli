@@ -1,4 +1,4 @@
-module github.com/tkhq/tkcli
+module github.com/tkhq/tkcli/src
 
 go 1.19
 
