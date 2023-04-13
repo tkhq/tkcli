@@ -16,8 +16,13 @@ jobs:
         with:
           go-version: 1.19
 
-      - name: Build binary
-        run: make build/turnkey
-
       - name: Test
-        run: go test -v ./...
+        env:
+          GOHOSTOS: linux
+          GOHOSTARCH: amd64
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          cd src
+          go build -o ../out/turnkey.linux-x86_64 main.go
+          go test -v ./...
