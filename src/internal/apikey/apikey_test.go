@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tkhq/tkcli/internal/apikey"
+	"github.com/tkhq/tkcli/src/internal/apikey"
 )
 
 func Test_FromTkPrivateKey(t *testing.T) {

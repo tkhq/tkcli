@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/tkhq/tkcli/internal/apikey"
+	"github.com/tkhq/tkcli/src/internal/apikey"
 )
 
 // Given a user-specified directory, return the path.
