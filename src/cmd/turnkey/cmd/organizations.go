@@ -9,9 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	organizationsCreateName string
-)
+var organizationsCreateName string
 
 func init() {
 	organizationsCreateCmd.Flags().StringVar(&organizationsCreateName, "name", "", "name of the organization")

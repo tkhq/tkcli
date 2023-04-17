@@ -10,13 +10,32 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+
+        tkbuild = pkgs.writeScriptBin "build" ''
+          #!/bin/sh
+          pushd $(git rev-parse --show-toplevel)/src
+          ${pkgs.go}/bin/go install ./cmd/turnkey
+        '';
+
+        tklint = pkgs.writeScriptBin "lint" ''
+          #!/bin/sh
+          pushd $(git rev-parse --show-toplevel)/src
+          ${pkgs.gofumpt}/bin/gofumpt -w ./cmd/turnkey ./internal/*
+          ${pkgs.golangci-lint}/bin/golangci-lint run ./cmd/turnkey ./internal/*
+        '';
       in
       {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             bashInteractive
+            envsubst
+            gofumpt
+            golangci-lint
+            go
             go-swagger
             go-tools
+            tkbuild
+            tklint
           ];
         };
       });
