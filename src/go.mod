@@ -1,4 +1,4 @@
-module github.com/tkhq/tkcli
+module github.com/tkhq/tkcli/src
 
 go 1.19
 
@@ -8,6 +8,8 @@ require (
 	github.com/go-openapi/strfmt v0.21.3
 	github.com/go-openapi/swag v0.22.3
 	github.com/go-openapi/validate v0.22.0
+	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/google/uuid v1.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
@@ -24,8 +26,6 @@ require (
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
 	github.com/go-openapi/loads v0.21.2 // indirect
 	github.com/go-openapi/spec v0.20.8 // indirect
-	github.com/gofrs/uuid v4.4.0+incompatible // indirect
-	github.com/google/uuid v1.1.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect

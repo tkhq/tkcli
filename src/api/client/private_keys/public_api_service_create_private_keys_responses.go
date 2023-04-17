@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/tkhq/tkcli/api/models"
+	"github.com/tkhq/tkcli/src/api/models"
 )
 
 // PublicAPIServiceCreatePrivateKeysReader is a Reader for the PublicAPIServiceCreatePrivateKeys structure.
