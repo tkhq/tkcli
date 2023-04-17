@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/tkhq/tkcli/src/internal/apikey"
+	"github.com/tkhq/tkcli/src/internal/clifs"
+	"github.com/tkhq/tkcli/src/internal/display"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/tkhq/tkcli/internal/apikey"
-	"github.com/tkhq/tkcli/internal/clifs"
-	"github.com/tkhq/tkcli/internal/display"
 )
 
 var (

@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"github.com/tkhq/tkcli/src/api/models"
+
 	"github.com/spf13/cobra"
-	"github.com/tkhq/tkcli/api/models"
 )
 
 func init() {

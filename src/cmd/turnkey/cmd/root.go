@@ -8,9 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tkhq/tkcli/src/internal/clifs"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/tkhq/tkcli/internal/clifs"
 )
 
 var (

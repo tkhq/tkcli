@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"github.com/tkhq/tkcli/src/internal/apikey"
+	"github.com/tkhq/tkcli/src/internal/clifs"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
-	"github.com/tkhq/tkcli/internal/apikey"
-	"github.com/tkhq/tkcli/internal/clifs"
 )
 
 // APIKeypair is the loaded API Keypair
