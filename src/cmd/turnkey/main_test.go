@@ -25,7 +25,7 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command(path.Join(currentDir, "../out/", TurnKeyBinaryName), args...)
+	cmd := exec.Command(path.Join(currentDir, "../out/", TurnkeyBinaryName), args...)
 	output, err := cmd.CombinedOutput()
 
 	return string(output), err
@@ -73,10 +73,10 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	err = os.WriteFile(tmpDir+"/myexistingkey.public", []byte("mykey.public"), 0755)
+	err = os.WriteFile(tmpDir+"/myexistingkey.public", []byte("mykey.public"), 0o755)
 	assert.Nil(t, err)
 
-	err = os.WriteFile(tmpDir+"/myexistingkey.private", []byte("mykey.private"), 0755)
+	err = os.WriteFile(tmpDir+"/myexistingkey.private", []byte("mykey.private"), 0o755)
 	assert.Nil(t, err)
 
 	assert.FileExists(t, tmpDir+"/myexistingkey.public")

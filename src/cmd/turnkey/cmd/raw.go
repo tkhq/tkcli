@@ -31,8 +31,8 @@ func init() {
 }
 
 var rawCmd = &cobra.Command{
-	Use:     "raw interacts with unstructured requests to the Turnkey API",
-	Short:   "raw interacts with unstructured requests to the Turnkey API",
+	Use:   "raw interacts with unstructured requests to the Turnkey API",
+	Short: "raw interacts with unstructured requests to the Turnkey API",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		LoadKeypair("")
 
@@ -41,8 +41,8 @@ var rawCmd = &cobra.Command{
 }
 
 var rawSignCmd = &cobra.Command{
-	Use:     "sign signs a raw payload",
-	Short:   "sign signs a raw payload",
+	Use:   "sign signs a raw payload",
+	Short: "sign signs a raw payload",
 	Run: func(cmd *cobra.Command, args []string) {
 		payloadEncoding := models.V1PayloadEncoding(rawSignPayloadEncoding)
 
@@ -81,4 +81,3 @@ var rawSignCmd = &cobra.Command{
 		Output(resp.Payload)
 	},
 }
-
