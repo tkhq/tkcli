@@ -10,11 +10,11 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/tkhq/tkcli/api/client/activities"
-	"github.com/tkhq/tkcli/api/client/organizations"
-	"github.com/tkhq/tkcli/api/client/policies"
-	"github.com/tkhq/tkcli/api/client/private_keys"
-	"github.com/tkhq/tkcli/api/client/users"
+	"github.com/tkhq/tkcli/src/api/client/activities"
+	"github.com/tkhq/tkcli/src/api/client/organizations"
+	"github.com/tkhq/tkcli/src/api/client/policies"
+	"github.com/tkhq/tkcli/src/api/client/private_keys"
+	"github.com/tkhq/tkcli/src/api/client/users"
 )
 
 // Default turnkey public API HTTP client.

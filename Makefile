@@ -24,9 +24,13 @@ default: \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
 
-.PHONY: build/turnkey
-build/turnkey: cmd/turnkey/ internal/
-	go build -o build/turnkey ./cmd/turnkey
+.PHONY: lint
+lint:
+	$(call toolchain,' \
+		GOCACHE=/home/build/$(CACHE_DIR) \
+		GOPATH=/home/build/$(CACHE_DIR) \
+		env -C $(SRC_DIR) go vet -v ./... \
+	')
 
 .PHONY: test
 test: $(OUT_DIR)/turnkey.linux-x86_64
@@ -34,6 +38,13 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 		GOCACHE=/home/build/$(CACHE_DIR) \
 		GOPATH=/home/build/$(CACHE_DIR) \
 		env -C $(SRC_DIR) go test -v ./... \
+	')
+
+.PHONY: api
+api:
+	$(call toolchain,' \
+		env -C $(SRC_DIR) swagger generate client -f https://raw.githubusercontent.com/tkhq/sdk/main/packages/http/src/__generated__/services/coordina tor/public/v1/public_api.swagger.json -t api; \
+		env -C $(SRC_DIR) go mod tidy \
 	')
 
 # Clean repo back to initial clone state
@@ -72,5 +83,5 @@ $(OUT_DIR)/turnkey.%:
 		env -C $(SRC_DIR) \
 		go build \
 			-trimpath \
-			-o /home/build/$@ main.go \
+			-o /home/build/$@ ./cmd/turnkey \
 	')
