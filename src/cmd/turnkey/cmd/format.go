@@ -8,9 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var (
-	outputFormat string
-)
+var outputFormat string
 
 type encoder interface {
 	Encode(data any) error

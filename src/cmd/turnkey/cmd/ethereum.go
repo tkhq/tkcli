@@ -9,13 +9,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-)
+var ethTxPayload string
 
 func init() {
-	ethCmd.Flags().StringVar(&signingKeyID, "signing-key", "", "name or ID of the signing key")
+	ethCmd.PersistentFlags().StringVarP(&signingKeyID, "signing-key", "s", "", "name or ID of the signing key")
 
 	rootCmd.AddCommand(ethCmd)
+
+	ethTxCmd.Flags().StringVar(&ethTxPayload, "payload", "", "payload of the transaction")
+
+	ethCmd.AddCommand(ethTxCmd)
 }
 
 var ethCmd = &cobra.Command{
@@ -29,15 +32,23 @@ var ethCmd = &cobra.Command{
 }
 
 var ethTxCmd = &cobra.Command{
-	Use:     "transaction signs a transaction",
-	Short:   "transaction provides signing for a transaction",
+	Use:     "transaction provides signing and other actions for a transaction",
+	Short:   "transaction provides signing and other actions for a transaction",
 	Aliases: []string{"tx"},
 	Run: func(cmd *cobra.Command, args []string) {
 		transactionType := models.Immutableactivityv1TransactionTypeTRANSACTIONTYPEETHEREUM
 		activityType := string(models.V1ActivityTypeACTIVITYTYPESIGNTRANSACTION)
 
-		// TODO: define the payload!
-		payload := ""
+		payload, err := ParameterToString(ethTxPayload)
+		if err != nil {
+			OutputError(errors.Wrap(err, "failed to read payload"))
+		}
+
+		// NB: eventually, we should add ways of creating transaction payloads, to be more helpful.
+		// Until then, this is an error.
+		if payload == "" {
+			OutputError(errors.New("payload cannot be empty"))
+		}
 
 		params := private_keys.NewPublicAPIServiceSignTransactionParams().WithBody(
 			&models.V1SignTransactionRequest{

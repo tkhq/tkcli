@@ -140,6 +140,10 @@ func LoadSigningKey(name string) {
 		signingKeyID = name
 	}
 
+	if signingKeyID == "" {
+		OutputError(errors.New("no private key provided"))
+	}
+
 	if _, err := uuid.Parse(signingKeyID); err != nil {
 		signingKeyID, err = lookupPrivateKeyByName(signingKeyID)
 		if err != nil {

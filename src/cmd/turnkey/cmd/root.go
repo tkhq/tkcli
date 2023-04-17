@@ -26,7 +26,7 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootKeysDirectory, "keys-folder", "d", clifs.DefaultKeysDir(), "directory in which to locate keys")
-	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of key with which to operate")
+	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
 }
