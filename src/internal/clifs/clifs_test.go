@@ -4,8 +4,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/tkhq/tkcli/src/internal/clifs"
+
 	"github.com/stretchr/testify/assert"
-	"github.com/tkhq/tkcli/internal/clifs"
 )
 
 // MacOSX has $HOME set by default

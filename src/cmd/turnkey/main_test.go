@@ -11,12 +11,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/tkhq/tkcli/src/internal/apikey"
+
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/tkhq/tkcli/internal/apikey"
 )
 
-const TurnkeyBinaryName = "turnkey"
+const TurnkeyBinaryName = "turnkey.linux-x86_64"
 
 func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 	currentDir, err := os.Getwd()
@@ -24,7 +25,7 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command(path.Join(currentDir, "..", "..", "build", TurnkeyBinaryName), args...)
+	cmd := exec.Command(path.Join(currentDir, "../out/", TurnKeyBinaryName), args...)
 	output, err := cmd.CombinedOutput()
 
 	return string(output), err

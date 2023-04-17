@@ -9,8 +9,9 @@ import (
 	"path"
 	"strings"
 
+	"github.com/tkhq/tkcli/src/internal/apikey"
+
 	"github.com/pkg/errors"
-	"github.com/tkhq/tkcli/internal/apikey"
 )
 
 var keysDirectory string
