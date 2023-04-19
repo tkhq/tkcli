@@ -239,3 +239,4 @@ to be owned by.
 | Arnaud Brousseau |[6870 5ACF 41E8 ECDE E292 5A42 4AAB 800C FFA3 065A](https://keyoxide.org/4AAB800CFFA3065A)|
 | Keyan Zhang      |[0211 6F38 FB32 9E98 65A1 D08B 5880 CFD7 A7D9 5342](https://keyoxide.org/5880CFD7A7D95342)|
 | Lance Vick       |[6B61 ECD7 6088 748C 7059 0D55 E90A 4013 36C8 AAA9](https://keyoxide.org/E90A401336C8AAA9)|
+| Seán C McCord    |[D9C8 71CC DEBD 2C7A 23D8 3041 798D DA52 5182 4DEA](https://keyoxide.org/798DDA5251824DEA)|

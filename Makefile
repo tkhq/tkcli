@@ -40,13 +40,6 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 		env -C $(SRC_DIR) go test -v ./... \
 	')
 
-.PHONY: api
-api:
-	$(call toolchain,' \
-		env -C $(SRC_DIR) swagger generate client -f https://raw.githubusercontent.com/tkhq/sdk/main/packages/http/src/__generated__/services/coordina tor/public/v1/public_api.swagger.json -t api; \
-		env -C $(SRC_DIR) go mod tidy \
-	')
-
 # Clean repo back to initial clone state
 .PHONY: clean
 clean: toolchain-clean
@@ -83,5 +76,5 @@ $(OUT_DIR)/turnkey.%:
 		env -C $(SRC_DIR) \
 		go build \
 			-trimpath \
-			-o /home/build/$@ ./cmd/turnkey \
+			-o /home/build/$@ . \
 	')
