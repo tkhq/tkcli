@@ -14,14 +14,14 @@
         tkbuild = pkgs.writeScriptBin "build" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
-          ${pkgs.go}/bin/go install ./cmd/turnkey
+          ${pkgs.go}/bin/go install
         '';
 
         tklint = pkgs.writeScriptBin "lint" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
-          ${pkgs.gofumpt}/bin/gofumpt -w ./cmd/turnkey ./internal/*
-          ${pkgs.golangci-lint}/bin/golangci-lint run ./cmd/turnkey ./internal/*
+          ${pkgs.gofumpt}/bin/gofumpt -w *.go ./cmd/*
+          ${pkgs.golangci-lint}/bin/golangci-lint run ./...
         '';
       in
       {
