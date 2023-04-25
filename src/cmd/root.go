@@ -32,8 +32,21 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
+
+	instantiateKeystore()
 }
 
+func instantiateKeystore() {
+	localKeyStore := local.New()
+
+	if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
+		OutputError(errors.Wrap(err, "failed to obtain key storage location"))
+	}
+
+	keyStore = localKeyStore
+}
+
+// Execute runs the cobra command for the Turnkey CLI.
 func Execute() error {
 	return rootCmd.Execute()
 }
@@ -45,20 +58,13 @@ var rootCmd = &cobra.Command{
 		// No non-JSON-formatted output should flow over stdin; thus change
 		// output for usage messages to stderr.
 		cmd.SetOut(os.Stderr)
-
-		localKeyStore := local.New()
-
-		if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
-			OutputError(errors.Wrap(err, "failed to obtain key storage location"))
-		}
-
-		keyStore = localKeyStore
 	},
 }
 
 // RequestTimestamp returns a timestamp formatted for inclusion in a request.
 func RequestTimestamp() *string {
 	ts := fmt.Sprintf("%d", time.Now().UnixMilli())
+
 	return &ts
 }
 

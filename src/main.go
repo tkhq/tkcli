@@ -1,3 +1,4 @@
+// Package main provides the base executable harness for the Turnkey CLI.
 package main
 
 import (
