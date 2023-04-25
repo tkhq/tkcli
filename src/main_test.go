@@ -43,7 +43,7 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	orgID := uuid.Must(uuid.NewV4())
 
 	tmpDir, err := os.MkdirTemp("/tmp", "keys")
-	defer os.RemoveAll(tmpDir)
+	defer assert.Nil(t, os.RemoveAll(tmpDir))
 
 	assert.Nil(t, err)
 
@@ -69,7 +69,7 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 	orgID := uuid.Must(uuid.NewV4())
 
 	tmpDir, err := os.MkdirTemp("/tmp", "keys")
-	defer os.RemoveAll(tmpDir)
+	defer assert.Nil(t, os.RemoveAll(tmpDir))
 
 	assert.Nil(t, err)
 
@@ -92,12 +92,14 @@ func TestStamp(t *testing.T) {
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
-	err = json.Unmarshal([]byte(out), &parsedOut)
-	assert.Nil(t, err)
+
+	assert.Nil(t, json.Unmarshal([]byte(out), &parsedOut))
+
 	stamp := parsedOut["stamp"]
 
 	pubkeyBytes, err := os.ReadFile("fixtures/testkey.public")
 	assert.Nil(t, err)
+
 	ensureValidStamp(t, stamp, string(pubkeyBytes))
 }
 
@@ -132,7 +134,7 @@ func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {
 	assert.Equal(t, expectedPublicKey, parsedStamp.PublicKey)
 
 	// All signatures start with 30....
-	assert.True(t, strings.HasPrefix(string(parsedStamp.Signature), "30"))
+	assert.True(t, strings.HasPrefix(parsedStamp.Signature, "30"))
 
 	_, err = hex.DecodeString(parsedStamp.Signature)
 

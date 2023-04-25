@@ -9,10 +9,10 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(genApiKey)
+	rootCmd.AddCommand(genAPIKeyCmd)
 }
 
-var genApiKey = &cobra.Command{
+var genAPIKeyCmd = &cobra.Command{
 	Use:     "generate-api-key generates a Turnkey API key",
 	Short:   "generate-api-key generates a Turnkey API key",
 	Aliases: []string{"g", "gen"},
@@ -47,10 +47,13 @@ var genApiKey = &cobra.Command{
 			OutputError(errors.Wrap(err, "failed to store new API keypair"))
 		}
 
-		localStore := keyStore.(*local.LocalStore)
+		localStore, ok := keyStore.(*local.LocalStore)
+		if !ok {
+			OutputError(errors.Wrap(err, "unhandled keystore type: expected LocalStore"))
+		}
 
 		Output(map[string]string{
-			"publicKey":      string(apiKey.TkPublicKey),
+			"publicKey":      apiKey.TkPublicKey,
 			"publicKeyFile":  localStore.PublicKeyFile(name),
 			"privateKeyFile": localStore.PrivateKeyFile(name),
 		})

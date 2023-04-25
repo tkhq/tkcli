@@ -7,10 +7,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-// APIKeypair is the loaded API Keypair
+// APIKeypair is the loaded API Keypair.
 var APIKeypair *apikey.Key
 
-// APIClient is the API Client
+// APIClient is the API Client.
 var APIClient *sdk.Client
 
 // LoadKeypair require-loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
@@ -42,10 +42,11 @@ func LoadKeypair(name string) {
 
 	// If org is _still_ empty, the API key is not usable.
 	if Organization == "" {
-		OutputError(errors.New("failed to associate the API key with an organization.  Please manually specify the organization ID."))
+		OutputError(errors.New("failed to associate the API key with an organization; please manually specify the organization ID"))
 	}
 }
 
+// LoadClient creates an API client from the preloaded API keypair.
 func LoadClient() {
 	var err error
 

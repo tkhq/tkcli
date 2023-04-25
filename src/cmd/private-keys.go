@@ -61,9 +61,21 @@ var privateKeysCreateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		curve := models.Immutableactivityv1Curve(privateKeysCreateCurve)
 
+		if curve == Help {
+			Output(models.Curves())
+
+			return
+		}
+
 		addressFormats := make([]models.Immutableactivityv1AddressFormat, len(privateKeysCreateAddressFormats))
 
 		for n, f := range privateKeysCreateAddressFormats {
+			if f == Help {
+				Output(models.AddressFormats())
+
+				return
+			}
+
 			addressFormats[n] = models.Immutableactivityv1AddressFormat(f)
 		}
 
@@ -134,7 +146,7 @@ var privateKeysListCmd = &cobra.Command{
 	},
 }
 
-// LoadSigningKey require-loads a signing key
+// LoadSigningKey require-loads a signing key.
 func LoadSigningKey(name string) {
 	if name != "" {
 		signingKeyID = name

@@ -11,16 +11,29 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        gci = pkgs.buildGoModule rec {
+           name = "gci";
+           src = pkgs.fetchFromGitHub {
+              owner = "daixiang0";
+              repo = "gci";
+              rev = "v0.10.1";
+              sha256 = "sha256-/YR61lovuYw+GEeXIgvyPbesz2epmQVmSLWjWwKT4Ag=";
+           };
+           #vendorSha256 = pkgs.lib.fakeSha256;
+           vendorSha256 = "sha256-g7htGfU6C2rzfu8hAn6SGr0ZRwB8ZzSf9CgHYmdupE8=";
+        };
+
         tkbuild = pkgs.writeScriptBin "build" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
-          ${pkgs.go}/bin/go install
+          ${pkgs.go}/bin/go build -o $(go env GOPATH)/bin/turnkey
         '';
 
         tklint = pkgs.writeScriptBin "lint" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
           ${pkgs.gofumpt}/bin/gofumpt -w *.go ./cmd/*
+          ${gci}/bin/gci -w --skip-generated -s standard -s default -s "Prefix(github.com/tkhq)"
           ${pkgs.golangci-lint}/bin/golangci-lint run ./...
         '';
       in
@@ -29,6 +42,7 @@
           packages = with pkgs; [
             bashInteractive
             envsubst
+            gci
             gofumpt
             golangci-lint
             go

@@ -35,7 +35,7 @@ func getEncoder() encoder {
 
 // OutputError prints an error to the console and exits.
 func OutputError(err error) {
-	if err := getEncoder().Encode(map[string]string{
+	if err = getEncoder().Encode(map[string]string{
 		"error": err.Error(),
 	}); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to write error to output encoder: %s", err)
@@ -53,12 +53,12 @@ func Output(payload any) {
 	os.Exit(0)
 }
 
-// ErrorResponse is a structured format to display an HTTP error response.
-type ErrorResponse struct {
+// ResponseError is a structured format to display an HTTP error response.
+type ResponseError struct {
 	Code int    `json:"responseCode"`
 	Text string `json:"responseBody"`
 }
 
-func (r *ErrorResponse) Error() string {
+func (r *ResponseError) Error() string {
 	return fmt.Sprintf("%d: %s", r.Code, r.Text)
 }
