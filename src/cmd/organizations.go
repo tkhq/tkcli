@@ -23,6 +23,7 @@ var organizationsCmd = &cobra.Command{
 	Short:   "organizations interacts with organizations stored in Turnkey",
 	Aliases: []string{"o", "org", "organization"},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
 		LoadKeypair("")
 		LoadClient()
 	},

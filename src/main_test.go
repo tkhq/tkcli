@@ -19,6 +19,15 @@ import (
 
 const TurnkeyBinaryName = "turnkey.linux-x86_64"
 
+// TempDir is the directory in which temporary files for the tests will be stored.
+var TempDir = "/tmp"
+
+func init() {
+	if os.Getenv("RUNNER_TEMP") != "" {
+		TempDir = os.Getenv("RUNNER_TEMP")
+	}
+}
+
 func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
@@ -42,7 +51,7 @@ func TestHelpText(t *testing.T) {
 func TestKeygenInTmpFolder(t *testing.T) {
 	orgID := uuid.Must(uuid.NewV4())
 
-	tmpDir, err := os.MkdirTemp("/tmp", "keys")
+	tmpDir, err := os.MkdirTemp(TempDir, "keys")
 	defer assert.Nil(t, os.RemoveAll(tmpDir))
 
 	assert.Nil(t, err)
@@ -68,7 +77,7 @@ func TestKeygenInTmpFolder(t *testing.T) {
 func TestKeygenDetectExistingKey(t *testing.T) {
 	orgID := uuid.Must(uuid.NewV4())
 
-	tmpDir, err := os.MkdirTemp("/tmp", "keys")
+	tmpDir, err := os.MkdirTemp(TempDir, "keys")
 	defer assert.Nil(t, os.RemoveAll(tmpDir))
 
 	assert.Nil(t, err)

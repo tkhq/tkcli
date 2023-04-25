@@ -22,6 +22,7 @@ var activitiesCmd = &cobra.Command{
 	Use:   "activities",
 	Short: "activities interacts with the API activities",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
 		LoadKeypair("")
 		LoadClient()
 	},

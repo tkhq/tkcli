@@ -36,6 +36,7 @@ var privateKeysCmd = &cobra.Command{
 	Use:   "private-keys interacts with private keys stored in Turnkey",
 	Short: "private-keys interacts with private keys",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
 		LoadKeypair("")
 		LoadClient()
 	},
