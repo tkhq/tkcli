@@ -32,18 +32,22 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
-
-	instantiateKeystore()
 }
 
-func instantiateKeystore() {
-	localKeyStore := local.New()
+func basicSetup(cmd *cobra.Command) {
+	// No non-JSON-formatted output should flow over stdin; thus change
+	// output for usage messages to stderr.
+	cmd.SetOut(os.Stderr)
 
-	if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
-		OutputError(errors.Wrap(err, "failed to obtain key storage location"))
+	if keyStore == nil {
+		localKeyStore := local.New()
+
+		if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
+			OutputError(errors.Wrap(err, "failed to obtain key storage location"))
+		}
+
+		keyStore = localKeyStore
 	}
-
-	keyStore = localKeyStore
 }
 
 // Execute runs the cobra command for the Turnkey CLI.
@@ -55,9 +59,7 @@ var rootCmd = &cobra.Command{
 	Use:   "turnkey interacts with the Turnkey API",
 	Short: "turnkey is the Turnkey CLI",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// No non-JSON-formatted output should flow over stdin; thus change
-		// output for usage messages to stderr.
-		cmd.SetOut(os.Stderr)
+		basicSetup(cmd)
 	},
 }
 
