@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tkhq/go-sdk/pkg/store"
-	"github.com/tkhq/go-sdk/pkg/store/local"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/tkhq/go-sdk/pkg/store"
+	"github.com/tkhq/go-sdk/pkg/store/local"
 )
 
 var (

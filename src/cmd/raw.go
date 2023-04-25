@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
-	"github.com/tkhq/go-sdk/pkg/api/models"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
+	"github.com/tkhq/go-sdk/pkg/api/models"
 )
 
 var (
