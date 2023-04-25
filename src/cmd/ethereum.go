@@ -25,6 +25,7 @@ var ethCmd = &cobra.Command{
 	Short:   "ethereum performs actions related to Ethereum",
 	Aliases: []string{"eth"},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
 		LoadKeypair("")
 		LoadSigningKey("")
 		LoadClient()
