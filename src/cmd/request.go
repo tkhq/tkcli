@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/tkhq/go-sdk/pkg/apikey"
-	"github.com/tkhq/go-sdk/pkg/store"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/tkhq/go-sdk/pkg/apikey"
+	"github.com/tkhq/go-sdk/pkg/store"
 )
 
 var (

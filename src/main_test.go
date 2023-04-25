@@ -11,10 +11,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tkhq/go-sdk/pkg/apikey"
-
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/tkhq/go-sdk/pkg/apikey"
 )
 
 const TurnkeyBinaryName = "turnkey.linux-x86_64"
