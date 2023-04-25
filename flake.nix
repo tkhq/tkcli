@@ -27,6 +27,7 @@
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
           ${pkgs.go}/bin/go build -o $(go env GOPATH)/bin/turnkey
+          ${pkgs.go}/bin/go build -o ../out/turnkey.linux-x86_64 # hack for local CLI go test
         '';
 
         tklint = pkgs.writeScriptBin "lint" ''
