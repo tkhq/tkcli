@@ -52,9 +52,9 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	orgID := uuid.Must(uuid.NewV4())
 
 	tmpDir, err := os.MkdirTemp(TempDir, "keys")
-	defer assert.Nil(t, os.RemoveAll(tmpDir))
-
 	assert.Nil(t, err)
+
+	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()
 
 	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "mykey", "--organization", orgID.String()})
 	assert.Nil(t, err)
@@ -78,7 +78,7 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 	orgID := uuid.Must(uuid.NewV4())
 
 	tmpDir, err := os.MkdirTemp(TempDir, "keys")
-	defer assert.Nil(t, os.RemoveAll(tmpDir))
+	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()
 
 	assert.Nil(t, err)
 
