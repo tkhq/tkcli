@@ -40,7 +40,7 @@ make install
 #### Brew
 
 ```
-brew tap tkhq/tkcli https://github.com/tkhq/tkcli/dist
+brew tap tkhq/tkcli
 brew install turnkey
 ```
 
@@ -112,7 +112,7 @@ to attempt to force one or more of us to tamper with the software.
 3. Reproduce binaries
 
     ```
-    make attest
+    make reproduce
     ```
 
     Note: See Trust section below for expected keys/signers
