@@ -33,7 +33,7 @@
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
           ${pkgs.gofumpt}/bin/gofumpt -w *.go ./cmd/*
-          ${gci}/bin/gci -w --skip-generated -s standard -s default -s "Prefix(github.com/tkhq)"
+          ${gci}/bin/gci write --skip-generated -s standard -s default -s "Prefix(github.com/tkhq)" .
           ${pkgs.golangci-lint}/bin/golangci-lint run ./...
         '';
       in

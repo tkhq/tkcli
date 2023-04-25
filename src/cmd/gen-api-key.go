@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/tkhq/go-sdk/pkg/apikey"
-	"github.com/tkhq/go-sdk/pkg/store/local"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/tkhq/go-sdk/pkg/apikey"
+	"github.com/tkhq/go-sdk/pkg/store/local"
 )
 
 func init() {

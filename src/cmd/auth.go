@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"github.com/pkg/errors"
+
 	"github.com/tkhq/go-sdk"
 	"github.com/tkhq/go-sdk/pkg/apikey"
-
-	"github.com/pkg/errors"
 )
 
 // APIKeypair is the loaded API Keypair.
