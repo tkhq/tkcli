@@ -19,7 +19,7 @@ func init() {
 }
 
 var organizationsCmd = &cobra.Command{
-	Use:     "organizations interacts with organizations stored in Turnkey",
+	Use:     "organizations",
 	Short:   "organizations interacts with organizations stored in Turnkey",
 	Aliases: []string{"o", "org", "organization"},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -30,7 +30,7 @@ var organizationsCmd = &cobra.Command{
 }
 
 var organizationsCreateCmd = &cobra.Command{
-	Use:   "create a new organization",
+	Use:   "create",
 	Short: "create a new organization",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if organizationsCreateName == "" {

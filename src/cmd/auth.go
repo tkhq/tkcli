@@ -19,6 +19,10 @@ func LoadKeypair(name string) {
 		name = KeyName
 	}
 
+	if keyStore == nil {
+		OutputError(errors.New("keystore not loaded"))
+	}
+
 	apiKey, err := keyStore.Load(name)
 	if err != nil {
 		OutputError(err)

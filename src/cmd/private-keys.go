@@ -33,7 +33,7 @@ func init() {
 }
 
 var privateKeysCmd = &cobra.Command{
-	Use:   "private-keys interacts with private keys stored in Turnkey",
+	Use:   "private-keys",
 	Short: "private-keys interacts with private keys",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
@@ -44,7 +44,7 @@ var privateKeysCmd = &cobra.Command{
 }
 
 var privateKeysCreateCmd = &cobra.Command{
-	Use:   "create a new private key",
+	Use:   "create",
 	Short: "create a new private key",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(privateKeysCreateAddressFormats) < 1 {
@@ -82,10 +82,6 @@ var privateKeysCreateCmd = &cobra.Command{
 
 		activity := string(models.V1ActivityTypeACTIVITYTYPECREATEPRIVATEKEYS)
 
-		// if privateKeysCreateTags == nil {
-		// 	privateKeysCreateTags = make([]string, 0)
-		// }
-
 		params := private_keys.NewPublicAPIServiceCreatePrivateKeysParams()
 		params.SetBody(&models.V1CreatePrivateKeysRequest{
 			OrganizationID: &Organization,
@@ -121,7 +117,7 @@ var privateKeysCreateCmd = &cobra.Command{
 }
 
 var privateKeysListCmd = &cobra.Command{
-	Use:   "list private keys",
+	Use:   "list",
 	Short: "list private keys for the organization",
 	Run: func(cmd *cobra.Command, args []string) {
 		params := private_keys.NewPublicAPIServiceGetPrivateKeysParams()
