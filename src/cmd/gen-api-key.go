@@ -13,7 +13,7 @@ func init() {
 }
 
 var genAPIKeyCmd = &cobra.Command{
-	Use:     "generate-api-key generates a Turnkey API key",
+	Use:     "generate-api-key",
 	Short:   "generate-api-key generates a Turnkey API key",
 	Aliases: []string{"g", "gen"},
 	PreRun: func(cmd *cobra.Command, args []string) {

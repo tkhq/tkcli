@@ -153,7 +153,7 @@ $ turnkey gen --name my-test-key
 Make an API request:
 
 ```sh
-$ turnkey request --host api.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
+$ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
 {
     "result": "I am a teapot"
 }
@@ -162,9 +162,9 @@ $ turnkey request --host api.turnkey.io --path /api/v1/sign --body '{"payload": 
 Create, but do not _post_ a request:
 
 ```sh
-$ turnkey request --no-post --host api.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
+$ turnkey request --no-post --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
 {
-    "curlCommand": "curl -X POST -d'{\"payload\": \"hello from TKHQ\"}' -H'X-Stamp: eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ' -v 'https://api.turnkey.io/api/v1/sign'",
+    "curlCommand": "curl -X POST -d'{\"payload\": \"hello from TKHQ\"}' -H'X-Stamp: eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ' -v 'https://coordinator-beta.turnkey.io/api/v1/sign'",
     "message": "{\"payload\": \"hello from TKHQ\"}",
     "stamp": "eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ"
 }

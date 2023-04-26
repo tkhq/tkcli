@@ -15,7 +15,7 @@ var (
 )
 
 func init() {
-	rawCmd.Flags().StringVar(&signingKeyID, "signing-key", "", "name or ID of the signing key")
+	rawCmd.Flags().StringVar(&signingKeyID, "private-key", "", "name or ID of the private signing key")
 
 	rawSignCmd.Flags().StringVar(&rawSignPayloadEncoding, "payload-encoding",
 		string(models.V1PayloadEncodingPAYLOADENCODINGTEXTUTF8), "encoding of payload")
@@ -30,9 +30,11 @@ func init() {
 }
 
 var rawCmd = &cobra.Command{
-	Use:   "raw interacts with unstructured requests to the Turnkey API",
-	Short: "raw interacts with unstructured requests to the Turnkey API",
+	Use:   "raw",
+	Short: "raw allows low-level (raw) requests to the Turnkey API",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+
 		LoadKeypair("")
 
 		LoadSigningKey("")
@@ -42,7 +44,7 @@ var rawCmd = &cobra.Command{
 }
 
 var rawSignCmd = &cobra.Command{
-	Use:   "sign signs a raw payload",
+	Use:   "sign",
 	Short: "sign signs a raw payload",
 	Run: func(cmd *cobra.Command, args []string) {
 		payloadEncoding := models.V1PayloadEncoding(rawSignPayloadEncoding)

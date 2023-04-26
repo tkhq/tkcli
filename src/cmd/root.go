@@ -56,7 +56,7 @@ func Execute() error {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "turnkey interacts with the Turnkey API",
+	Use:   "turnkey",
 	Short: "turnkey is the Turnkey CLI",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
