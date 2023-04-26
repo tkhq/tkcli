@@ -19,6 +19,8 @@
               rev = "v0.10.1";
               sha256 = "sha256-/YR61lovuYw+GEeXIgvyPbesz2epmQVmSLWjWwKT4Ag=";
            };
+
+           # Switch to fake vendor sha for upgrades:
            #vendorSha256 = pkgs.lib.fakeSha256;
            vendorSha256 = "sha256-g7htGfU6C2rzfu8hAn6SGr0ZRwB8ZzSf9CgHYmdupE8=";
         };
