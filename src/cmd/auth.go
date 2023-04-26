@@ -34,7 +34,7 @@ func LoadKeypair(name string) {
 
 	APIKeypair = apiKey
 
-	// If we haven't had the organization explicitly setm try to load it from key metadata.
+	// If we haven't had the organization explicitly set try to load it from key metadata.
 	if Organization == "" {
 		// Add the first (and for now only) org in the key metadata
 		for _, o := range APIKeypair.Organizations {
