@@ -13,12 +13,12 @@ func init() {
 }
 
 var addressFormatsCmd = &cobra.Command{
-	Use:   "address-formats interacts with the available address formats",
+	Use:   "address-formats",
 	Short: "address-formats interacts with the available address formats",
 }
 
 var addressFormatsListCmd = &cobra.Command{
-	Use:   "list returns the available key formats",
+	Use:   "list",
 	Short: "list returns the available key formats",
 	Run: func(cmd *cobra.Command, args []string) {
 		Output(models.AddressFormats())

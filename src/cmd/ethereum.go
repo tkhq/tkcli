@@ -11,7 +11,7 @@ import (
 var ethTxPayload string
 
 func init() {
-	ethCmd.PersistentFlags().StringVarP(&signingKeyID, "signing-key", "s", "", "name or ID of the signing key")
+	ethCmd.PersistentFlags().StringVarP(&signingKeyID, "private-key", "s", "", "name or ID of the private signing key")
 
 	rootCmd.AddCommand(ethCmd)
 
@@ -21,7 +21,7 @@ func init() {
 }
 
 var ethCmd = &cobra.Command{
-	Use:     "ethereum performs actions related to Ethereum",
+	Use:     "ethereum",
 	Short:   "ethereum performs actions related to Ethereum",
 	Aliases: []string{"eth"},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -33,7 +33,7 @@ var ethCmd = &cobra.Command{
 }
 
 var ethTxCmd = &cobra.Command{
-	Use:     "transaction provides signing and other actions for a transaction",
+	Use:     "transaction",
 	Short:   "transaction provides signing and other actions for a transaction",
 	Aliases: []string{"tx"},
 	Run: func(cmd *cobra.Command, args []string) {
