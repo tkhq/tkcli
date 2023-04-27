@@ -47,9 +47,9 @@ var genAPIKeyCmd = &cobra.Command{
 			OutputError(errors.Wrap(err, "failed to store new API keypair"))
 		}
 
-		localStore, ok := keyStore.(*local.LocalStore)
+		localStore, ok := keyStore.(*local.Store)
 		if !ok {
-			OutputError(errors.Wrap(err, "unhandled keystore type: expected LocalStore"))
+			OutputError(errors.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
 
 		Output(map[string]string{
