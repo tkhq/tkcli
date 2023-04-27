@@ -35,6 +35,7 @@
         tklint = pkgs.writeScriptBin "lint" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
+          ${pkgs.go}/bin/go mod tidy
           ${pkgs.gofumpt}/bin/gofumpt -w *.go ./cmd/*
           ${gci}/bin/gci write --skip-generated -s standard -s default -s "Prefix(github.com/tkhq)" .
           ${pkgs.golangci-lint}/bin/golangci-lint run ./...
