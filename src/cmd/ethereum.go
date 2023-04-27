@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
@@ -43,13 +43,13 @@ var ethTxCmd = &cobra.Command{
 
 		payload, err := ParameterToString(ethTxPayload)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to read payload"))
+			OutputError(eris.Wrap(err, "failed to read payload"))
 		}
 
 		// NB: eventually, we should add ways of creating transaction payloads, to be more helpful.
 		// Until then, this is an error.
 		if payload == "" {
-			OutputError(errors.New("payload cannot be empty"))
+			OutputError(eris.New("payload cannot be empty"))
 		}
 
 		params := private_keys.NewPublicAPIServiceSignTransactionParams().WithBody(
@@ -67,11 +67,11 @@ var ethTxCmd = &cobra.Command{
 
 		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceSignTransaction(params, APIClient.Authenticator)
 		if err != nil {
-			OutputError(errors.Wrap(err, "request failed"))
+			OutputError(eris.Wrap(err, "request failed"))
 		}
 
 		if !resp.IsSuccess() {
-			OutputError(errors.Errorf("failed to create private key: %s", resp.Error()))
+			OutputError(eris.Errorf("failed to create private key: %s", resp.Error()))
 		}
 
 		Output(resp.Payload)

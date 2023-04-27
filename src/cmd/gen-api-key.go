@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
@@ -18,18 +18,18 @@ var genAPIKeyCmd = &cobra.Command{
 	Aliases: []string{"g", "gen"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if Organization == "" {
-			OutputError(errors.New("please supply an organization ID (UUID)"))
+			OutputError(eris.New("please supply an organization ID (UUID)"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		name, err := cmd.Flags().GetString("key-name")
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to read API key name"))
+			OutputError(eris.Wrap(err, "failed to read API key name"))
 		}
 
 		apiKey, err := apikey.New(Organization)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to create API keypair"))
+			OutputError(eris.Wrap(err, "failed to create API keypair"))
 		}
 
 		if name == "-" {
@@ -44,12 +44,12 @@ var genAPIKeyCmd = &cobra.Command{
 		apiKey.Metadata.Organizations = []string{Organization}
 
 		if err = keyStore.Store(name, apiKey); err != nil {
-			OutputError(errors.Wrap(err, "failed to store new API keypair"))
+			OutputError(eris.Wrap(err, "failed to store new API keypair"))
 		}
 
 		localStore, ok := keyStore.(*local.Store)
 		if !ok {
-			OutputError(errors.Wrap(err, "unhandled keystore type: expected *local.Store"))
+			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
 
 		Output(map[string]string{
