@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
@@ -34,7 +34,7 @@ var organizationsCreateCmd = &cobra.Command{
 	Short: "create a new organization",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if organizationsCreateName == "" {
-			OutputError(errors.New("name for private key must be specified"))
+			OutputError(eris.New("name for private key must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -63,11 +63,11 @@ var organizationsCreateCmd = &cobra.Command{
 
 		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceCreatePrivateKeys(params, APIClient.Authenticator)
 		if err != nil {
-			OutputError(errors.Wrap(err, "request failed"))
+			OutputError(eris.Wrap(err, "request failed"))
 		}
 
 		if !resp.IsSuccess() {
-			OutputError(errors.Errorf("failed to create private key: %s", resp.Error()))
+			OutputError(eris.Errorf("failed to create private key: %s", resp.Error()))
 		}
 
 		Output(resp.Payload)

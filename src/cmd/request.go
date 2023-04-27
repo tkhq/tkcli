@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
@@ -45,22 +45,22 @@ var makeRequest = &cobra.Command{
 
 		apiKey, err := store.Default.Load(KeyName)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to get API key"))
+			OutputError(eris.Wrap(err, "failed to get API key"))
 		}
 
 		bodyReader, err := ParameterToReader(requestBody)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to process request body"))
+			OutputError(eris.Wrap(err, "failed to process request body"))
 		}
 
 		body, err := io.ReadAll(bodyReader)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to read message body"))
+			OutputError(eris.Wrap(err, "failed to read message body"))
 		}
 
 		stamp, err := apikey.Stamp(body, apiKey)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to produce a valid API stamp"))
+			OutputError(eris.Wrap(err, "failed to produce a valid API stamp"))
 		}
 
 		if requestNoPost {
@@ -73,7 +73,7 @@ var makeRequest = &cobra.Command{
 
 		response, err := post(cmd.Context(), protocol, requestHost, requestPath, body, stamp)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to post request"))
+			OutputError(eris.Wrap(err, "failed to post request"))
 		}
 
 		defer response.Body.Close() //nolint: errcheck
@@ -110,7 +110,7 @@ func post(ctx context.Context, protocol string, host string, path string, body [
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
-		return nil, errors.Wrap(err, "error while creating HTTP POST request")
+		return nil, eris.Wrap(err, "error while creating HTTP POST request")
 	}
 
 	req.Header.Set("X-Stamp", stamp)
@@ -119,7 +119,7 @@ func post(ctx context.Context, protocol string, host string, path string, body [
 
 	response, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while sending HTTP POST request")
+		return nil, eris.Wrap(err, "error while sending HTTP POST request")
 	}
 
 	return response, nil
