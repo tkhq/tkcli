@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
@@ -49,7 +49,7 @@ func TestHelpText(t *testing.T) {
 }
 
 func TestKeygenInTmpFolder(t *testing.T) {
-	orgID := uuid.Must(uuid.NewV4())
+	orgID := uuid.New()
 
 	tmpDir, err := os.MkdirTemp(TempDir, "keys")
 	assert.Nil(t, err)
@@ -75,7 +75,7 @@ func TestKeygenInTmpFolder(t *testing.T) {
 }
 
 func TestKeygenDetectExistingKey(t *testing.T) {
-	orgID := uuid.Must(uuid.NewV4())
+	orgID := uuid.New()
 
 	tmpDir, err := os.MkdirTemp(TempDir, "keys")
 	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()

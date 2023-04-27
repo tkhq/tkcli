@@ -6,6 +6,7 @@ import (
 
 	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
 	"github.com/tkhq/go-sdk/pkg/api/models"
+	"github.com/tkhq/go-sdk/pkg/util"
 )
 
 var ethTxPayload string
@@ -59,7 +60,7 @@ var ethTxCmd = &cobra.Command{
 					Type:                &transactionType,
 					UnsignedTransaction: &payload,
 				},
-				TimestampMs: RequestTimestamp(),
+				TimestampMs: util.RequestTimestamp(),
 				Type:        &activityType,
 			},
 		)

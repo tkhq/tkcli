@@ -2,11 +2,9 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -61,13 +59,6 @@ var rootCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 	},
-}
-
-// RequestTimestamp returns a timestamp formatted for inclusion in a request.
-func RequestTimestamp() *string {
-	ts := fmt.Sprintf("%d", time.Now().UnixMilli())
-
-	return &ts
 }
 
 // ParameterToReader converts a commandline parameter to an io.Reader based on its syntax.
