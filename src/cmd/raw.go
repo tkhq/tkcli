@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
@@ -54,7 +54,7 @@ var rawSignCmd = &cobra.Command{
 
 		payload, err := ParameterToString(rawSignPayload)
 		if err != nil {
-			OutputError(errors.Wrap(err, "failed to read payload"))
+			OutputError(eris.Wrap(err, "failed to read payload"))
 		}
 
 		activityType := string(models.V1ActivityTypeACTIVITYTYPESIGNRAWPAYLOAD)
@@ -75,11 +75,11 @@ var rawSignCmd = &cobra.Command{
 
 		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceSignRawPayload(params, APIClient.Authenticator)
 		if err != nil {
-			OutputError(errors.Wrap(err, "request failed"))
+			OutputError(eris.Wrap(err, "request failed"))
 		}
 
 		if !resp.IsSuccess() {
-			OutputError(errors.Errorf("failed to create private key: %s", resp.Error()))
+			OutputError(eris.Errorf("failed to create private key: %s", resp.Error()))
 		}
 
 		Output(resp.Payload)

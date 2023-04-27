@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
@@ -49,15 +49,15 @@ var privateKeysCreateCmd = &cobra.Command{
 	Short: "create a new private key",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(privateKeysCreateAddressFormats) < 1 {
-			OutputError(errors.New("must specify at least one address format"))
+			OutputError(eris.New("must specify at least one address format"))
 		}
 
 		if privateKeysCreateCurve == "" {
-			OutputError(errors.New("curve cannot be empty"))
+			OutputError(eris.New("curve cannot be empty"))
 		}
 
 		if privateKeysCreateName == "" {
-			OutputError(errors.New("name for private key must be specified"))
+			OutputError(eris.New("name for private key must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -101,16 +101,16 @@ var privateKeysCreateCmd = &cobra.Command{
 		})
 
 		if err := params.Body.Validate(nil); err != nil {
-			OutputError(errors.Wrap(err, "request validation failed"))
+			OutputError(eris.Wrap(err, "request validation failed"))
 		}
 
 		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceCreatePrivateKeys(params, APIClient.Authenticator)
 		if err != nil {
-			OutputError(errors.Wrap(err, "request failed"))
+			OutputError(eris.Wrap(err, "request failed"))
 		}
 
 		if !resp.IsSuccess() {
-			OutputError(errors.Errorf("failed to create private key: %s", resp.Error()))
+			OutputError(eris.Errorf("failed to create private key: %s", resp.Error()))
 		}
 
 		Output(resp.Payload)
@@ -128,16 +128,16 @@ var privateKeysListCmd = &cobra.Command{
 		})
 
 		if err := params.Body.Validate(nil); err != nil {
-			OutputError(errors.Wrap(err, "request validation failed"))
+			OutputError(eris.Wrap(err, "request validation failed"))
 		}
 
 		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceGetPrivateKeys(params, APIClient.Authenticator)
 		if err != nil {
-			OutputError(errors.Wrap(err, "request failed"))
+			OutputError(eris.Wrap(err, "request failed"))
 		}
 
 		if !resp.IsSuccess() {
-			OutputError(errors.Errorf("failed to list private keys: %s", resp.Error()))
+			OutputError(eris.Errorf("failed to list private keys: %s", resp.Error()))
 		}
 
 		Output(resp.Payload)
@@ -151,13 +151,13 @@ func LoadSigningKey(name string) {
 	}
 
 	if signingKeyID == "" {
-		OutputError(errors.New("no private key provided"))
+		OutputError(eris.New("no private key provided"))
 	}
 
 	if _, err := uuid.Parse(signingKeyID); err != nil {
 		signingKeyID, err = lookupPrivateKeyByName(signingKeyID)
 		if err != nil {
-			OutputError(errors.Wrap(err, "provided private key was not a UUID and lookup by name failed"))
+			OutputError(eris.Wrap(err, "provided private key was not a UUID and lookup by name failed"))
 		}
 	}
 }
@@ -170,16 +170,16 @@ func lookupPrivateKeyByName(name string) (string, error) {
 	})
 
 	if err := params.Body.Validate(nil); err != nil {
-		return "", errors.Wrap(err, "formulation of a lookup by name request failed")
+		return "", eris.Wrap(err, "formulation of a lookup by name request failed")
 	}
 
 	resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceGetPrivateKeys(params, APIClient.Authenticator)
 	if err != nil {
-		return "", errors.Wrap(err, "lookup by name failed")
+		return "", eris.Wrap(err, "lookup by name failed")
 	}
 
 	if !resp.IsSuccess() {
-		return "", errors.Errorf("lookup by name failed: %s", resp.Error())
+		return "", eris.Errorf("lookup by name failed: %s", resp.Error())
 	}
 
 	for _, k := range resp.Payload.PrivateKeys {
@@ -188,5 +188,5 @@ func lookupPrivateKeyByName(name string) (string, error) {
 		}
 	}
 
-	return "", errors.Errorf("private key name %q not found in list of private keys", name)
+	return "", eris.Errorf("private key name %q not found in list of private keys", name)
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/store"
@@ -41,7 +41,7 @@ func basicSetup(cmd *cobra.Command) {
 		localKeyStore := local.New()
 
 		if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
-			OutputError(errors.Wrap(err, "failed to obtain key storage location"))
+			OutputError(eris.Wrap(err, "failed to obtain key storage location"))
 		}
 
 		keyStore = localKeyStore
@@ -82,13 +82,13 @@ func ParameterToReader(param string) (io.Reader, error) {
 func ParameterToString(param string) (string, error) {
 	payloadReader, err := ParameterToReader(param)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to process payload")
+		return "", eris.Wrap(err, "failed to process payload")
 	}
 
 	buf := new(bytes.Buffer)
 
 	if _, err := buf.ReadFrom(payloadReader); err != nil {
-		return "", errors.Wrap(err, "failed to read payload data")
+		return "", eris.Wrap(err, "failed to read payload data")
 	}
 
 	return buf.String(), nil

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
+	"github.com/rotisserie/eris"
 
 	"github.com/tkhq/go-sdk"
 	"github.com/tkhq/go-sdk/pkg/apikey"
@@ -20,7 +20,7 @@ func LoadKeypair(name string) {
 	}
 
 	if keyStore == nil {
-		OutputError(errors.New("keystore not loaded"))
+		OutputError(eris.New("keystore not loaded"))
 	}
 
 	apiKey, err := keyStore.Load(name)
@@ -29,7 +29,7 @@ func LoadKeypair(name string) {
 	}
 
 	if apiKey == nil {
-		OutputError(errors.New("API key not loaded"))
+		OutputError(eris.New("API key not loaded"))
 	}
 
 	APIKeypair = apiKey
@@ -46,7 +46,7 @@ func LoadKeypair(name string) {
 
 	// If org is _still_ empty, the API key is not usable.
 	if Organization == "" {
-		OutputError(errors.New("failed to associate the API key with an organization; please manually specify the organization ID"))
+		OutputError(eris.New("failed to associate the API key with an organization; please manually specify the organization ID"))
 	}
 }
 
@@ -57,6 +57,6 @@ func LoadClient() {
 	APIClient, err = sdk.New(APIKeypair.Name)
 
 	if err != nil {
-		OutputError(errors.Wrap(err, "failed to create API client"))
+		OutputError(eris.Wrap(err, "failed to create API client"))
 	}
 }
