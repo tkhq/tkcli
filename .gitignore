@@ -19,6 +19,7 @@ build/
 
 # Vscode-related configs
 .vscode
+.direnv
 
 # Toolchain
 /cache

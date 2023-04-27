@@ -24,10 +24,13 @@ default: \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
 
-.PHONY: install
-install: default
-	mkdir -p ~/.local/bin
-	cp $(OUT_DIR)/turnkey.$(HOST_OS)-$(HOST_ARCH) ~/.local/bin/turnkey
+.PHONY: lint
+lint:
+	$(call toolchain,' \
+		GOCACHE=/home/build/$(CACHE_DIR) \
+		GOPATH=/home/build/$(CACHE_DIR) \
+		env -C $(SRC_DIR) go vet -v ./... \
+	')
 
 .PHONY: test
 test: $(OUT_DIR)/turnkey.linux-x86_64
@@ -73,5 +76,5 @@ $(OUT_DIR)/turnkey.%:
 		env -C $(SRC_DIR) \
 		go build \
 			-trimpath \
-			-o /home/build/$@ main.go \
+			-o /home/build/$@ . \
 	')
