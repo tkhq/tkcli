@@ -189,10 +189,37 @@ make
 make out/turnkey.linux-amd64
 ```
 
-### Stage release
+## Release
 
+To release a new version of the CLI:
+
+```sh
+$ make VERSION=x.y.z dist
 ```
-make dist
+
+This will produce a new set of artifact in the `dist/` directory, along with a new manifest.
+
+Open a pull request, and once you have enough approvals, tag the release:
+
+```sh
+$ git tag -sa vX.Y.Z -m "New release: X.Y.Z"
+```
+
+Finally, update the download table above, with links pointing to the new binaries.
+
+Once the pull request is merged, ask your reviewer(s) to attest with `git sig`:
+
+```sh
+$ make reproduce
+
+# If the reproduce command succeeds:
+$ git sig add
+```
+
+Once enough signatures have been collected, the following command should succeed:
+
+```sh
+$ git sig verify --threshold 2
 ```
 
 ## Trust
