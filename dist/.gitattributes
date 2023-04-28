@@ -1,4 +1,1 @@
-turnkey.darwin-x86_64 filter=lfs diff=lfs merge=lfs -text
-turnkey.linux-x86_64 filter=lfs diff=lfs merge=lfs -text
-turnkey.linux-aarch64 filter=lfs diff=lfs merge=lfs -text
-turnkey.darwin-aarch64 filter=lfs diff=lfs merge=lfs -text
+turnkey.{darwin,linux}* filter=lfs diff=lfs merge=lfs -text
