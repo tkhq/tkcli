@@ -20,6 +20,7 @@ default: \
 	$(OUT_DIR)/turnkey.linux-aarch64 \
 	$(OUT_DIR)/turnkey.darwin-x86_64 \
 	$(OUT_DIR)/turnkey.darwin-aarch64 \
+	$(OUT_DIR)/turnkey.darwin-arm64 \
 	$(OUT_DIR)/Formula/turnkey.rb \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
