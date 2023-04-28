@@ -31,15 +31,15 @@ all the time.
 
 #### Git
 
-```
+```sh
 git clone https://github.com/thkq/tkcli
 cd tkcli
-make install
+# Copy artifacts from `dist/` to a folder on your $PATH
 ```
 
 #### Brew
 
-```
+```sh
 brew tap tkhq/tkcli
 brew install turnkey
 ```
