@@ -40,6 +40,11 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 		env -C $(SRC_DIR) go test -v ./... \
 	')
 
+.PHONY: install
+install: default
+	mkdir -p ~/.local/bin
+	cp $(OUT_DIR)/turnkey.$(HOST_OS)-$(HOST_ARCH) ~/.local/bin/turnkey
+
 # Clean repo back to initial clone state
 .PHONY: clean
 clean: toolchain-clean

@@ -34,7 +34,8 @@ all the time.
 ```sh
 git clone https://github.com/thkq/tkcli
 cd tkcli
-# Copy artifacts from `dist/` to a folder on your $PATH
+# This installs in  ~/.local/bin; make sure this is in your $PATH!
+make install
 ```
 
 #### Brew
