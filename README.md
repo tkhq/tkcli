@@ -189,7 +189,7 @@ make out/turnkey.linux-amd64
 To release a new version of the CLI:
 
 ```sh
-$ make VERSION=x.y.z dist
+$ make VERSION=vX.Y.Z dist
 ```
 
 This will produce a new set of artifact in the `dist/` directory, along with a new manifest.
