@@ -10,6 +10,9 @@ ifneq ("$(wildcard $(ROOT)/src/toolchain)","")
 	clone := $(shell git submodule update --init --recursive)
 endif
 
+# Apple reports `uname -m` as "arm64", but really that's the same as "aarch64"
+NORMALIZED_HOST_ARCH := $(subst arm64,aarch64,$(HOST_ARCH))
+
 .DEFAULT_GOAL :=
 .PHONY: default
 default: \
@@ -20,7 +23,6 @@ default: \
 	$(OUT_DIR)/turnkey.linux-aarch64 \
 	$(OUT_DIR)/turnkey.darwin-x86_64 \
 	$(OUT_DIR)/turnkey.darwin-aarch64 \
-	$(OUT_DIR)/turnkey.darwin-arm64 \
 	$(OUT_DIR)/Formula/turnkey.rb \
 	$(OUT_DIR)/release.env \
 	$(OUT_DIR)/manifest.txt
@@ -44,7 +46,7 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 .PHONY: install
 install: default
 	mkdir -p ~/.local/bin
-	cp $(OUT_DIR)/turnkey.$(HOST_OS)-$(HOST_ARCH) ~/.local/bin/turnkey
+	cp $(OUT_DIR)/turnkey.$(HOST_OS)-$(NORMALIZED_HOST_ARCH) ~/.local/bin/turnkey
 
 # Clean repo back to initial clone state
 .PHONY: clean
