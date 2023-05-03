@@ -22,12 +22,16 @@ all the time.
 
 #### Download
 
-| OS    | Architecture | Download                                             |
-|-------|--------------|------------------------------------------------------|
-| Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.linux-x86_64)    |
-| Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.linux-aarch64)  |
-| MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.darwin-x86_64)  |
-| MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/main/dist/turnkey.darwin-aarch64)|
+| Version | OS    | Architecture | Download                                                                                      |
+|---------|-------|--------------|-----------------------------------------------------------------------------------------------|
+| v1.0.0  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.linux-x86_64)    |
+| v1.0.0  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.linux-aarch64)  |
+| v1.0.0  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.darwin-x86_64)  |
+| v1.0.0  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.darwin-aarch64)|
+| v0.3.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.linux-x86_64)    |
+| v0.3.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.linux-aarch64)  |
+| v0.3.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.darwin-x86_64)  |
+| v0.3.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.darwin-aarch64)|
 
 #### Git
 
