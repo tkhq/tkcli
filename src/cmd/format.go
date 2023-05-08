@@ -46,6 +46,7 @@ func OutputError(err error) {
 
 // Output prints to the console and exits.
 func Output(payload any) {
+	payload = maybeParseJSON(payload)
 	if err := getEncoder().Encode(payload); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to encode output: %s", err)
 	}
@@ -61,4 +62,21 @@ type ResponseError struct {
 
 func (r *ResponseError) Error() string {
 	return fmt.Sprintf("%d: %s", r.Code, r.Text)
+}
+
+// In case the payload is already JSON-encoded, try decoding it before passing it on.
+// Otherwise it leads to double-encoding.
+// This is the case for e.g. HTTP response bytes (they're generally JSON-encoded strings).
+// If the payload isn't a valid byte array, or not a valid JSON-encoded string, it is returned as-is.
+func maybeParseJSON(payload any) any {
+	bytes, ok := payload.([]byte)
+	if ok {
+		var decoded any
+		err := json.Unmarshal(bytes, &decoded)
+		if err == nil {
+			return decoded
+		}
+
+	}
+	return payload
 }
