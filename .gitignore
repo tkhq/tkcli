@@ -14,7 +14,7 @@
 # Apple folder files
 .DS_Store
 
-# Dist/build folder
+# Local build folder
 build/
 
 # Vscode-related configs

@@ -188,6 +188,14 @@ make
 make out/turnkey.linux-amd64
 ```
 
+### Local build (for development only)
+
+The following will drop a binary in `build/turnkey`:
+
+```
+make local-build
+```
+
 ## Release
 
 To release a new version of the CLI:
