@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
-	"github.com/tkhq/go-sdk/pkg/store"
 )
 
 var (
@@ -37,15 +36,14 @@ var makeRequest = &cobra.Command{
 		and sends it to the Turnkey API server.
 		See options for alternate behavior, such as not sending the request.`,
 	Aliases: []string{"req", "r"},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		protocol := "https"
 		if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(requestHost) {
 			protocol = "http"
-		}
-
-		apiKey, err := store.Default.Load(KeyName)
-		if err != nil {
-			OutputError(eris.Wrap(err, "failed to get API key"))
 		}
 
 		bodyReader, err := ParameterToReader(requestBody)
@@ -58,7 +56,7 @@ var makeRequest = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to read message body"))
 		}
 
-		stamp, err := apikey.Stamp(body, apiKey)
+		stamp, err := apikey.Stamp(body, APIKeypair)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to produce a valid API stamp"))
 		}

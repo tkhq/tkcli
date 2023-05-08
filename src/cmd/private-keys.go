@@ -13,8 +13,6 @@ import (
 var (
 	signingKeyID string
 
-	privateKeysOrgID string
-
 	privateKeysCreateAddressFormats []string
 	privateKeysCreateCurve          string
 	privateKeysCreateName           string

@@ -97,7 +97,9 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 }
 
 func TestStamp(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--key-name", "fixtures/testkey.private", "--body", "hello!"})
+	orgID := uuid.New()
+
+	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--keys-folder", ".", "--organization", orgID.String(), "--key-name", "fixtures/testkey.private", "--body", "hello!"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
@@ -113,7 +115,9 @@ func TestStamp(t *testing.T) {
 }
 
 func TestApproveRequest(t *testing.T) {
-	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--host", "api.turnkey.io", "--key-name", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
+	orgID := uuid.New()
+
+	out, err := RunCliWithArgs(t, []string{"request", "--no-post", "--keys-folder", ".", "--organization", orgID.String(), "--key-name", "fixtures/testkey.private", "--body", "{\"some\": \"field\"}", "--path", "/some/endpoint"})
 	assert.Nil(t, err)
 
 	var parsedOut map[string]string
@@ -129,7 +133,7 @@ func TestApproveRequest(t *testing.T) {
 
 	assert.Contains(t, parsedOut["curlCommand"], "curl -X POST -d'{\"some\": \"field\"}'")
 	assert.Contains(t, parsedOut["curlCommand"], fmt.Sprintf("-H'X-Stamp: %s'", stamp))
-	assert.Contains(t, parsedOut["curlCommand"], "https://api.turnkey.io/some/endpoint")
+	assert.Contains(t, parsedOut["curlCommand"], "https://coordinator-beta.turnkey.io/some/endpoint")
 }
 
 func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {

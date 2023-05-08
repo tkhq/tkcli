@@ -54,7 +54,7 @@ var ethTxCmd = &cobra.Command{
 
 		params := private_keys.NewPublicAPIServiceSignTransactionParams().WithBody(
 			&models.V1SignTransactionRequest{
-				OrganizationID: &privateKeysOrgID,
+				OrganizationID: &Organization,
 				Parameters: &models.V1SignTransactionIntent{
 					PrivateKeyID:        &signingKeyID,
 					Type:                &transactionType,
