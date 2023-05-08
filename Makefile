@@ -10,6 +10,8 @@ ifneq ("$(wildcard $(ROOT)/src/toolchain)","")
 	clone := $(shell git submodule update --init --recursive)
 endif
 
+LOCAL_BUILD_DIR := 'build'
+
 .DEFAULT_GOAL :=
 .PHONY: default
 default: \
@@ -49,6 +51,7 @@ install: default
 .PHONY: clean
 clean: toolchain-clean
 	git clean -dfx $(SRC_DIR)
+	rm -rf $(LOCAL_BUILD_DIR)
 
 $(KEY_DIR)/%.asc:
 	$(call fetch_pgp_key,$(basename $(notdir $@)))
@@ -83,3 +86,9 @@ $(OUT_DIR)/turnkey.%:
 			-trimpath \
 			-o /home/build/$@ . \
 	')
+
+.PHONY: build-local
+build-local:
+	pushd $(shell git rev-parse --show-toplevel)/src; \
+	go build -o ../$(LOCAL_BUILD_DIR)/turnkey; \
+	popd;
