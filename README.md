@@ -148,9 +148,10 @@ to attempt to force one or more of us to tamper with the software.
 Create a new API key:
 
 ```sh
-$ turnkey gen --name my-test-key
+$ turnkey gen --keys-folder ~/.config/turnkey/keys --key-name my-test-key --organization $ORGANIZATION_ID
 {
     "privateKeyFile": "/Users/rno/.config/turnkey/keys/my-test-key.private",
+    "publicKey": "033af10ddb38527ae59af0a598e505573972b1aa6f0e4a3ccb9c3c8e3f209ea1ef",
     "publicKeyFile": "/Users/rno/.config/turnkey/keys/my-test-key.public"
 }
 ```
@@ -158,7 +159,7 @@ $ turnkey gen --name my-test-key
 Make an API request:
 
 ```sh
-$ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
+$ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key-name=my-test-key
 {
     "result": "I am a teapot"
 }
@@ -167,7 +168,7 @@ $ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body 
 Create, but do not _post_ a request:
 
 ```sh
-$ turnkey request --no-post --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key=my-test-key
+$ turnkey request --no-post --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --key-name=my-test-key
 {
     "curlCommand": "curl -X POST -d'{\"payload\": \"hello from TKHQ\"}' -H'X-Stamp: eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ' -v 'https://coordinator-beta.turnkey.io/api/v1/sign'",
     "message": "{\"payload\": \"hello from TKHQ\"}",
@@ -193,8 +194,12 @@ make out/turnkey.linux-amd64
 The following will drop a binary in `build/turnkey`:
 
 ```
-make local-build
+make build-local
 ```
+
+Note that you may need to do the following:
+- `git submodule update --init --recursive`
+- Install `git-lfs`: https://git-lfs.com
 
 ## Release
 
