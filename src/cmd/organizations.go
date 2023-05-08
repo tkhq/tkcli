@@ -48,7 +48,7 @@ var organizationsCreateCmd = &cobra.Command{
 
 		params := private_keys.NewPublicAPIServiceCreatePrivateKeysParams()
 		params.SetBody(&models.V1CreatePrivateKeysRequest{
-			OrganizationID: &privateKeysOrgID,
+			OrganizationID: &Organization,
 			Parameters: &models.V1CreatePrivateKeysIntent{
 				PrivateKeys: []*models.V1PrivateKeyParams{
 					{

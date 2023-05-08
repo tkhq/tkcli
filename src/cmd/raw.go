@@ -61,7 +61,7 @@ var rawSignCmd = &cobra.Command{
 
 		params := private_keys.NewPublicAPIServiceSignRawPayloadParams().WithBody(
 			&models.V1SignRawPayloadRequest{
-				OrganizationID: &privateKeysOrgID,
+				OrganizationID: &Organization,
 				Parameters: &models.V1SignRawPayloadIntent{
 					Encoding:     &payloadEncoding,
 					HashFunction: &hashFunction,
