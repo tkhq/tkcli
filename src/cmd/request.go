@@ -32,9 +32,8 @@ func init() {
 
 var makeRequest = &cobra.Command{
 	Use: "request",
-	Short: `request takes a request body, generates a stamp for the given request,
-		and sends it to the Turnkey API server.
-		See options for alternate behavior, such as not sending the request.`,
+	Short: `Given a request body, generate a stamp for it, and send it to the Turnkey API server.
+			See options for alternate behavior, such as previewing but not sending the request.`,
 	Aliases: []string{"req", "r"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)

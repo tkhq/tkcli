@@ -32,7 +32,7 @@ func init() {
 
 var rawCmd = &cobra.Command{
 	Use:   "raw",
-	Short: "raw allows low-level (raw) requests to the Turnkey API",
+	Short: "Send low-level (raw) requests to the Turnkey API",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 
@@ -46,7 +46,7 @@ var rawCmd = &cobra.Command{
 
 var rawSignCmd = &cobra.Command{
 	Use:   "sign",
-	Short: "sign signs a raw payload",
+	Short: "Sign a raw payload",
 	Run: func(cmd *cobra.Command, args []string) {
 		payloadEncoding := models.V1PayloadEncoding(rawSignPayloadEncoding)
 
