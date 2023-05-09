@@ -39,6 +39,7 @@
           ${pkgs.gofumpt}/bin/gofumpt -w *.go ./cmd/*
           ${gci}/bin/gci write --skip-generated -s standard -s default -s "Prefix(github.com/tkhq)" .
           ${pkgs.golangci-lint}/bin/golangci-lint run ./...
+          ${pkgs.go}/bin/go build -o ../out/turnkey.linux-x86_64 # hack for local CLI go test
           ${pkgs.go}/bin/go test -v ./...
         '';
       in
