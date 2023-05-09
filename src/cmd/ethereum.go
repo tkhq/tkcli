@@ -23,7 +23,7 @@ func init() {
 
 var ethCmd = &cobra.Command{
 	Use:     "ethereum",
-	Short:   "ethereum performs actions related to Ethereum",
+	Short:   "Perform actions related to Ethereum",
 	Aliases: []string{"eth"},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
@@ -35,7 +35,7 @@ var ethCmd = &cobra.Command{
 
 var ethTxCmd = &cobra.Command{
 	Use:     "transaction",
-	Short:   "transaction provides signing and other actions for a transaction",
+	Short:   "Perform signing and other actions for a transaction",
 	Aliases: []string{"tx"},
 	Run: func(cmd *cobra.Command, args []string) {
 		transactionType := models.Immutableactivityv1TransactionTypeTRANSACTIONTYPEETHEREUM

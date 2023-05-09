@@ -14,12 +14,12 @@ func init() {
 
 var transactionTypesCmd = &cobra.Command{
 	Use:   "transaction-types",
-	Short: "transaction-types interacts with the available transaction types",
+	Short: "Interact with the available transaction types",
 }
 
 var transactionTypesListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list returns the available transaction types",
+	Short: "Return the available transaction types",
 	Run: func(cmd *cobra.Command, args []string) {
 		Output(models.TransactionTypes())
 	},

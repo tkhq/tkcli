@@ -14,12 +14,12 @@ func init() {
 
 var curvesCmd = &cobra.Command{
 	Use:   "curves",
-	Short: "curves interacts with the available curves",
+	Short: "Interact with the available curves",
 }
 
 var curvesListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list returns the available curve types",
+	Short: "Return the available curve types",
 	Run: func(cmd *cobra.Command, args []string) {
 		Output(models.Curves())
 	},

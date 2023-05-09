@@ -20,7 +20,7 @@ func init() {
 
 var activitiesCmd = &cobra.Command{
 	Use:   "activities",
-	Short: "activities interacts with the API activities",
+	Short: "Interact with the API activities",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
@@ -30,7 +30,7 @@ var activitiesCmd = &cobra.Command{
 
 var activitiesListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list returns the set of activities for an organization",
+	Short: "Return the set of activities for an organization",
 	Run: func(cmd *cobra.Command, args []string) {
 		activitiesFilter := make([]models.V1ActivityStatus, len(activitiesListStatus))
 
@@ -83,7 +83,7 @@ var activitiesListCmd = &cobra.Command{
 
 var activitiesGetCmd = &cobra.Command{
 	Use:   "get <activity-id>",
-	Short: "get returns the details and status of a particular activity",
+	Short: "Return the details and status of a particular activity",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		id := args[0]

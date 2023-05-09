@@ -20,7 +20,7 @@ func init() {
 
 var organizationsCmd = &cobra.Command{
 	Use:     "organizations",
-	Short:   "organizations interacts with organizations stored in Turnkey",
+	Short:   "Interact with organizations stored in Turnkey",
 	Aliases: []string{"o", "org", "organization"},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
@@ -31,7 +31,7 @@ var organizationsCmd = &cobra.Command{
 
 var organizationsCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "create a new organization",
+	Short: "Create a new organization",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if organizationsCreateName == "" {
 			OutputError(eris.New("name for private key must be specified"))

@@ -35,7 +35,7 @@ func init() {
 
 var privateKeysCmd = &cobra.Command{
 	Use:   "private-keys",
-	Short: "private-keys interacts with private keys",
+	Short: "Interact with private keys",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
@@ -46,7 +46,7 @@ var privateKeysCmd = &cobra.Command{
 
 var privateKeysCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "create a new private key",
+	Short: "Create a new private key",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(privateKeysCreateAddressFormats) < 1 {
 			OutputError(eris.New("must specify at least one address format"))
@@ -119,7 +119,7 @@ var privateKeysCreateCmd = &cobra.Command{
 
 var privateKeysListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list private keys for the organization",
+	Short: "Return private keys for the organization",
 	Run: func(cmd *cobra.Command, args []string) {
 		params := private_keys.NewPublicAPIServiceGetPrivateKeysParams()
 
