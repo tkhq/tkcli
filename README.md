@@ -148,11 +148,11 @@ to attempt to force one or more of us to tamper with the software.
 Create a new API key:
 
 ```sh
-$ turnkey gen --keys-folder ~/.config/turnkey/keys --key-name my-test-key --organization $ORGANIZATION_ID
+$ turnkey gen --organization $ORGANIZATION_ID
 {
-    "privateKeyFile": "/Users/rno/.config/turnkey/keys/my-test-key.private",
-    "publicKey": "033af10ddb38527ae59af0a598e505573972b1aa6f0e4a3ccb9c3c8e3f209ea1ef",
-    "publicKeyFile": "/Users/rno/.config/turnkey/keys/my-test-key.public"
+   "privateKeyFile": "/Users/andrew/Library/Application Support/turnkey/keys/default.private",
+   "publicKey": "0236f17892a4649d97b2e4a4ad3c22d815e4e77848a0b8e4a5b0956ae4d6be382e",
+   "publicKeyFile": "/Users/andrew/Library/Application Support/turnkey/keys/default.public"
 }
 ```
 
