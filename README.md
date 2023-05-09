@@ -159,7 +159,7 @@ $ turnkey gen --organization $ORGANIZATION_ID
 Make an API request (using the default API key created above):
 
 ```sh
-$ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}'
+$ turnkey request --path /api/v1/sign --body '{"payload": "hello from TKHQ"}'
 {
     "result": "I am a teapot"
 }
@@ -168,7 +168,7 @@ $ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body 
 If you need to sign a request with a different key, use the `--key-name` and/or `--keys-folder` flags:
 
 ```sh
-$ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --keys-folder /path/to/keys --key-name another-key
+$ turnkey request --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --keys-folder /path/to/keys --key-name another-key
 {
     "result": "I am a teapot"
 }
@@ -177,7 +177,7 @@ $ turnkey request --host coordinator-beta.turnkey.io --path /api/v1/sign --body 
 Create, but do not _post_ a request:
 
 ```sh
-$ turnkey request --no-post --host coordinator-beta.turnkey.io --path /api/v1/sign --body '{"payload": "hello from TKHQ"}'
+$ turnkey request --no-post --path /api/v1/sign --body '{"payload": "hello from TKHQ"}'
 {
     "curlCommand": "curl -X POST -d'{\"payload\": \"hello from TKHQ\"}' -H'X-Stamp: eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ' -v 'https://coordinator-beta.turnkey.io/api/v1/sign'",
     "message": "{\"payload\": \"hello from TKHQ\"}",
