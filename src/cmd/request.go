@@ -15,17 +15,16 @@ import (
 )
 
 var (
-	requestHost, requestPath, requestBody string
-	requestNoPost                         bool
+	requestPath, requestBody string
+	requestNoPost            bool
 )
 
 func init() {
-	makeRequest.Flags().StringVar(&requestHost, "host", "coordinator-beta.turnkey.io", "hostname of the API server")
-	makeRequest.Flags().StringVar(&requestPath, "path", "", "path for the API request")
 	makeRequest.Flags().StringVar(&requestBody, "body", "-", "body of the request, which can be '-' to indicate stdin or be prefixed with '@' to indicate a source filename")
 	makeRequest.Flags().BoolVar(&requestNoPost, "no-post", false, `generates the stamp and displays
 		the cURL command to use in order to perform this action,
 		but does NOT post the request to the API server`)
+	makeRequest.Flags().StringVar(&requestPath, "path", "", "path for the API request")
 
 	rootCmd.AddCommand(makeRequest)
 }
@@ -41,7 +40,7 @@ var makeRequest = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		protocol := "https"
-		if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(requestHost) {
+		if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(apiHost) {
 			protocol = "http"
 		}
 
@@ -64,11 +63,11 @@ var makeRequest = &cobra.Command{
 			Output(map[string]string{
 				"message":     string(body),
 				"stamp":       stamp,
-				"curlCommand": generateCurlCommand(requestHost, requestPath, body, stamp),
+				"curlCommand": generateCurlCommand(apiHost, requestPath, body, stamp),
 			})
 		}
 
-		response, err := post(cmd.Context(), protocol, requestHost, requestPath, body, stamp)
+		response, err := post(cmd.Context(), protocol, apiHost, requestPath, body, stamp)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to post request"))
 		}

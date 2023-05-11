@@ -4,6 +4,7 @@ import (
 	"github.com/rotisserie/eris"
 
 	"github.com/tkhq/go-sdk"
+	"github.com/tkhq/go-sdk/pkg/api/client"
 	"github.com/tkhq/go-sdk/pkg/apikey"
 )
 
@@ -52,11 +53,11 @@ func LoadKeypair(name string) {
 
 // LoadClient creates an API client from the preloaded API keypair.
 func LoadClient() {
-	var err error
+	transportConfig := client.DefaultTransportConfig().WithHost(apiHost)
 
-	APIClient, err = sdk.New(APIKeypair.Name)
-
-	if err != nil {
-		OutputError(eris.Wrap(err, "failed to create API client"))
+	APIClient = &sdk.Client{
+		Client:        client.NewHTTPClientWithConfig(nil, transportConfig),
+		Authenticator: &sdk.Authenticator{Key: APIKeypair},
+		APIKey:        APIKeypair,
 	}
 }
