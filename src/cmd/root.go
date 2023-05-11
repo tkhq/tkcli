@@ -21,6 +21,8 @@ var (
 	// KeyName is the name of the key with which we are operating.
 	KeyName string
 
+	apiHost string
+
 	// Organization is the organization ID to interact with.
 	Organization string
 )
@@ -28,6 +30,7 @@ var (
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootKeysDirectory, "keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
 	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
+	rootCmd.PersistentFlags().StringVar(&apiHost, "host", "coordinator-beta.turnkey.io", "hostname of the API server")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
 }
