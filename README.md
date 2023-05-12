@@ -213,6 +213,7 @@ make build-local
 Note that you may need to do the following:
 - `git submodule update --init --recursive`
 - Install `git-lfs`: https://git-lfs.com
+- Setup: `git lfs install`
 
 ## Release
 
