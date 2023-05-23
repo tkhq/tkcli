@@ -7,7 +7,7 @@ require (
 	github.com/rotisserie/eris v0.5.4
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
-	github.com/tkhq/go-sdk v0.0.0-20230509135234-a986215ad5b6
+	github.com/tkhq/go-sdk v0.0.0-20230523203708-7c199d0f6909
 	gopkg.in/yaml.v3 v3.0.1
 )
 
