@@ -58,7 +58,7 @@ make install
 #### Brew
 
 ```sh
-brew tap tkhq/tkcli
+brew tap tkhq/tap
 brew install turnkey
 ```
 
