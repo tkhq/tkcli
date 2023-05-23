@@ -8,6 +8,13 @@ We have multiple ways to install the CLI depending on your threat model.
 
 Please check our work to whatever extent appropriate for your use case.
 
+### Prerequisites
+
+The Makefile assumes the presence of a few basic tools:
+ - `make`
+ - `bash`
+ - `Docker`
+
 ### Blind Trust
 
 > :warning: Before you copy/paste, note that these are /low/ security options
@@ -42,6 +49,8 @@ all the time.
 ```sh
 git clone https://github.com/thkq/tkcli
 cd tkcli
+# Ensure installation of the toolchain git submodule
+`git submodule update --init --recursive`
 # This installs in  ~/.local/bin; make sure this is in your $PATH!
 make install
 ```
@@ -77,14 +86,16 @@ To follow these steps please install [git-lfs][gl] and [git-sig][gs].
 
 1. Clone repo
 
-    ```
+    ```sh
     git clone https://github.com/tkhq/tkcli
     cd tkcli
+    # Ensure installation of the toolchain git submodule
+    git submodule update --init --recursive
     ```
 
 2. Review binary signatures
 
-    ```
+    ```sh
     git sig verify
     ```
 
@@ -108,9 +119,11 @@ to attempt to force one or more of us to tamper with the software.
 
 1. Clone repo
 
-    ```
+    ```sh
     git clone https://github.com/tkhq/tkcli
     cd tkcli
+    # Ensure installation of the toolchain git submodule
+    git submodule update --init --recursive
     ```
 
 2. Review source
@@ -120,7 +133,7 @@ to attempt to force one or more of us to tamper with the software.
 
 3. Reproduce binaries
 
-    ```
+    ```sh
     make reproduce
     ```
 
@@ -128,7 +141,7 @@ to attempt to force one or more of us to tamper with the software.
 
 4. Install binaries
 
-    ```
+    ```sh
     make install
     ```
 
@@ -138,7 +151,9 @@ to attempt to force one or more of us to tamper with the software.
     binaries we would welcome you signing them and submitting your signature so
     we have public evidence third parties are checking our work.
 
-    ```
+    **NOTE**: this additionally uses Github's official CLI tool, [gh](https://github.com/cli/cli).
+
+    ```sh
     gh repo fork
     git add dist/*
     git commit -m "add signature"
@@ -192,13 +207,14 @@ $ turnkey request --no-post --path /api/v1/sign --body '{"payload": "hello from 
 ## Building
 
 ### Build for all platforms
-```
+
+```sh
 make
 ```
 
 ### Build for one platform
 
-```
+```sh
 make out/turnkey.linux-amd64
 ```
 
@@ -206,7 +222,7 @@ make out/turnkey.linux-amd64
 
 The following will drop a binary in `build/turnkey`:
 
-```
+```sh
 make build-local
 ```
 
