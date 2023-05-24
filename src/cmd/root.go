@@ -2,8 +2,13 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
+	"io/fs"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/rotisserie/eris"
@@ -39,6 +44,11 @@ func basicSetup(cmd *cobra.Command) {
 	// No non-JSON-formatted output should flow over stdin; thus change
 	// output for usage messages to stderr.
 	cmd.SetOut(os.Stderr)
+
+	err := detectAndMoveDeprecatedDefaultKeysDirOnMacOs()
+	if err != nil {
+		OutputError(err)
+	}
 
 	if keyStore == nil {
 		localKeyStore := local.New()
@@ -95,4 +105,93 @@ func ParameterToString(param string) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+func detectAndMoveDeprecatedDefaultKeysDirOnMacOs() error {
+	if runtime.GOOS != "darwin" {
+		return nil
+	}
+
+	deprecatedDir := local.DeprecatedDefaultKeysDir()
+	if deprecatedDir == "" {
+		return nil
+	}
+
+	newDir := local.DefaultKeysDir()
+	fmt.Printf("Legacy keys directory detected; will migrate keys to new location\n- Legacy: %s\n- New: %s\n\n", deprecatedDir, newDir)
+
+	err := filepath.WalkDir(deprecatedDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip directories
+		if d.IsDir() {
+			return nil
+		}
+
+		relativeFilePath, err := filepath.Rel(deprecatedDir, path)
+		if err != nil {
+			return err
+		}
+
+		destFilePath := filepath.Join(newDir, relativeFilePath)
+
+		err = SafeRename(path, destFilePath)
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Moved `%s` to %s\n", relativeFilePath, destFilePath)
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = os.RemoveAll(deprecatedDir)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("")
+	fmt.Println("Successfully migrated legacy keys directory.")
+	fmt.Println("")
+
+	return nil
+}
+
+// Like `os.Rename(...)`, but does not allow overwriting
+func SafeRename(oldPath string, newPath string) error {
+	exists, err := checkExists(newPath)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return eris.Errorf("target path already exists: %s", newPath)
+	}
+
+	err = os.Rename(oldPath, newPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if errors.Is(err, fs.ErrNotExist) {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
