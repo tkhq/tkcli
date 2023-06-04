@@ -31,6 +31,10 @@ all the time.
 
 | Version | OS    | Architecture | Download                                                                                      |
 |---------|-------|--------------|-----------------------------------------------------------------------------------------------|
+| v1.0.2  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.linux-x86_64)    |
+| v1.0.2  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.linux-aarch64)  |
+| v1.0.2  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.darwin-x86_64)  |
+| v1.0.2  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.darwin-aarch64)|
 | v1.0.1  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.linux-x86_64)    |
 | v1.0.1  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.linux-aarch64)  |
 | v1.0.1  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.darwin-x86_64)  |
@@ -239,7 +243,7 @@ To release a new version of the CLI:
 $ make VERSION=vX.Y.Z dist
 ```
 
-This will produce a new set of artifact in the `dist/` directory, along with a new manifest.
+This will produce a new set of artifacts in the `dist/` directory, along with a new manifest.
 
 Open a pull request, and once you have enough approvals, tag the release:
 
