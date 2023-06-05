@@ -268,7 +268,7 @@ Once enough signatures have been collected, the following command should succeed
 $ git sig verify --threshold 2
 ```
 
-Finally, create a new release with a changelog.
+Finally, post the new release on Github with a changelog and update the Homebrew tap.
 
 ## Trust
 
