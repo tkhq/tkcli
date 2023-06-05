@@ -268,6 +268,8 @@ Once enough signatures have been collected, the following command should succeed
 $ git sig verify --threshold 2
 ```
 
+Finally, create a new release with a changelog.
+
 ## Trust
 
 ### Process
