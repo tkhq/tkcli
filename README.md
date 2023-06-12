@@ -62,8 +62,7 @@ make install
 #### Brew
 
 ```sh
-brew tap tkhq/tap
-brew install turnkey
+brew install tkhq/tap/turnkey
 ```
 
 ### Moderate Trust
