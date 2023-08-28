@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tkhq/tkcli/src/cmd"
+	"github.com/tkhq/tkcli/src/cmd/turnkey/pkg"
 )
 
 func main() {
-	if err := cmd.Execute(); err != nil {
+	if err := pkg.Execute(); err != nil {
 		enc := json.NewEncoder(os.Stderr)
 		enc.SetIndent("", "   ")
 

@@ -34,7 +34,7 @@ func RunCliWithArgs(t *testing.T, args []string) (string, error) {
 		t.Fatal(err)
 	}
 
-	cmd := exec.Command(path.Join(currentDir, "../out/", TurnkeyBinaryName), args...)
+	cmd := exec.Command(path.Join(currentDir, "../../../out/", TurnkeyBinaryName), args...)
 	output, err := cmd.CombinedOutput()
 
 	return string(output), err

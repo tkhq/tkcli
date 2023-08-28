@@ -31,7 +31,7 @@ lint:
 	$(call toolchain,' \
 		GOCACHE=/home/build/$(CACHE_DIR) \
 		GOPATH=/home/build/$(CACHE_DIR) \
-		env -C $(SRC_DIR) go vet -v ./... \
+		env -C $(SRC_DIR) go vet -v ./cmd/turnkey/... \
 	')
 
 .PHONY: test
@@ -39,7 +39,7 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 	$(call toolchain,' \
 		GOCACHE=/home/build/$(CACHE_DIR) \
 		GOPATH=/home/build/$(CACHE_DIR) \
-		env -C $(SRC_DIR) go test -v ./... \
+		env -C $(SRC_DIR) go test -v ./cmd/turnkey/... \
 	')
 
 .PHONY: install
@@ -84,11 +84,11 @@ $(OUT_DIR)/turnkey.%:
 		env -C $(SRC_DIR) \
 		go build \
 			-trimpath \
-			-o /home/build/$@ . \
+			-o /home/build/$@ ./cmd/turnkey/ \
 	')
 
 .PHONY: build-local
 build-local:
-	pushd $(shell git rev-parse --show-toplevel)/src; \
+	pushd $(shell git rev-parse --show-toplevel)/src/cmd/turnkey; \
 	go build -o ../$(LOCAL_BUILD_DIR)/turnkey; \
 	popd;
