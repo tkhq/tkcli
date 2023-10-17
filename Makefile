@@ -1,5 +1,7 @@
 include $(PWD)/src/toolchain/Makefile
 
+VERSION ?= $(shell git describe --tag --always --dirty --match 'v[0-9]*' --abbrev=8)
+
 KEYS := \
 	6B61ECD76088748C70590D55E90A401336C8AAA9 \
 	A8864A8303994E3A18ACD1760CAB4418C834B102 \
@@ -16,7 +18,6 @@ LOCAL_BUILD_DIR := 'build'
 .PHONY: default
 default: \
 	toolchain \
-	version \
 	$(DEFAULT_GOAL) \
 	$(patsubst %,$(KEY_DIR)/%.asc,$(KEYS)) \
 	$(OUT_DIR)/turnkey.linux-x86_64 \
@@ -42,12 +43,6 @@ test: $(OUT_DIR)/turnkey.linux-x86_64
 		GOPATH=/home/build/$(CACHE_DIR) \
 		env -C $(SRC_DIR) go test -v ./cmd/turnkey/... \
 	')
-
-.PHONY: version
-version:
-	mkdir -p src/internal/version/data
-	git describe --tag --always --dirty --match v[0-9]\* --abbrev=8 > src/internal/version/data/version
-	git rev-parse HEAD > src/internal/version/data/commit
 
 .PHONY: install
 install: default
@@ -90,8 +85,10 @@ $(OUT_DIR)/turnkey.%:
 		CGO_ENABLED=0 \
 		env -C $(SRC_DIR) \
 		go build \
+			-ldflags "-X github.com/tkhq/tkcli/src/cmd/turnkey/pkg.versionString=$(VERSION)" \
 			-trimpath \
-			-o /home/build/$@ ./cmd/turnkey/ \
+			-o /home/build/$@ \
+			./cmd/turnkey/ \
 	')
 
 .PHONY: build-local
