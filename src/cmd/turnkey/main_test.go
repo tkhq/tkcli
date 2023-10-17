@@ -133,7 +133,7 @@ func TestApproveRequest(t *testing.T) {
 
 	assert.Contains(t, parsedOut["curlCommand"], "curl -X POST -d'{\"some\": \"field\"}'")
 	assert.Contains(t, parsedOut["curlCommand"], fmt.Sprintf("-H'X-Stamp: %s'", stamp))
-	assert.Contains(t, parsedOut["curlCommand"], "https://coordinator-beta.turnkey.io/some/endpoint")
+	assert.Contains(t, parsedOut["curlCommand"], "https://api.turnkey.com/some/endpoint")
 }
 
 func ensureValidStamp(t *testing.T, stamp string, expectedPublicKey string) {

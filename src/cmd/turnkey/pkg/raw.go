@@ -48,9 +48,9 @@ var rawSignCmd = &cobra.Command{
 	Use:   "sign",
 	Short: "Sign a raw payload",
 	Run: func(cmd *cobra.Command, args []string) {
-		payloadEncoding := models.V1PayloadEncoding(rawSignPayloadEncoding)
+		payloadEncoding := models.Immutableactivityv1PayloadEncoding(rawSignPayloadEncoding)
 
-		hashFunction := models.V1HashFunction(rawSignHashFunction)
+		hashFunction := models.Immutableactivityv1HashFunction(rawSignHashFunction)
 
 		payload, err := ParameterToString(rawSignPayload)
 		if err != nil {

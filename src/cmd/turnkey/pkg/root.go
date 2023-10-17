@@ -35,7 +35,7 @@ var (
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootKeysDirectory, "keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
 	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
-	rootCmd.PersistentFlags().StringVar(&apiHost, "host", "coordinator-beta.turnkey.io", "hostname of the API server")
+	rootCmd.PersistentFlags().StringVar(&apiHost, "host", "api.turnkey.com", "hostname of the API server")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
 }
@@ -147,7 +147,6 @@ func detectAndMoveDeprecatedDefaultKeysDirOnMacOs() error {
 
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}

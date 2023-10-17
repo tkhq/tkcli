@@ -1,3 +1,6 @@
+/src/internal/version/data/
+go.work.sum
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -25,3 +28,4 @@ build/
 /cache
 /out
 .*
+

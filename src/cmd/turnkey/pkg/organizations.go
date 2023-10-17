@@ -38,18 +38,18 @@ var organizationsCreateCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		curve := models.Immutableactivityv1Curve(privateKeysCreateCurve)
+		curve := models.Immutablecommonv1Curve(privateKeysCreateCurve)
 
-		addressFormats := make([]models.Immutableactivityv1AddressFormat, len(privateKeysCreateAddressFormats))
+		addressFormats := make([]models.Immutablecommonv1AddressFormat, len(privateKeysCreateAddressFormats))
 
 		for n, f := range privateKeysCreateAddressFormats {
-			addressFormats[n] = models.Immutableactivityv1AddressFormat(f)
+			addressFormats[n] = models.Immutablecommonv1AddressFormat(f)
 		}
 
 		params := private_keys.NewPublicAPIServiceCreatePrivateKeysParams()
 		params.SetBody(&models.V1CreatePrivateKeysRequest{
 			OrganizationID: &Organization,
-			Parameters: &models.V1CreatePrivateKeysIntent{
+			Parameters: &models.V1CreatePrivateKeysIntentV2{
 				PrivateKeys: []*models.V1PrivateKeyParams{
 					{
 						AddressFormats: addressFormats,

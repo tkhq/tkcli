@@ -38,7 +38,7 @@ var ethTxCmd = &cobra.Command{
 	Short:   "Perform signing and other actions for a transaction",
 	Aliases: []string{"tx"},
 	Run: func(cmd *cobra.Command, args []string) {
-		transactionType := models.Immutableactivityv1TransactionTypeTRANSACTIONTYPEETHEREUM
+		transactionType := models.V1TransactionTypeTRANSACTIONTYPEETHEREUM
 		activityType := string(models.V1ActivityTypeACTIVITYTYPESIGNTRANSACTION)
 
 		payload, err := ParameterToString(ethTxPayload)
