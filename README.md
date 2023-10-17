@@ -238,16 +238,34 @@ Note that you may need to do the following:
 
 To release a new version of the CLI:
 
+Determine the next version:
+
 ```sh
-$ make VERSION=vX.Y.Z dist
+git tag | sort -n | tail -n5
 ```
 
-This will produce a new set of artifact in the `dist/` directory, along with a new manifest.
+Export your new version:
+
+```sh
+export VERSION=vX.Y.Z
+```
+
+Build the release artifacts:
+
+```sh
+$ make VERSION=$VERSION dist
+```
+
+Cut a new release branch:
+
+```sh
+$ git branch -b release-$VERSION
+```
 
 Open a pull request, and once you have enough approvals, tag the release:
 
 ```sh
-$ git tag -sa vX.Y.Z -m "New release: X.Y.Z"
+$ git tag -sa $VERSION -m "New release: $VERSION"
 ```
 
 Finally, update the download table above, with links pointing to the new binaries.
