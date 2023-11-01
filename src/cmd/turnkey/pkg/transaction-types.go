@@ -21,6 +21,6 @@ var transactionTypesListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Return the available transaction types",
 	Run: func(cmd *cobra.Command, args []string) {
-		Output(models.TransactionTypes())
+		Output(models.TransactionTypeEnum)
 	},
 }
