@@ -25,9 +25,9 @@ func init() {
 
 	walletAccountCreateCmd.Flags().StringVar(&walletName, "name", "", "name of wallet used for account creation")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountAddressFormat, "address-format", "", "address format for account. For a list of formats, use 'turnkey address-formats list'.")
-	walletAccountCreateCmd.Flags().StringVar(&walletAccountCurve, "curve", "", "curve for account. For a list of curves, use 'turnkey curves list'. If unset, will predicate based on address format.")
+	walletAccountCreateCmd.Flags().StringVar(&walletAccountCurve, "curve", "", "curve for account. For a list of curves, use 'turnkey curves list'. If unset, will predict based on address format.")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountPathFormat, "path-format", string(models.PathFormatBip32), "the derivation path format for account.")
-	walletAccountCreateCmd.Flags().StringVar(&walletAccountPath, "path", "", "the derivation path for account. If unset, will predicate next path.")
+	walletAccountCreateCmd.Flags().StringVar(&walletAccountPath, "path", "", "the derivation path for account. If unset, will predict next path.")
 
 	walletAccountsCmd.AddCommand(walletAccountsListCmd)
 	walletAccountsCmd.AddCommand(walletAccountCreateCmd)
