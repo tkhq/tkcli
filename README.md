@@ -257,19 +257,19 @@ export VERSION=vX.Y.Z
 Build the release artifacts:
 
 ```sh
-$ make VERSION=$VERSION dist
+make VERSION=$VERSION dist
 ```
 
 Cut a new release branch:
 
 ```sh
-$ git branch -b release-$VERSION
+git checkout -b release-$VERSION
 ```
 
 Open a pull request, and once you have enough approvals, tag the release:
 
 ```sh
-$ git tag -sa $VERSION -m "New release: $VERSION"
+git tag -sa $VERSION -m "New release: $VERSION"
 ```
 
 Finally, update the download table above, with links pointing to the new binaries.
@@ -277,16 +277,16 @@ Finally, update the download table above, with links pointing to the new binarie
 Once the pull request is merged, ask your reviewer(s) to attest with `git sig`:
 
 ```sh
-$ make reproduce
+make reproduce
 
 # If the reproduce command succeeds:
-$ git sig add
+git sig add
 ```
 
 Once enough signatures have been collected, the following command should succeed:
 
 ```sh
-$ git sig verify --threshold 2
+git sig verify --threshold 2
 ```
 
 Finally, post the new release on Github with a changelog and update the Homebrew tap.
