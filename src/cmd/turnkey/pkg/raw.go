@@ -4,24 +4,24 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
-	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
+	"github.com/tkhq/go-sdk/pkg/api/client/signers"
 	"github.com/tkhq/go-sdk/pkg/api/models"
 	"github.com/tkhq/go-sdk/pkg/util"
 )
 
 var (
+	rawSigner              string
 	rawSignPayloadEncoding string
 	rawSignHashFunction    string
 	rawSignPayload         string
 )
 
 func init() {
-	rawCmd.Flags().StringVar(&signingKeyID, "private-key", "", "name or ID of the private signing key")
-
+	rawSignCmd.Flags().StringVarP(&rawSigner, "signer", "s", "", "wallet account address, private key address, or private key ID")
 	rawSignCmd.Flags().StringVar(&rawSignPayloadEncoding, "payload-encoding",
-		string(models.V1PayloadEncodingPAYLOADENCODINGTEXTUTF8), "encoding of payload")
+		string(models.PayloadEncodingTextUTF8), "encoding of payload")
 	rawSignCmd.Flags().StringVar(&rawSignHashFunction, "hash-function",
-		string(models.V1HashFunctionHASHFUNCTIONSHA256), "hash function")
+		string(models.HashFunctionSha256), "hash function")
 	rawSignCmd.Flags().StringVar(&rawSignPayload, "payload",
 		"", "payload to be signed")
 
@@ -35,11 +35,7 @@ var rawCmd = &cobra.Command{
 	Short: "Send low-level (raw) requests to the Turnkey API",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
-
 		LoadKeypair("")
-
-		LoadSigningKey("")
-
 		LoadClient()
 	},
 }
@@ -48,24 +44,23 @@ var rawSignCmd = &cobra.Command{
 	Use:   "sign",
 	Short: "Sign a raw payload",
 	Run: func(cmd *cobra.Command, args []string) {
-		payloadEncoding := models.Immutableactivityv1PayloadEncoding(rawSignPayloadEncoding)
-
-		hashFunction := models.Immutableactivityv1HashFunction(rawSignHashFunction)
+		payloadEncoding := models.PayloadEncoding(rawSignPayloadEncoding)
+		hashFunction := models.HashFunction(rawSignHashFunction)
 
 		payload, err := ParameterToString(rawSignPayload)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to read payload"))
 		}
 
-		activityType := string(models.V1ActivityTypeACTIVITYTYPESIGNRAWPAYLOAD)
+		activityType := string(models.ActivityTypeSignRawPayload)
 
-		params := private_keys.NewPublicAPIServiceSignRawPayloadParams().WithBody(
-			&models.V1SignRawPayloadRequest{
+		params := signers.NewSignRawPayloadParams().WithBody(
+			&models.SignRawPayloadRequest{
 				OrganizationID: &Organization,
-				Parameters: &models.V1SignRawPayloadIntent{
+				Parameters: &models.SignRawPayloadIntentV2{
+					SignWith:     &rawSigner,
 					Encoding:     &payloadEncoding,
 					HashFunction: &hashFunction,
-					PrivateKeyID: &signingKeyID,
 					Payload:      &payload,
 				},
 				TimestampMs: util.RequestTimestamp(),
@@ -73,13 +68,13 @@ var rawSignCmd = &cobra.Command{
 			},
 		)
 
-		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceSignRawPayload(params, APIClient.Authenticator)
+		resp, err := APIClient.V0().Signers.SignRawPayload(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(eris.Wrap(err, "request failed"))
 		}
 
 		if !resp.IsSuccess() {
-			OutputError(eris.Errorf("failed to create private key: %s", resp.Error()))
+			OutputError(eris.Errorf("failed to sign raw payload: %s", resp.Error()))
 		}
 
 		Output(resp.Payload)

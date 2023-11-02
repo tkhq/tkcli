@@ -4,18 +4,20 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
-	"github.com/tkhq/go-sdk/pkg/api/client/private_keys"
+	"github.com/tkhq/go-sdk/pkg/api/client/signers"
 	"github.com/tkhq/go-sdk/pkg/api/models"
 	"github.com/tkhq/go-sdk/pkg/util"
 )
 
-var ethTxPayload string
+var (
+	ethTxSigner  string
+	ethTxPayload string
+)
 
 func init() {
-	ethCmd.PersistentFlags().StringVarP(&signingKeyID, "private-key", "s", "", "name or ID of the private signing key")
-
 	rootCmd.AddCommand(ethCmd)
 
+	ethTxCmd.Flags().StringVarP(&ethTxSigner, "signer", "s", "", "wallet account address, private key address, or private key ID")
 	ethTxCmd.Flags().StringVar(&ethTxPayload, "payload", "", "payload of the transaction")
 
 	ethCmd.AddCommand(ethTxCmd)
@@ -28,7 +30,6 @@ var ethCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
-		LoadSigningKey("")
 		LoadClient()
 	},
 }
@@ -38,8 +39,8 @@ var ethTxCmd = &cobra.Command{
 	Short:   "Perform signing and other actions for a transaction",
 	Aliases: []string{"tx"},
 	Run: func(cmd *cobra.Command, args []string) {
-		transactionType := models.V1TransactionTypeTRANSACTIONTYPEETHEREUM
-		activityType := string(models.V1ActivityTypeACTIVITYTYPESIGNTRANSACTION)
+		transactionType := models.TransactionTypeEthereum
+		activityType := string(models.ActivityTypeSignTransaction)
 
 		payload, err := ParameterToString(ethTxPayload)
 		if err != nil {
@@ -52,11 +53,11 @@ var ethTxCmd = &cobra.Command{
 			OutputError(eris.New("payload cannot be empty"))
 		}
 
-		params := private_keys.NewPublicAPIServiceSignTransactionParams().WithBody(
-			&models.V1SignTransactionRequest{
+		params := signers.NewSignTransactionParams().WithBody(
+			&models.SignTransactionRequest{
 				OrganizationID: &Organization,
-				Parameters: &models.V1SignTransactionIntent{
-					PrivateKeyID:        &signingKeyID,
+				Parameters: &models.SignTransactionIntentV2{
+					SignWith:            &ethTxSigner,
 					Type:                &transactionType,
 					UnsignedTransaction: &payload,
 				},
@@ -65,7 +66,7 @@ var ethTxCmd = &cobra.Command{
 			},
 		)
 
-		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceSignTransaction(params, APIClient.Authenticator)
+		resp, err := APIClient.V0().Signers.SignTransaction(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(eris.Wrap(err, "request failed"))
 		}

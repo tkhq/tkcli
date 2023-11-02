@@ -32,47 +32,46 @@ var activitiesListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Return the set of activities for an organization",
 	Run: func(cmd *cobra.Command, args []string) {
-		activitiesFilter := make([]models.V1ActivityStatus, len(activitiesListStatus))
+		activitiesFilter := make([]models.ActivityStatus, len(activitiesListStatus))
 
 		for i, s := range activitiesListStatus {
 			if s == Help {
-				Output(models.ActivityStatuses())
+				Output(models.ActivityStatusEnum)
 
 				return
 			}
 
 			if s == "all" {
-				activitiesFilter = models.ActivityStatuses()
-
+				activitiesFilter = models.ActivityStatusEnum
 				break
 			}
 
 			switch s {
 			case "created":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSCREATED
+				activitiesFilter[i] = models.ActivityStatusCreated
 			case "pending":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSPENDING
+				activitiesFilter[i] = models.ActivityStatusPending
 			case "completed":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSCOMPLETED
+				activitiesFilter[i] = models.ActivityStatusCompleted
 			case "failed":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSFAILED
+				activitiesFilter[i] = models.ActivityStatusFailed
 			case "consensus":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSCONSENSUSNEEDED
+				activitiesFilter[i] = models.ActivityStatusConsensusNeeded
 			case "consensus_needed":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSCONSENSUSNEEDED
+				activitiesFilter[i] = models.ActivityStatusConsensusNeeded
 			case "rejected":
-				activitiesFilter[i] = models.V1ActivityStatusACTIVITYSTATUSREJECTED
+				activitiesFilter[i] = models.ActivityStatusRejected
 			default:
-				activitiesFilter[i] = models.V1ActivityStatus(s)
+				activitiesFilter[i] = models.ActivityStatus(s)
 			}
 		}
 
-		params := activities.NewPublicAPIServiceGetActivitiesParams().WithDefaults().WithBody(&models.V1GetActivitiesRequest{
+		params := activities.NewGetActivitiesParams().WithDefaults().WithBody(&models.GetActivitiesRequest{
 			FilterByStatus: activitiesFilter,
 			OrganizationID: &Organization,
 		})
 
-		res, err := APIClient.V0().Activities.PublicAPIServiceGetActivities(params, APIClient.Authenticator)
+		res, err := APIClient.V0().Activities.GetActivities(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(err)
 		}
@@ -88,12 +87,12 @@ var activitiesGetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		id := args[0]
 
-		params := activities.NewPublicAPIServiceGetActivityParams().WithDefaults().WithBody(&models.V1GetActivityRequest{
+		params := activities.NewGetActivityParams().WithDefaults().WithBody(&models.GetActivityRequest{
 			ActivityID:     &id,
 			OrganizationID: &Organization,
 		})
 
-		res, err := APIClient.V0().Activities.PublicAPIServiceGetActivity(params, APIClient.Authenticator)
+		res, err := APIClient.V0().Activities.GetActivity(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(err)
 		}

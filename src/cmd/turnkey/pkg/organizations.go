@@ -38,19 +38,19 @@ var organizationsCreateCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		curve := models.Immutablecommonv1Curve(privateKeysCreateCurve)
+		curve := models.Curve(privateKeysCreateCurve)
 
-		addressFormats := make([]models.Immutablecommonv1AddressFormat, len(privateKeysCreateAddressFormats))
+		addressFormats := make([]models.AddressFormat, len(privateKeysCreateAddressFormats))
 
 		for n, f := range privateKeysCreateAddressFormats {
-			addressFormats[n] = models.Immutablecommonv1AddressFormat(f)
+			addressFormats[n] = models.AddressFormat(f)
 		}
 
-		params := private_keys.NewPublicAPIServiceCreatePrivateKeysParams()
-		params.SetBody(&models.V1CreatePrivateKeysRequest{
+		params := private_keys.NewCreatePrivateKeysParams()
+		params.SetBody(&models.CreatePrivateKeysRequest{
 			OrganizationID: &Organization,
-			Parameters: &models.V1CreatePrivateKeysIntentV2{
-				PrivateKeys: []*models.V1PrivateKeyParams{
+			Parameters: &models.CreatePrivateKeysIntentV2{
+				PrivateKeys: []*models.PrivateKeyParams{
 					{
 						AddressFormats: addressFormats,
 						Curve:          &curve,
@@ -61,7 +61,7 @@ var organizationsCreateCmd = &cobra.Command{
 			},
 		})
 
-		resp, err := APIClient.V0().PrivateKeys.PublicAPIServiceCreatePrivateKeys(params, APIClient.Authenticator)
+		resp, err := APIClient.V0().PrivateKeys.CreatePrivateKeys(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(eris.Wrap(err, "request failed"))
 		}

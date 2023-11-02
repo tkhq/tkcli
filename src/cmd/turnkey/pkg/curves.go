@@ -21,6 +21,6 @@ var curvesListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Return the available curve types",
 	Run: func(cmd *cobra.Command, args []string) {
-		Output(models.Curves())
+		Output(models.CurveEnum)
 	},
 }

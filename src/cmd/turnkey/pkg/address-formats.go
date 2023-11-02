@@ -21,6 +21,6 @@ var addressFormatsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Return the available key formats",
 	Run: func(cmd *cobra.Command, args []string) {
-		Output(models.AddressFormats())
+		Output(models.AddressFormatEnum)
 	},
 }
