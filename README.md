@@ -31,6 +31,10 @@ all the time.
 
 | Version | OS    | Architecture | Download                                                                                      |
 |---------|-------|--------------|-----------------------------------------------------------------------------------------------|
+| v1.0.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-x86_64)    |
+| v1.0.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-aarch64)  |
+| v1.0.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-x86_64)  |
+| v1.0.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-aarch64)|
 | v1.0.3  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.linux-x86_64)    |
 | v1.0.3  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.linux-aarch64)  |
 | v1.0.3  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.darwin-x86_64)  |
@@ -257,19 +261,19 @@ export VERSION=vX.Y.Z
 Build the release artifacts:
 
 ```sh
-$ make VERSION=$VERSION dist
+make VERSION=$VERSION dist
 ```
 
 Cut a new release branch:
 
 ```sh
-$ git branch -b release-$VERSION
+git checkout -b release-$VERSION
 ```
 
 Open a pull request, and once you have enough approvals, tag the release:
 
 ```sh
-$ git tag -sa $VERSION -m "New release: $VERSION"
+git tag -sa $VERSION -m "New release: $VERSION"
 ```
 
 Finally, update the download table above, with links pointing to the new binaries.
@@ -277,16 +281,16 @@ Finally, update the download table above, with links pointing to the new binarie
 Once the pull request is merged, ask your reviewer(s) to attest with `git sig`:
 
 ```sh
-$ make reproduce
+make reproduce
 
 # If the reproduce command succeeds:
-$ git sig add
+git sig add
 ```
 
 Once enough signatures have been collected, the following command should succeed:
 
 ```sh
-$ git sig verify --threshold 2
+git sig verify --threshold 2
 ```
 
 Finally, post the new release on Github with a changelog and update the Homebrew tap.
