@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	walletName                 string
+	walletNameOrID             string
 	walletAccountAddressFormat string
 	walletAccountCurve         string
 	walletAccountPathFormat    string
@@ -19,11 +19,11 @@ var (
 )
 
 func init() {
-	walletCreateCmd.Flags().StringVar(&walletName, "name", "", "name to be applied to the wallet")
+	walletCreateCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet")
 
-	walletAccountsListCmd.Flags().StringVar(&walletName, "name", "", "name of wallet used to fetch accounts")
+	walletAccountsListCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used to fetch accounts")
 
-	walletAccountCreateCmd.Flags().StringVar(&walletName, "name", "", "name of wallet used for account creation")
+	walletAccountCreateCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used for account creation")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountAddressFormat, "address-format", "", "address format for account. For a list of formats, use 'turnkey address-formats list'.")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountCurve, "curve", "", "curve for account. For a list of curves, use 'turnkey curves list'. If unset, will predict based on address format.")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountPathFormat, "path-format", string(models.PathFormatBip32), "the derivation path format for account.")
@@ -53,7 +53,7 @@ var walletCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if walletName == "" {
+		if walletNameOrID == "" {
 			OutputError(eris.New("name for wallet must be specified"))
 		}
 	},
@@ -64,7 +64,7 @@ var walletCreateCmd = &cobra.Command{
 		params.SetBody(&models.CreateWalletRequest{
 			OrganizationID: &Organization,
 			Parameters: &models.CreateWalletIntent{
-				WalletName: &walletName,
+				WalletName: &walletNameOrID,
 				Accounts:   []*models.WalletAccountParams{},
 			},
 			TimestampMs: util.RequestTimestamp(),
@@ -125,8 +125,8 @@ var walletAccountCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new account for a wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if walletName == "" {
-			OutputError(eris.New("name for wallet must be specified"))
+		if walletNameOrID == "" {
+			OutputError(eris.New("name or id for wallet must be specified"))
 		}
 
 		if walletAccountAddressFormat == "" {
@@ -134,7 +134,7 @@ var walletAccountCreateCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		wallet, err := lookupWalletByName(walletName)
+		wallet, err := lookupWallet(walletNameOrID)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to lookup wallet"))
 		}
@@ -222,12 +222,12 @@ var walletAccountsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Return accounts for the wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if walletName == "" {
-			OutputError(eris.New("name for wallet must be specified"))
+		if walletNameOrID == "" {
+			OutputError(eris.New("name or ID for wallet must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		wallet, err := lookupWalletByName(walletName)
+		wallet, err := lookupWallet(walletNameOrID)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to lookup wallet"))
 		}
@@ -256,7 +256,7 @@ var walletAccountsListCmd = &cobra.Command{
 	},
 }
 
-func lookupWalletByName(name string) (*models.Wallet, error) {
+func lookupWallet(nameOrID string) (*models.Wallet, error) {
 	params := wallets.NewGetWalletsParams()
 
 	params.SetBody(&models.GetWalletsRequest{
@@ -277,12 +277,12 @@ func lookupWalletByName(name string) (*models.Wallet, error) {
 	}
 
 	for _, wallet := range resp.Payload.Wallets {
-		if *wallet.WalletName == name {
+		if *wallet.WalletName == nameOrID || *wallet.WalletID == nameOrID {
 			return wallet, nil
 		}
 	}
 
-	return nil, eris.Errorf("wallet name %q not found in list of wallets", name)
+	return nil, eris.Errorf("wallet %q not found in list of wallets", nameOrID)
 }
 
 func listAccountsForWallet(walletID *string) ([]*models.WalletAccount, error) {
