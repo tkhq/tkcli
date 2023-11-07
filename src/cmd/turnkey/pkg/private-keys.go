@@ -74,7 +74,7 @@ var privateKeysCreateCmd = &cobra.Command{
 			addressFormats[n] = models.AddressFormat(f)
 		}
 
-		activity := string(models.ActivityTypeCreatePrivateKeys)
+		activity := string(models.ActivityTypeCreatePrivateKeysV2)
 
 		params := private_keys.NewCreatePrivateKeysParams()
 		params.SetBody(&models.CreatePrivateKeysRequest{
