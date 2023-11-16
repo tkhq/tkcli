@@ -52,7 +52,7 @@ var rawSignCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to read payload"))
 		}
 
-		activityType := string(models.ActivityTypeSignRawPayload)
+		activityType := string(models.ActivityTypeSignRawPayloadV2)
 
 		params := signers.NewSignRawPayloadParams().WithBody(
 			&models.SignRawPayloadRequest{
