@@ -158,6 +158,8 @@ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXl
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/tkhq/go-sdk v0.0.0-20231101200934-5338f37bc020 h1:XaFlAdJNvIWTGVGkt0BbqZ7kh6Ky7AdL9fnw1q0jrzk=
 github.com/tkhq/go-sdk v0.0.0-20231101200934-5338f37bc020/go.mod h1:P0yocuYTkq0h2OMtgcOEDp9qnys5aWUev37qVobbTw0=
+github.com/tkhq/go-sdk v0.0.0-20240301183822-fe442863d54b h1:0mjnsxI6GQ+3JqP1jDLwtiOvSc6Hb7Vw6SrlbB8VX9k=
+github.com/tkhq/go-sdk v0.0.0-20240301183822-fe442863d54b/go.mod h1:P0yocuYTkq0h2OMtgcOEDp9qnys5aWUev37qVobbTw0=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.0.2/go.mod h1:1WAq6h33pAW+iRreB34OORO2Nf7qel3VV3fjBj+hCSs=
 github.com/xdg-go/scram v1.1.1/go.mod h1:RaEWvsqvNKKvBPvcKeFjrG2cJqOkHTiyTpzz23ni57g=
