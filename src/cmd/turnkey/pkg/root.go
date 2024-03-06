@@ -182,6 +182,25 @@ func SafeRename(oldPath string, newPath string) error {
 	return nil
 }
 
+// ReadFile reads the content from the given file path and trims whitespace.
+func ReadFile(path string) (string, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return "", eris.Wrap(err, "error reading file")
+	}
+
+	return strings.TrimSpace(string(content)), nil
+}
+
+// WriteFile writes the given content to a file at the specified path.
+func WriteFile(content string, path string) error {
+	err := os.WriteFile(path, []byte(content), 0644)
+	if err != nil {
+		return eris.Wrap(err, "error writing file")
+	}
+	return nil
+}
+
 func checkExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if errors.Is(err, fs.ErrNotExist) {
