@@ -61,8 +61,6 @@ all the time.
 ```sh
 git clone https://github.com/thkq/tkcli
 cd tkcli
-# Ensure installation of the toolchain git submodule
-`git submodule update --init --recursive`
 # This installs in  ~/.local/bin; make sure this is in your $PATH!
 make install
 ```
@@ -100,8 +98,6 @@ To follow these steps please install [git-lfs][gl] and [git-sig][gs].
     ```sh
     git clone https://github.com/tkhq/tkcli
     cd tkcli
-    # Ensure installation of the toolchain git submodule
-    git submodule update --init --recursive
     ```
 
 2. Review binary signatures
@@ -133,8 +129,6 @@ to attempt to force one or more of us to tamper with the software.
     ```sh
     git clone https://github.com/tkhq/tkcli
     cd tkcli
-    # Ensure installation of the toolchain git submodule
-    git submodule update --init --recursive
     ```
 
 2. Review source
