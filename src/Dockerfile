@@ -18,6 +18,8 @@ RUN go env -w GOSUMDB=sum.golang.org
 ARG BUILD_SRC_DIR
 ARG GO_BUILDFLAGS="-trimpath -buildvcs=false"
 ARG GO_LDFLAGS="-s -w -buildid= -extldflags=-static"
+ARG GOOS
+ARG GOARCH
 
 COPY . /home/user/tkcli
 

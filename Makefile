@@ -11,6 +11,7 @@ SRC_DIR := src
 KEY_DIR := fetch/keys
 OUT_DIR := out
 
+lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
 altarch = $(subst x86_64,amd64,$(subst aarch64,arm64,$1))
 normarch = $(subst arm64,aarch64,$(subst amd64,x86_64,$1))
 HOST_ARCH := $(call normarch,$(call lc,$(shell uname -m)))
@@ -48,8 +49,10 @@ BUILDER := $(shell which docker)
 # - output manifest.txt of all tar/digest hashes for an easy git diff
 # - support buildah and podman
 define build
-	$(eval $(call determine_platform,$*))
+	$(eval $(call determine_platform,$(1)))
 	echo PLATFORM is $(PLATFORM)
+	echo HOST_ARCH_ALT is $(HOST_ARCH_ALT)
+	echo HOST_OS is $(HOST_OS)
 	$(eval LANGUAGE := go)
 	$(eval NAME := $(2))
 	$(eval VERSION := $(if $(3),$(3),latest))
@@ -66,8 +69,8 @@ define build
 			--build-arg LABEL=$(NAME) \
 			--build-arg ARCH=$(ARCH) \
 			--build-arg HOST_ARCH=$(HOST_ARCH) \
-			--build-arg HOST_ARCH_ALT=$(HOST_ARCH_ALT) \
-			--build-arg HOST_OS=$(HOST_OS) \
+			--build-arg GOARCH=$(HOST_ARCH_ALT) \
+			--build-arg GOOS=$(HOST_OS) \
 			--platform $(PLATFORM) \
 			$(if $(DOCKER_CACHE_SRC),$(DOCKER_CACHE_SRC),) \
 			$(if $(DOCKER_CACHE_DST),$(DOCKER_CACHE_DST),) \
@@ -83,28 +86,37 @@ define build
 	mkdir -p out/
 	echo $(TIMESTAMP) $(BUILD_CMD) >> out/build.log
 	$(BUILD_CMD)
-	$(if $(filter package,$(TARGET)),$(BUILDER) save $(REGISTRY)/$(NAME):$(VERSION) -o $@.docker.tar,)
 endef
 
 define determine_platform
     ifeq ($1,linux-x86_64)
         PLATFORM := linux/amd64
+		HOST_ARCH_ALT := amd64
+		HOST_OS := linux
     else ifeq ($1,linux-aarch64)
         PLATFORM := linux/arm64
+		HOST_ARCH_ALT := arm64
+		HOST_OS := linux
     else ifeq ($1,darwin-x86_64)
         PLATFORM := linux/amd64
+		HOST_ARCH_ALT := amd64
+		HOST_OS := darwin
     else ifeq ($1,darwin-aarch64)
         PLATFORM := linux/arm64
+		HOST_ARCH_ALT := arm64
+		HOST_OS := darwin
     endif
 endef
 
 define go-build
 	$(call build,$(3),$(2),latest)
+	# $(if $(filter package,$(TARGET)),$(BUILDER) save $(REGISTRY)/$(NAME):$(VERSION) -o $@.docker.tar,)
 	# Ignore errors from the docker rm; this is just to ensure no such container exists before we create it.
 	docker rm -f $(2) 2> /dev/null
 	docker create --name=$(2) local/$(2)
 	docker export $(2) -o $(OUT_DIR)/$(2).tar
 	tar xf $(OUT_DIR)/$(2).tar -C $(OUT_DIR) app
+	rm $(OUT_DIR)/$(2).tar
 	mv $(OUT_DIR)/app $(OUT_DIR)/$(2)
 endef
 
@@ -123,7 +135,13 @@ default: \
 	$(OUT_DIR)/turnkey.darwin-aarch64 \
 	$(OUT_DIR)/Formula/turnkey.rb \
 	$(OUT_DIR)/release.env \
-	$(OUT_DIR)/manifest.txt
+	digests.txt
+
+.PHONY: digests.txt
+digests.txt:
+	echo "Building digests.txt"; \
+	cd $(OUT_DIR); \
+	sha256sum turnkey.* > ../digests.txt
 
 .PHONY: lint
 lint:
@@ -132,7 +150,7 @@ lint:
 	golangci-lint run ./cmd/turnkey/... --timeout=3m || exit 1;
 
 .PHONY: test
-test: $(OUT_DIR)/turnkey.linux-x86_64
+test: $(OUT_DIR)/turnkey.$(HOST_OS)-$(HOST_ARCH)
 	echo "Running tests..."; \
 	cd $(SRC_DIR); \
 	go test -v ./cmd/turnkey/...
@@ -142,11 +160,10 @@ install: default
 	mkdir -p ~/.local/bin
 	cp $(OUT_DIR)/turnkey.$(HOST_OS)-$(HOST_ARCH) ~/.local/bin/turnkey
 
-# Clean repo back to initial clone state
 .PHONY: clean
 clean:
-	git clean -dfx $(SRC_DIR)
 	rm -rf $(LOCAL_BUILD_DIR)
+	rm -rf $(OUT_DIR)
 
 $(KEY_DIR)/%.asc:
 	$(call fetch_pgp_key,$(basename $(notdir $@)))
@@ -179,3 +196,12 @@ build-local:
 	pushd $(shell git rev-parse --show-toplevel)/src/cmd/turnkey; \
 	go build -o ../$(LOCAL_BUILD_DIR)/turnkey; \
 	popd;
+
+.PHONY: reproduce
+reproduce: clean default digests.txt
+	diff digests.txt digests-dist.txt \
+	|| echo "Warning: digests.txt and digests-dist.txt differ"
+	
+.PHONY: dist
+dist: digests.txt
+	mv digests.txt digests-dist.txt
