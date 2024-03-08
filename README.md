@@ -172,7 +172,7 @@ to attempt to force one or more of us to tamper with the software.
 Create a new API key:
 
 ```sh
-$ turnkey gen --organization $ORGANIZATION_ID
+$ turnkey generate api-key --organization $ORGANIZATION_ID
 {
    "privateKeyFile": "/Users/andrew/Library/Application Support/turnkey/keys/default.private",
    "publicKey": "0236f17892a4649d97b2e4a4ad3c22d815e4e77848a0b8e4a5b0956ae4d6be382e",

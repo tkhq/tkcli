@@ -1,19 +1,18 @@
 package pkg
 
 import (
-	"encoding/hex"
 	"encoding/json"
 
-	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
 )
 
 // Filepath to write the export bundle to.
-var ExportBundlePath string
+var exportBundlePath string
 
 func init() {
-	decryptCmd.Flags().StringVar(&ExportBundlePath, "export-bundle-path", "/export_bundle.txt", "filepath to write the export bundle to.")
+	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-path", "/export_bundle.txt", "filepath to write the export bundle to.")
+	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-path", "", "filepath to write the plaintext from that will be decrypted.")
 
 	rootCmd.AddCommand(decryptCmd)
 }
@@ -22,14 +21,9 @@ var decryptCmd = &cobra.Command{
 	Use:   "decrypt",
 	Short: "Decrypt a ciphertext",
 	Long:  `Decrypt a ciphertext from a bundle exported from a Turnkey secure enclave.`,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		if PlaintextPath == "" {
-			OutputError(eris.New("Filepath for plaintext must be specified"))
-		}
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// read from export bundle path
-		exportBundle, err := readFile(ExportBundlePath)
+		exportBundle, err := readFile(exportBundlePath)
 		if err != nil {
 			OutputError(err)
 		}
@@ -56,15 +50,16 @@ var decryptCmd = &cobra.Command{
 		if err != nil {
 			OutputError(err)
 		}
-		plaintext := hex.EncodeToString(plaintextBytes)
 
-		// output the hex-encoded plaintext if no filepath is passed
-		if PlaintextPath == "" {
+		plaintext := string(plaintextBytes)
+
+		// output the plaintext if no filepath is passed
+		if plaintextPath == "" {
 			Output(plaintext)
 			return
 		}
 
-		err = writeFile(plaintext, PlaintextPath)
+		err = writeFile(plaintext, plaintextPath)
 		if err != nil {
 			OutputError(err)
 		}

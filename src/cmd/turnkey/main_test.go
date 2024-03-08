@@ -65,7 +65,6 @@ func TestKeygenInTmpFolder(t *testing.T) {
 
 	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()
 
-	// todo(olivia)
 	out, err := RunCliWithArgs(t, []string{"generate", "api-key", "--keys-folder", tmpDir, "--key-name", "mykey", "--organization", orgID.String()})
 	assert.Nil(t, err)
 

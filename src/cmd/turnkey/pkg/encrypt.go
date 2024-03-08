@@ -11,23 +11,23 @@ import (
 )
 
 var (
-	// User is the user ID to import wallets and private keys with.
-	User string
+	// user is the user ID to import wallets and private keys with.
+	user string
 
 	// Filepath to write the import bundle to.
-	ImportBundlePath string
+	importBundlePath string
 
 	// Filepath to read the encrypted bundle from.
-	EncryptedBundlePath string
+	encryptedBundlePath string
 
 	// Filepath to read the plaintext from that will be encrypted.
-	PlaintextPath string
+	plaintextPath string
 )
 
 func init() {
-	encryptCmd.Flags().StringVar(&ImportBundlePath, "import-bundle-path", "/import_bundle.txt", "filepath to write the import bundle to.")
-	encryptCmd.Flags().StringVar(&EncryptedBundlePath, "encrypted-bundle-path", "/encrypted_bundle.txt", "filepath to read the encrypted bundle from.")
-	encryptCmd.Flags().StringVar(&PlaintextPath, "plaintext-path", "", "filepath to read the plaintext from that will be encrypted.")
+	encryptCmd.Flags().StringVar(&importBundlePath, "import-bundle-path", "/import_bundle.txt", "filepath to write the import bundle to.")
+	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-path", "/encrypted_bundle.txt", "filepath to read the encrypted bundle from.")
+	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-path", "", "filepath to read the plaintext from that will be encrypted.")
 
 	rootCmd.AddCommand(encryptCmd)
 }
@@ -37,13 +37,13 @@ var encryptCmd = &cobra.Command{
 	Short: "Encrypt a plaintext",
 	Long:  `Encrypt a plaintext into a bundle to be imported to a Turnkey secure enclave.`,
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if PlaintextPath == "" {
+		if plaintextPath == "" {
 			OutputError(eris.New("Filepath for plaintext must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// read from import bundle path
-		importBundle, err := readFile(ImportBundlePath)
+		importBundle, err := readFile(importBundlePath)
 		if err != nil {
 			OutputError(err)
 		}
@@ -66,7 +66,7 @@ var encryptCmd = &cobra.Command{
 		}
 
 		// encrypt plaintext
-		plaintext, err := readFile(PlaintextPath)
+		plaintext, err := readFile(plaintextPath)
 		if err != nil {
 			OutputError(err)
 		}
@@ -87,7 +87,7 @@ var encryptCmd = &cobra.Command{
 		}
 
 		// write to encrypted bundle path
-		err = writeFile(string(encryptedBundleBytes), EncryptedBundlePath)
+		err = writeFile(string(encryptedBundleBytes), encryptedBundlePath)
 		if err != nil {
 			OutputError(err)
 		}
