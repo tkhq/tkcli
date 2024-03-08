@@ -11,6 +11,7 @@ SRC_DIR := src
 KEY_DIR := fetch/keys
 OUT_DIR := out
 
+altarch = $(subst x86_64,amd64,$(subst aarch64,arm64,$1))
 normarch = $(subst arm64,aarch64,$(subst amd64,x86_64,$1))
 HOST_ARCH := $(call normarch,$(call lc,$(shell uname -m)))
 HOST_ARCH_ALT := $(call altarch,$(HOST_ARCH))
@@ -63,6 +64,10 @@ define build
 			-t $(REGISTRY)/$(NAME):$(VERSION) \
 			--build-arg REGISTRY=$(REGISTRY) \
 			--build-arg LABEL=$(NAME) \
+			--build-arg ARCH=$(ARCH) \
+			--build-arg HOST_ARCH=$(HOST_ARCH) \
+			--build-arg HOST_ARCH_ALT=$(HOST_ARCH_ALT) \
+			--build-arg HOST_OS=$(HOST_OS) \
 			--platform $(PLATFORM) \
 			$(if $(DOCKER_CACHE_SRC),$(DOCKER_CACHE_SRC),) \
 			$(if $(DOCKER_CACHE_DST),$(DOCKER_CACHE_DST),) \
