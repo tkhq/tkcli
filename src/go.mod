@@ -10,7 +10,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tkhq/go-sdk v0.0.0-20240306173256-cde2ffbe3c7a
-	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240306173256-cde2ffbe3c7a
+	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240309210249-e589efc314fb
 	gopkg.in/yaml.v3 v3.0.1
 )
 
