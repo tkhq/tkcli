@@ -28,7 +28,7 @@ var apiKeyCmd = &cobra.Command{
 	Aliases: []string{"g", "gen"},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if Organization == "" {
-			OutputError(eris.New("please supply an organization ID (UUID)"))
+			OutputError(eris.New("--organization must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

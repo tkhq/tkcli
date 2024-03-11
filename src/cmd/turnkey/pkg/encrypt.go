@@ -25,9 +25,9 @@ var (
 )
 
 func init() {
-	encryptCmd.Flags().StringVar(&importBundlePath, "import-bundle-path", "/import_bundle.txt", "filepath to write the import bundle to.")
-	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-path", "/encrypted_bundle.txt", "filepath to read the encrypted bundle from.")
-	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-path", "", "filepath to read the plaintext from that will be encrypted.")
+	encryptCmd.Flags().StringVar(&importBundlePath, "import-bundle-input", "", "filepath to write the import bundle to.")
+	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-output", "", "filepath to read the encrypted bundle from.")
+	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-input", "", "filepath to read the plaintext from that will be encrypted.")
 
 	rootCmd.AddCommand(encryptCmd)
 }
@@ -37,8 +37,16 @@ var encryptCmd = &cobra.Command{
 	Short: "Encrypt a plaintext",
 	Long:  `Encrypt a plaintext into a bundle to be imported to a Turnkey secure enclave.`,
 	PreRun: func(cmd *cobra.Command, args []string) {
+		if importBundlePath == "" {
+			OutputError(eris.New("--import-bundle-input must be specified"))
+		}
+
+		if encryptedBundlePath == "" {
+			OutputError(eris.New("--encrypted-bundle-output must be specified"))
+		}
+
 		if plaintextPath == "" {
-			OutputError(eris.New("Filepath for plaintext must be specified"))
+			OutputError(eris.New("--plaintext-input must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

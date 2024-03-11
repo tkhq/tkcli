@@ -23,11 +23,11 @@ func init() {
 	walletCreateCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet.")
 
 	walletInitImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the wallet")
-	walletInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-path", "", "filepath to write the import bundle to.")
+	walletInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-output", "", "filepath to write the import bundle to.")
 
 	walletImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the wallet")
 	walletImportCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet.")
-	walletImportCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-path", "", "filepath to read the encrypted bundle from.")
+	walletImportCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-input", "", "filepath to read the encrypted bundle from.")
 
 	walletAccountsListCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used to fetch accounts.")
 
@@ -64,7 +64,7 @@ var walletCreateCmd = &cobra.Command{
 	Short: "Create a new wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("name for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -130,11 +130,11 @@ var walletInitImportCmd = &cobra.Command{
 	Short: "Initialize wallet import",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if user == "" {
-			OutputError(eris.New("ID for user importing wallet must be specified"))
+			OutputError(eris.New("--user must be specified"))
 		}
 
 		if importBundlePath == "" {
-			OutputError(eris.New("import bundle path must be specified"))
+			OutputError(eris.New("--import-bundle-output must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -176,15 +176,15 @@ var walletImportCmd = &cobra.Command{
 	Short: "Import a wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if user == "" {
-			OutputError(eris.New("ID for user importing wallet must be specified"))
+			OutputError(eris.New("--user must be specified"))
 		}
 
 		if walletNameOrID == "" {
-			OutputError(eris.New("name for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 
 		if encryptedBundlePath == "" {
-			OutputError(eris.New("encrypted bundle path must be specified"))
+			OutputError(eris.New("--encrypted-bundle-input must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -236,11 +236,11 @@ var walletAccountCreateCmd = &cobra.Command{
 	Short: "Create a new account for a wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("name or id for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 
 		if walletAccountAddressFormat == "" {
-			OutputError(eris.New("address format cannot be empty"))
+			OutputError(eris.New("--address-format must not be empty"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -333,7 +333,7 @@ var walletAccountsListCmd = &cobra.Command{
 	Short: "Return accounts for the wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("name or ID for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

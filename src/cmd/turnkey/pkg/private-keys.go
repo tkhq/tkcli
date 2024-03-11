@@ -23,11 +23,11 @@ func init() {
 	privateKeysCreateCmd.Flags().StringSliceVar(&privateKeysCreateTags, "tag", make([]string, 0), "tag(s) to be applied to the private key")
 
 	privateKeyInitImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the private key")
-	privateKeyInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-path", "", "filepath to write the import bundle to.")
+	privateKeyInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-output", "", "filepath to write the import bundle to.")
 
 	privateKeyImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the private key")
 	privateKeyImportCmd.Flags().StringVar(&privateKeysCreateName, "name", "", "name to be applied to the private key.")
-	privateKeyImportCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-path", "", "filepath to read the encrypted bundle from.")
+	privateKeyImportCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-input", "", "filepath to read the encrypted bundle from.")
 	privateKeyImportCmd.Flags().StringSliceVar(&privateKeysCreateAddressFormats, "address-format", nil, "address format(s) for private key.  For a list of formats, use 'turnkey address-formats list'.")
 	privateKeyImportCmd.Flags().StringVar(&privateKeysCreateCurve, "curve", "", "curve to use for the generation of the private key.  For a list of available curves, use 'turnkey curves list'.")
 
@@ -55,15 +55,15 @@ var privateKeysCreateCmd = &cobra.Command{
 	Short: "Create a new private key",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(privateKeysCreateAddressFormats) < 1 {
-			OutputError(eris.New("must specify at least one address format"))
+			OutputError(eris.New("--address-format must not be empty"))
 		}
 
 		if privateKeysCreateCurve == "" {
-			OutputError(eris.New("curve cannot be empty"))
+			OutputError(eris.New("--curve must be specified"))
 		}
 
 		if privateKeysCreateName == "" {
-			OutputError(eris.New("name for private key must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -153,11 +153,11 @@ var privateKeyInitImportCmd = &cobra.Command{
 	Short: "Initialize private key import",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if user == "" {
-			OutputError(eris.New("ID for user importing private key must be specified"))
+			OutputError(eris.New("--user must be specified"))
 		}
 
 		if importBundlePath == "" {
-			OutputError(eris.New("import bundle path must be specified"))
+			OutputError(eris.New("--import-bundle-output must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -199,23 +199,23 @@ var privateKeyImportCmd = &cobra.Command{
 	Short: "Import a private key",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if user == "" {
-			OutputError(eris.New("ID for user importing private key must be specified"))
+			OutputError(eris.New("--user must be specified"))
 		}
 
 		if encryptedBundlePath == "" {
-			OutputError(eris.New("encrypted bundle path must be specified"))
+			OutputError(eris.New("--encrypted-bundle-input must be specified"))
 		}
 
 		if len(privateKeysCreateAddressFormats) < 1 {
-			OutputError(eris.New("must specify at least one address format"))
+			OutputError(eris.New("--address-format must not be empty"))
 		}
 
 		if privateKeysCreateCurve == "" {
-			OutputError(eris.New("curve cannot be empty"))
+			OutputError(eris.New("--curve must be specified"))
 		}
 
 		if privateKeysCreateName == "" {
-			OutputError(eris.New("name for private key must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
