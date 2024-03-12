@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"fmt"
+
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
@@ -19,11 +20,18 @@ var (
 )
 
 func init() {
-	walletCreateCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet")
+	walletCreateCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet.")
 
-	walletAccountsListCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used to fetch accounts")
+	walletInitImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the wallet")
+	walletInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-output", "", "filepath to write the import bundle to.")
 
-	walletAccountCreateCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used for account creation")
+	walletImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the wallet")
+	walletImportCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet.")
+	walletImportCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-input", "", "filepath to read the encrypted bundle from.")
+
+	walletAccountsListCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used to fetch accounts.")
+
+	walletAccountCreateCmd.Flags().StringVar(&walletNameOrID, "wallet", "", "name or ID of wallet used for account creation.")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountAddressFormat, "address-format", "", "address format for account. For a list of formats, use 'turnkey address-formats list'.")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountCurve, "curve", "", "curve for account. For a list of curves, use 'turnkey curves list'. If unset, will predict based on address format.")
 	walletAccountCreateCmd.Flags().StringVar(&walletAccountPathFormat, "path-format", string(models.PathFormatBip32), "the derivation path format for account.")
@@ -33,6 +41,8 @@ func init() {
 	walletAccountsCmd.AddCommand(walletAccountCreateCmd)
 	walletsCmd.AddCommand(walletCreateCmd)
 	walletsCmd.AddCommand(walletsListCmd)
+	walletsCmd.AddCommand(walletInitImportCmd)
+	walletsCmd.AddCommand(walletImportCmd)
 	walletsCmd.AddCommand(walletAccountsCmd)
 
 	rootCmd.AddCommand(walletsCmd)
@@ -54,7 +64,7 @@ var walletCreateCmd = &cobra.Command{
 	Short: "Create a new wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("name for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -115,6 +125,106 @@ var walletsListCmd = &cobra.Command{
 	},
 }
 
+var walletInitImportCmd = &cobra.Command{
+	Use:   "init-import",
+	Short: "Initialize wallet import",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if user == "" {
+			OutputError(eris.New("--user must be specified"))
+		}
+
+		if importBundlePath == "" {
+			OutputError(eris.New("--import-bundle-output must be specified"))
+		}
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		activity := string(models.ActivityTypeInitImportWallet)
+
+		params := wallets.NewInitImportWalletParams()
+		params.SetBody(&models.InitImportWalletRequest{
+			OrganizationID: &Organization,
+			Parameters: &models.InitImportWalletIntent{
+				UserID: &user,
+			},
+			TimestampMs: util.RequestTimestamp(),
+			Type:        &activity,
+		})
+
+		if err := params.Body.Validate(nil); err != nil {
+			OutputError(eris.Wrap(err, "request validation failed"))
+		}
+
+		resp, err := APIClient.V0().Wallets.InitImportWallet(params, APIClient.Authenticator)
+		if err != nil {
+			OutputError(eris.Wrap(err, "request failed"))
+		}
+
+		if !resp.IsSuccess() {
+			OutputError(eris.Errorf("failed to initialize wallet import: %s", resp.Error()))
+		}
+
+		importBundle := resp.Payload.Activity.Result.InitImportWalletResult.ImportBundle
+		err = writeFile(*importBundle, importBundlePath)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to write import bundle to file"))
+		}
+	},
+}
+
+var walletImportCmd = &cobra.Command{
+	Use:   "import",
+	Short: "Import a wallet",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if user == "" {
+			OutputError(eris.New("--user must be specified"))
+		}
+
+		if walletNameOrID == "" {
+			OutputError(eris.New("--name must be specified"))
+		}
+
+		if encryptedBundlePath == "" {
+			OutputError(eris.New("--encrypted-bundle-input must be specified"))
+		}
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		encryptedBundle, err := readFile(encryptedBundlePath)
+		if err != nil {
+			OutputError(err)
+		}
+
+		activity := string(models.ActivityTypeImportWallet)
+
+		params := wallets.NewImportWalletParams()
+		params.SetBody(&models.ImportWalletRequest{
+			OrganizationID: &Organization,
+			Parameters: &models.ImportWalletIntent{
+				UserID:          &user,
+				WalletName:      &walletNameOrID,
+				EncryptedBundle: &encryptedBundle,
+				Accounts:        []*models.WalletAccountParams{},
+			},
+			TimestampMs: util.RequestTimestamp(),
+			Type:        &activity,
+		})
+
+		if err := params.Body.Validate(nil); err != nil {
+			OutputError(eris.Wrap(err, "request validation failed"))
+		}
+
+		resp, err := APIClient.V0().Wallets.ImportWallet(params, APIClient.Authenticator)
+		if err != nil {
+			OutputError(eris.Wrap(err, "request failed"))
+		}
+
+		if !resp.IsSuccess() {
+			OutputError(eris.Errorf("failed to import wallet: %s", resp.Error()))
+		}
+
+		Output(resp.Payload)
+	},
+}
+
 var walletAccountsCmd = &cobra.Command{
 	Use:     "accounts",
 	Short:   "Interact with wallet accounts",
@@ -126,11 +236,11 @@ var walletAccountCreateCmd = &cobra.Command{
 	Short: "Create a new account for a wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("name or id for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 
 		if walletAccountAddressFormat == "" {
-			OutputError(eris.New("address format cannot be empty"))
+			OutputError(eris.New("--address-format must not be empty"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -223,7 +333,7 @@ var walletAccountsListCmd = &cobra.Command{
 	Short: "Return accounts for the wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("name or ID for wallet must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

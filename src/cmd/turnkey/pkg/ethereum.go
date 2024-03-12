@@ -4,7 +4,7 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
-	"github.com/tkhq/go-sdk/pkg/api/client/signers"
+	"github.com/tkhq/go-sdk/pkg/api/client/signing"
 	"github.com/tkhq/go-sdk/pkg/api/models"
 	"github.com/tkhq/go-sdk/pkg/util"
 )
@@ -53,7 +53,7 @@ var ethTxCmd = &cobra.Command{
 			OutputError(eris.New("payload cannot be empty"))
 		}
 
-		params := signers.NewSignTransactionParams().WithBody(
+		params := signing.NewSignTransactionParams().WithBody(
 			&models.SignTransactionRequest{
 				OrganizationID: &Organization,
 				Parameters: &models.SignTransactionIntentV2{
@@ -66,7 +66,7 @@ var ethTxCmd = &cobra.Command{
 			},
 		)
 
-		resp, err := APIClient.V0().Signers.SignTransaction(params, APIClient.Authenticator)
+		resp, err := APIClient.V0().Signing.SignTransaction(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(eris.Wrap(err, "request failed"))
 		}

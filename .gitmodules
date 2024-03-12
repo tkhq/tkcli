@@ -1,3 +1,0 @@
-[submodule "src/toolchain"]
-	path = src/toolchain
-	url = https://codeberg.org/distrust/toolchain

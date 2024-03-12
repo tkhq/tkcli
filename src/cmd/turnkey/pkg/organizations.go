@@ -34,7 +34,7 @@ var organizationsCreateCmd = &cobra.Command{
 	Short: "Create a new organization",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if organizationsCreateName == "" {
-			OutputError(eris.New("name for private key must be specified"))
+			OutputError(eris.New("--name must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

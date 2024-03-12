@@ -4,7 +4,7 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
-	"github.com/tkhq/go-sdk/pkg/api/client/signers"
+	"github.com/tkhq/go-sdk/pkg/api/client/signing"
 	"github.com/tkhq/go-sdk/pkg/api/models"
 	"github.com/tkhq/go-sdk/pkg/util"
 )
@@ -54,7 +54,7 @@ var rawSignCmd = &cobra.Command{
 
 		activityType := string(models.ActivityTypeSignRawPayloadV2)
 
-		params := signers.NewSignRawPayloadParams().WithBody(
+		params := signing.NewSignRawPayloadParams().WithBody(
 			&models.SignRawPayloadRequest{
 				OrganizationID: &Organization,
 				Parameters: &models.SignRawPayloadIntentV2{
@@ -68,7 +68,7 @@ var rawSignCmd = &cobra.Command{
 			},
 		)
 
-		resp, err := APIClient.V0().Signers.SignRawPayload(params, APIClient.Authenticator)
+		resp, err := APIClient.V0().Signing.SignRawPayload(params, APIClient.Authenticator)
 		if err != nil {
 			OutputError(eris.Wrap(err, "request failed"))
 		}

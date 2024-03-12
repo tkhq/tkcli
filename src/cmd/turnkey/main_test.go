@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -17,7 +18,7 @@ import (
 	"github.com/tkhq/go-sdk/pkg/apikey"
 )
 
-const TurnkeyBinaryName = "turnkey.linux-x86_64"
+var TurnkeyBinaryName = "turnkey.linux-x86_64"
 
 // TempDir is the directory in which temporary files for the tests will be stored.
 var TempDir = "/tmp"
@@ -26,6 +27,14 @@ func init() {
 	if os.Getenv("RUNNER_TEMP") != "" {
 		TempDir = os.Getenv("RUNNER_TEMP")
 	}
+	var arch string
+	switch runtime.GOARCH {
+	case "arm64":
+		arch = "aarch64"
+	case "amd64":
+		arch = "x86_64"
+	}
+	TurnkeyBinaryName = fmt.Sprintf("turnkey.%s-%s", runtime.GOOS, arch)
 }
 
 func RunCliWithArgs(t *testing.T, args []string) (string, error) {
@@ -56,7 +65,7 @@ func TestKeygenInTmpFolder(t *testing.T) {
 
 	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()
 
-	out, err := RunCliWithArgs(t, []string{"gen", "--keys-folder", tmpDir, "--key-name", "mykey", "--organization", orgID.String()})
+	out, err := RunCliWithArgs(t, []string{"generate", "api-key", "--keys-folder", tmpDir, "--key-name", "mykey", "--organization", orgID.String()})
 	assert.Nil(t, err)
 
 	assert.FileExists(t, tmpDir+"/mykey.public")
