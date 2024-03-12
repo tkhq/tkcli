@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"encoding/hex"
 	"encoding/json"
 
 	"github.com/rotisserie/eris"
@@ -79,12 +78,7 @@ var encryptCmd = &cobra.Command{
 			OutputError(err)
 		}
 
-		var plaintextBytes []byte
-		plaintextBytes, err = hex.DecodeString(plaintext)
-		if err != nil {
-			plaintextBytes = []byte(plaintext)
-		}
-		clientSendMsg, err := encryptClient.Encrypt(plaintextBytes, serverTargetMsg)
+		clientSendMsg, err := encryptClient.Encrypt([]byte(plaintext), serverTargetMsg)
 		if err != nil {
 			OutputError(err)
 		}
