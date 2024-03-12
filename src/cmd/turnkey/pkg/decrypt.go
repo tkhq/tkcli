@@ -3,6 +3,7 @@ package pkg
 import (
 	"encoding/json"
 
+	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
 )
@@ -11,8 +12,8 @@ import (
 var exportBundlePath string
 
 func init() {
-	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-path", "/export_bundle.txt", "filepath to write the export bundle to.")
-	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-path", "", "filepath to write the plaintext from that will be decrypted.")
+	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to write the export bundle to.")
+	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-output", "", "optional filepath to write the plaintext from that will be decrypted.")
 
 	rootCmd.AddCommand(decryptCmd)
 }
@@ -21,6 +22,11 @@ var decryptCmd = &cobra.Command{
 	Use:   "decrypt",
 	Short: "Decrypt a ciphertext",
 	Long:  `Decrypt a ciphertext from a bundle exported from a Turnkey secure enclave.`,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if encryptedBundlePath == "" {
+			OutputError(eris.New("--encrypted-bundle-input must be specified"))
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// read from export bundle path
 		exportBundle, err := readFile(exportBundlePath)
