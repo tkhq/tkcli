@@ -1,8 +1,10 @@
 package pkg
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
@@ -21,12 +23,16 @@ var (
 
 	// Filepath to read the plaintext from that will be encrypted.
 	plaintextPath string
+
+	// Format to apply to the plaintext key before it's encrypted: `mnemonic`, `hexadecimal`, `solana`. Defaults to `mnemonic`.
+	keyFormat string
 )
 
 func init() {
 	encryptCmd.Flags().StringVar(&importBundlePath, "import-bundle-input", "", "filepath to write the import bundle to.")
 	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-output", "", "filepath to read the encrypted bundle from.")
 	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-input", "", "filepath to read the plaintext from that will be encrypted.")
+	encryptCmd.Flags().StringVar(&keyFormat, "key-format", "mnemonic", "optional formatting to apply to the plaintext before it is encrypted.")
 
 	rootCmd.AddCommand(encryptCmd)
 }
@@ -72,13 +78,32 @@ var encryptCmd = &cobra.Command{
 			OutputError(err)
 		}
 
-		// encrypt plaintext
+		// format the plaintext key
 		plaintext, err := readFile(plaintextPath)
 		if err != nil {
 			OutputError(err)
 		}
+		var plaintextBytes []byte
+		switch keyFormat {
+		case "mnemonic":
+			plaintextBytes = []byte(plaintext)
+		case "hexadecimal":
+			plaintextBytes, err = hex.DecodeString(plaintext)
+			if err != nil {
+				OutputError(err)
+			}
+		case "solana":
+			decoded := base58.Decode(plaintext)
+			if len(decoded) < 32 {
+				OutputError(eris.New("invalid plaintext length. must be at least 32 bytes for key-format `solana`"))
+			}
+			plaintextBytes = decoded[:32]
+		default:
+			OutputError(eris.New("--key-format is invalid. accepted values: mnemonic, hexadecimal, solana."))
+		}
 
-		clientSendMsg, err := encryptClient.Encrypt([]byte(plaintext), serverTargetMsg)
+		// encrypt plaintext
+		clientSendMsg, err := encryptClient.Encrypt([]byte(plaintextBytes), serverTargetMsg)
 		if err != nil {
 			OutputError(err)
 		}
