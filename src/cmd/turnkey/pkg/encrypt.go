@@ -103,7 +103,7 @@ var encryptCmd = &cobra.Command{
 		}
 
 		// encrypt plaintext
-		clientSendMsg, err := encryptClient.Encrypt([]byte(plaintextBytes), serverTargetMsg)
+		clientSendMsg, err := encryptClient.Encrypt(plaintextBytes, serverTargetMsg)
 		if err != nil {
 			OutputError(err)
 		}
