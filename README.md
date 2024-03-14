@@ -31,6 +31,14 @@ all the time.
 
 | Version | OS    | Architecture | Download                                                                                      |
 |---------|-------|--------------|-----------------------------------------------------------------------------------------------|
+| v1.1.0  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.linux-x86_64)    |
+| v1.1.0  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.linux-aarch64)  |
+| v1.1.0  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.darwin-x86_64)  |
+| v1.1.0  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.darwin-aarch64)|
+| v1.0.5  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-x86_64)    |
+| v1.0.5  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-aarch64)  |
+| v1.0.5  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-x86_64)  |
+| v1.0.5  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-aarch64)|
 | v1.0.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-x86_64)    |
 | v1.0.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-aarch64)  |
 | v1.0.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-x86_64)  |
@@ -232,7 +240,6 @@ make build-local
 ```
 
 Note that you may need to do the following:
-- `git submodule update --init --recursive`
 - Install `git-lfs`: https://git-lfs.com
 - Setup: `git lfs install`
 

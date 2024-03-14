@@ -28,4 +28,5 @@ build/
 /cache
 /out
 .*
-
+dist/build.log
+digests.txt
