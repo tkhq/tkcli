@@ -31,10 +31,10 @@ all the time.
 
 | Version | OS    | Architecture | Download                                                                                      |
 |---------|-------|--------------|-----------------------------------------------------------------------------------------------|
-| v1.1.0  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.linux-x86_64)    |
-| v1.1.0  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.linux-aarch64)  |
-| v1.1.0  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.darwin-x86_64)  |
-| v1.1.0  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.0/dist/turnkey.darwin-aarch64)|
+| v1.1.1  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.linux-x86_64)    |
+| v1.1.1  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.linux-aarch64)  |
+| v1.1.1  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.darwin-x86_64)  |
+| v1.1.1  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.darwin-aarch64)|
 | v1.0.5  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-x86_64)    |
 | v1.0.5  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-aarch64)  |
 | v1.0.5  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-x86_64)  |

@@ -114,7 +114,7 @@ define go-build
 	# $(if $(filter package,$(TARGET)),$(BUILDER) save $(REGISTRY)/$(NAME):$(VERSION) -o $@.docker.tar,)
 	# Ignore errors from the docker rm; this is just to ensure no such container exists before we create it.
 	docker rm -f $(2) 2> /dev/null
-	docker create --name=$(2) local/$(2)
+	docker create --name=$(2) local/$(2):$(VERSION)
 	docker export $(2) -o $(OUT_DIR)/$(2).tar
 	tar xf $(OUT_DIR)/$(2).tar -C $(OUT_DIR) app
 	rm $(OUT_DIR)/$(2).tar
