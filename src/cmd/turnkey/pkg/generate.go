@@ -22,10 +22,9 @@ var generateCmd = &cobra.Command{
 
 // Represents the command to generate an API key
 var apiKeyCmd = &cobra.Command{
-	Use:     "api-key",
-	Short:   "Generate a Turnkey API key",
-	Long:    `Generate a new API key that can be used for authenticating with the API.`,
-	Aliases: []string{"g", "gen"},
+	Use:   "api-key",
+	Short: "Generate a Turnkey API key",
+	Long:  `Generate a new API key that can be used for authenticating with the API.`,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if Organization == "" {
 			OutputError(eris.New("--organization must be specified"))
