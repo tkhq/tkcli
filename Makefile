@@ -205,5 +205,6 @@ reproduce: clean default
 	
 .PHONY: $(DIST_DIR)
 $(DIST_DIR): clean default
+	rm -rf $@/*
 	cp digests.txt digests-dist.txt
 	cp -R $(OUT_DIR)/* $@/
