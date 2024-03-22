@@ -17,7 +17,7 @@ var APIClient *sdk.Client
 // LoadKeypair require-loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
 func LoadKeypair(name string) {
 	if name == "" {
-		name = KeyName
+		name = ApiKeyName
 	}
 
 	if apiKeyStore == nil {
