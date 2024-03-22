@@ -6,10 +6,16 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
+	"github.com/tkhq/go-sdk/pkg/encryption_key"
 )
 
-// Filepath to write the export bundle to.
-var exportBundlePath string
+var (
+	// Filepath to write the export bundle to.
+	exportBundlePath string
+
+	// EncryptionKeypair is the loaded Encryption Keypair.
+	EncryptionKeypair *encryption_key.Key
+)
 
 func init() {
 	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to write the export bundle to.")
@@ -70,4 +76,36 @@ var decryptCmd = &cobra.Command{
 			OutputError(err)
 		}
 	},
+}
+
+// LoadEncryptionKeypair require-loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
+func LoadEncryptionKeypair(name string) {
+	if name == "" {
+		name = EncryptionKeyName
+	}
+
+	if encryptionKeyStore == nil {
+		OutputError(eris.New("encryption keystore not loaded"))
+	}
+
+	encryptionKey, err := encryptionKeyStore.Load(name)
+	if err != nil {
+		OutputError(err)
+	}
+
+	if encryptionKey == nil {
+		OutputError(eris.New("Encryption key not loaded"))
+	}
+
+	EncryptionKeypair = encryptionKey
+
+	// If we haven't had the organization explicitly set try to load it from key metadata.
+	if Organization == "" {
+		Organization = encryptionKey.Organization
+	}
+
+	// If org is _still_ empty, the API key is not usable.
+	if Organization == "" {
+		OutputError(eris.New("failed to associate the Encryption key with an organization; please manually specify the organization ID"))
+	}
 }
