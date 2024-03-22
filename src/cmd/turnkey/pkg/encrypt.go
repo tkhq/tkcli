@@ -13,7 +13,7 @@ import (
 
 var (
 	// user is the user ID to import wallets and private keys with.
-	user string
+	User string
 
 	// Filepath to write the import bundle to.
 	importBundlePath string

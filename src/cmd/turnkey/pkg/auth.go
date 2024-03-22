@@ -17,14 +17,14 @@ var APIClient *sdk.Client
 // LoadKeypair require-loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
 func LoadKeypair(name string) {
 	if name == "" {
-		name = KeyName
+		name = ApiKeyName
 	}
 
-	if keyStore == nil {
+	if apiKeyStore == nil {
 		OutputError(eris.New("keystore not loaded"))
 	}
 
-	apiKey, err := keyStore.Load(name)
+	apiKey, err := apiKeyStore.Load(name)
 	if err != nil {
 		OutputError(err)
 	}

@@ -18,6 +18,8 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
+	"github.com/tkhq/go-sdk/pkg/apikey"
+	"github.com/tkhq/go-sdk/pkg/encryption_key"
 	"github.com/tkhq/go-sdk/pkg/store"
 	"github.com/tkhq/go-sdk/pkg/store/local"
 )
@@ -25,10 +27,17 @@ import (
 var (
 	rootKeysDirectory string
 
-	keyStore store.Store
+	encryptionKeysDirectory string
 
-	// KeyName is the name of the key with which we are operating.
-	KeyName string
+	apiKeyStore store.Store[apikey.Key]
+
+	encryptionKeyStore store.Store[encryption_key.Key]
+
+	// ApiKeyName is the name of the key with which we are operating.
+	ApiKeyName string
+
+	// EncryptionKeyName is the name of the key with which we are operating.
+	EncryptionKeyName string
 
 	apiHost string
 
@@ -41,7 +50,9 @@ const signerPublicKey = "04ca7c0d624c75de6f34af342e87a21e0d8c83efd1bd5b5da0c0177
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootKeysDirectory, "keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
-	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
+	rootCmd.PersistentFlags().StringVarP(&encryptionKeysDirectory, "encryption-keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
+	rootCmd.PersistentFlags().StringVarP(&ApiKeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
+	rootCmd.PersistentFlags().StringVar(&EncryptionKeyName, "encryption-key-name", "default", "name of encryption key with which to interact with the Turnkey API service")
 	rootCmd.PersistentFlags().StringVar(&apiHost, "host", "api.turnkey.com", "hostname of the API server")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
@@ -57,14 +68,24 @@ func basicSetup(cmd *cobra.Command) {
 		OutputError(err)
 	}
 
-	if keyStore == nil {
-		localKeyStore := local.New()
+	if apiKeyStore == nil {
+		localKeyStore := local.New[apikey.Key]()
 
 		if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
 			OutputError(eris.Wrap(err, "failed to obtain key storage location"))
 		}
 
-		keyStore = localKeyStore
+		apiKeyStore = localKeyStore
+	}
+
+	if encryptionKeyStore == nil {
+		localEncryptionKeyStore := local.New[encryption_key.Key]()
+
+		if err := localEncryptionKeyStore.SetKeysDirectory(encryptionKeysDirectory); err != nil {
+			OutputError(eris.Wrap(err, "failed to obtain key storage location"))
+		}
+
+		encryptionKeyStore = localEncryptionKeyStore
 	}
 }
 

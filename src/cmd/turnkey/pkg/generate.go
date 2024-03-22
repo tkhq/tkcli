@@ -5,11 +5,13 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
+	"github.com/tkhq/go-sdk/pkg/encryption_key"
 	"github.com/tkhq/go-sdk/pkg/store/local"
 )
 
 func init() {
 	generateCmd.AddCommand(apiKeyCmd)
+	generateCmd.AddCommand(encryptionKeyCmd)
 
 	rootCmd.AddCommand(generateCmd)
 }
@@ -52,17 +54,62 @@ var apiKeyCmd = &cobra.Command{
 		apiKey.Metadata.PublicKey = apiKey.TkPublicKey
 		apiKey.Metadata.Organizations = []string{Organization}
 
-		if err = keyStore.Store(name, apiKey); err != nil {
+		if err = apiKeyStore.Store(name, apiKey); err != nil {
 			OutputError(eris.Wrap(err, "failed to store new API keypair"))
 		}
 
-		localStore, ok := keyStore.(*local.Store)
+		localStore, ok := apiKeyStore.(*local.Store[apikey.Key])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
 
 		Output(map[string]string{
 			"publicKey":      apiKey.TkPublicKey,
+			"publicKeyFile":  localStore.PublicKeyFile(name),
+			"privateKeyFile": localStore.PrivateKeyFile(name),
+		})
+	},
+}
+
+// Represents the command to generate an encryption key
+var encryptionKeyCmd = &cobra.Command{
+	Use:   "encryption-key",
+	Short: "Generate a Turnkey encryption key",
+	Long:  `Generate a new encryption key that can be used for encrypting text sent from Turnkey secure enclaves.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		name, err := cmd.Flags().GetString("encryption-key-name")
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to read API key name"))
+		}
+
+		encryptionKey, err := encryption_key.New(User, Organization)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to create API keypair"))
+		}
+
+		if name == "-" {
+			Output(map[string]string{
+				"publicKey":  encryptionKey.TkPublicKey,
+				"privateKey": encryptionKey.TkPrivateKey,
+			})
+		}
+
+		encryptionKey.Metadata.Name = name
+		encryptionKey.Metadata.PublicKey = encryptionKey.TkPublicKey
+		encryptionKey.Metadata.Organization = Organization
+		encryptionKey.Metadata.User = User
+
+		if err = encryptionKeyStore.Store(name, encryptionKey); err != nil {
+			OutputError(eris.Wrap(err, "failed to store new encryption keypair"))
+		}
+
+		localStore, ok := encryptionKeyStore.(*local.Store[encryption_key.Key])
+		if !ok {
+			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
+		}
+
+		Output(map[string]string{
+			"publicKey":      encryptionKey.TkPublicKey,
 			"publicKeyFile":  localStore.PublicKeyFile(name),
 			"privateKeyFile": localStore.PrivateKeyFile(name),
 		})
