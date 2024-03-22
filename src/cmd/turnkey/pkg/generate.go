@@ -62,11 +62,11 @@ var apiKeyCmd = &cobra.Command{
 		apiKey.Metadata.PublicKey = apiKey.TkPublicKey
 		apiKey.Metadata.Organizations = []string{Organization}
 
-		if err = keyStore.Store(name, apiKey); err != nil {
+		if err = apiKeyStore.Store(name, apiKey); err != nil {
 			OutputError(eris.Wrap(err, "failed to store new API keypair"))
 		}
 
-		localStore, ok := keyStore.(*local.Store)
+		localStore, ok := apiKeyStore.(*local.Store[apikey.Key])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
