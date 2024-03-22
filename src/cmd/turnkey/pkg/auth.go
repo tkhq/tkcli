@@ -20,11 +20,11 @@ func LoadKeypair(name string) {
 		name = KeyName
 	}
 
-	if keyStore == nil {
+	if apiKeyStore == nil {
 		OutputError(eris.New("keystore not loaded"))
 	}
 
-	apiKey, err := keyStore.Load(name)
+	apiKey, err := apiKeyStore.Load(name)
 	if err != nil {
 		OutputError(err)
 	}
