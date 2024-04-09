@@ -5,18 +5,18 @@ go 1.21
 toolchain go1.21.0
 
 require (
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/google/uuid v1.3.1
 	github.com/rotisserie/eris v0.5.4
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	github.com/tkhq/go-sdk v0.0.0-20240306173256-cde2ffbe3c7a
-	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240309210249-e589efc314fb
+	github.com/tkhq/go-sdk v0.0.0-20240409013829-672064f648db
+	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240409013829-672064f648db
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/btcsuite/btcutil v1.0.2 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
