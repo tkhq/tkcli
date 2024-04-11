@@ -33,6 +33,7 @@ func init() {
 	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-output", "", "filepath to read the encrypted bundle from.")
 	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-input", "", "filepath to read the plaintext from that will be encrypted.")
 	encryptCmd.Flags().StringVar(&keyFormat, "key-format", "mnemonic", "optional formatting to apply to the plaintext before it is encrypted.")
+	encryptCmd.Flags().StringVar(&user, "user", "", "ID of user to encrypting the plaintext.")
 
 	rootCmd.AddCommand(encryptCmd)
 }
@@ -57,12 +58,6 @@ var encryptCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// read from import bundle path
 		importBundle, err := readFile(importBundlePath)
-		if err != nil {
-			OutputError(err)
-		}
-
-		var serverTargetMsg enclave_encrypt.ServerTargetMsg
-		err = json.Unmarshal([]byte(importBundle), &serverTargetMsg)
 		if err != nil {
 			OutputError(err)
 		}
@@ -103,7 +98,7 @@ var encryptCmd = &cobra.Command{
 		}
 
 		// encrypt plaintext
-		clientSendMsg, err := encryptClient.Encrypt(plaintextBytes, serverTargetMsg)
+		clientSendMsg, err := encryptClient.Encrypt(plaintextBytes, []byte(importBundle), Organization, &user)
 		if err != nil {
 			OutputError(err)
 		}
