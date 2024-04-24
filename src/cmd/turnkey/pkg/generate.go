@@ -11,6 +11,8 @@ import (
 
 func init() {
 	generateCmd.AddCommand(apiKeyCmd)
+
+	encryptionKeyCmd.Flags().StringVar(&User, "user", "", "ID of user to generating the encryption key")
 	generateCmd.AddCommand(encryptionKeyCmd)
 
 	rootCmd.AddCommand(generateCmd)
@@ -58,7 +60,7 @@ var apiKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to store new API keypair"))
 		}
 
-		localStore, ok := apiKeyStore.(*local.Store[apikey.Key])
+		localStore, ok := apiKeyStore.(*local.Store[apikey.Key, apikey.Metadata])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
@@ -76,15 +78,24 @@ var encryptionKeyCmd = &cobra.Command{
 	Use:   "encryption-key",
 	Short: "Generate a Turnkey encryption key",
 	Long:  `Generate a new encryption key that can be used for encrypting text sent from Turnkey secure enclaves.`,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if Organization == "" {
+			OutputError(eris.New("--organization must be specified"))
+		}
+
+		if User == "" {
+			OutputError(eris.New("--user must be specified"))
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		name, err := cmd.Flags().GetString("encryption-key-name")
 		if err != nil {
-			OutputError(eris.Wrap(err, "failed to read API key name"))
+			OutputError(eris.Wrap(err, "failed to read encryption key name"))
 		}
 
 		encryptionKey, err := encryption_key.New(User, Organization)
 		if err != nil {
-			OutputError(eris.Wrap(err, "failed to create API keypair"))
+			OutputError(eris.Wrap(err, "failed to create encryption keypair"))
 		}
 
 		if name == "-" {
@@ -103,7 +114,7 @@ var encryptionKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to store new encryption keypair"))
 		}
 
-		localStore, ok := encryptionKeyStore.(*local.Store[encryption_key.Key])
+		localStore, ok := encryptionKeyStore.(*local.Store[encryption_key.Key, encryption_key.Metadata])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}

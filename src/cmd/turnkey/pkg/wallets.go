@@ -60,6 +60,7 @@ var walletsCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
+		LoadEncryptionKeypair("")
 		LoadClient()
 	},
 	Aliases: []string{},

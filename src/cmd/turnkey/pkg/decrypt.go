@@ -1,8 +1,6 @@
 package pkg
 
 import (
-	"encoding/json"
-
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
@@ -18,7 +16,7 @@ var (
 )
 
 func init() {
-	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to write the export bundle to.")
+	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to read the export bundle from.")
 	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-output", "", "optional filepath to write the plaintext from that will be decrypted.")
 
 	rootCmd.AddCommand(decryptCmd)
@@ -28,9 +26,13 @@ var decryptCmd = &cobra.Command{
 	Use:   "decrypt",
 	Short: "Decrypt a ciphertext",
 	Long:  `Decrypt a ciphertext from a bundle exported from a Turnkey secure enclave.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadEncryptionKeypair("")
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if encryptedBundlePath == "" {
-			OutputError(eris.New("--encrypted-bundle-input must be specified"))
+		if exportBundlePath == "" {
+			OutputError(eris.New("--export-bundle-input must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -40,10 +42,11 @@ var decryptCmd = &cobra.Command{
 			OutputError(err)
 		}
 
-		var serverSendMsg enclave_encrypt.ServerSendMsg
-		err = json.Unmarshal([]byte(exportBundle), &serverSendMsg)
+		// get encryption key
+		tkPrivateKey := EncryptionKeypair.GetPrivateKey()
+		kemPrivateKey, err := encryption_key.DecodeTurnkeyPrivateKey(tkPrivateKey)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Wrap(err, "failed to decode encryption private key"))
 		}
 
 		// set up enclave encrypt client
@@ -52,13 +55,13 @@ var decryptCmd = &cobra.Command{
 			OutputError(err)
 		}
 
-		encryptClient, err := enclave_encrypt.NewEnclaveEncryptClient(signerPublic)
+		encryptClient, err := enclave_encrypt.NewEnclaveEncryptClientFromTargetKey(signerPublic, *kemPrivateKey)
 		if err != nil {
 			OutputError(err)
 		}
 
 		// decrypt ciphertext
-		plaintextBytes, err := encryptClient.Decrypt(serverSendMsg)
+		plaintextBytes, err := encryptClient.Decrypt([]byte(exportBundle), Organization)
 		if err != nil {
 			OutputError(err)
 		}
@@ -106,6 +109,6 @@ func LoadEncryptionKeypair(name string) {
 
 	// If org is _still_ empty, the API key is not usable.
 	if Organization == "" {
-		OutputError(eris.New("failed to associate the Encryption key with an organization; please manually specify the organization ID"))
+		OutputError(eris.New("failed to associate the encryption key with an organization; please manually specify the organization ID"))
 	}
 }

@@ -29,9 +29,9 @@ var (
 
 	encryptionKeysDirectory string
 
-	apiKeyStore store.Store[apikey.Key]
+	apiKeyStore store.Store[apikey.Key, apikey.Metadata]
 
-	encryptionKeyStore store.Store[encryption_key.Key]
+	encryptionKeyStore store.Store[encryption_key.Key, encryption_key.Metadata]
 
 	// ApiKeyName is the name of the key with which we are operating.
 	ApiKeyName string
@@ -45,12 +45,13 @@ var (
 	Organization string
 )
 
-// Turnkey Signer enclave's public key.
+// Turnkey Signer enclave's quorum public key.
 const signerPublicKey = "04ca7c0d624c75de6f34af342e87a21e0d8c83efd1bd5b5da0c0177c147f744fba6f01f9f37356f9c617659aafa55f6e0af8d169a8f054d153ab3201901fb63ecb04cf288fe433cc4e1aa0ce1632feac4ea26bf2f5a09dcfe5a42c398e06898710330f0572882f4dbdf0f5304b8fc8703acd69adca9a4bbf7f5d00d20a5e364b2569"
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&rootKeysDirectory, "keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
-	rootCmd.PersistentFlags().StringVarP(&encryptionKeysDirectory, "encryption-keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
+	// todo(olivia): create default keys dir for encryption-keys
+	rootCmd.PersistentFlags().StringVar(&encryptionKeysDirectory, "encryption-keys-folder", strings.Replace(local.DefaultKeysDir(), "keys", "encryption-keys", 1), "directory in which to locate encryption keys")
 	rootCmd.PersistentFlags().StringVarP(&ApiKeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
 	rootCmd.PersistentFlags().StringVar(&EncryptionKeyName, "encryption-key-name", "default", "name of encryption key with which to interact with the Turnkey API service")
 	rootCmd.PersistentFlags().StringVar(&apiHost, "host", "api.turnkey.com", "hostname of the API server")
@@ -69,7 +70,7 @@ func basicSetup(cmd *cobra.Command) {
 	}
 
 	if apiKeyStore == nil {
-		localKeyStore := local.New[apikey.Key]()
+		localKeyStore := local.New[apikey.Key, apikey.Metadata]()
 
 		if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
 			OutputError(eris.Wrap(err, "failed to obtain key storage location"))
@@ -79,7 +80,7 @@ func basicSetup(cmd *cobra.Command) {
 	}
 
 	if encryptionKeyStore == nil {
-		localEncryptionKeyStore := local.New[encryption_key.Key]()
+		localEncryptionKeyStore := local.New[encryption_key.Key, encryption_key.Metadata]()
 
 		if err := localEncryptionKeyStore.SetKeysDirectory(encryptionKeysDirectory); err != nil {
 			OutputError(eris.Wrap(err, "failed to obtain key storage location"))
@@ -251,6 +252,7 @@ func hexToPublicKey(hexString string) (*ecdsa.PublicKey, error) {
 		return nil, err
 	}
 
+	// second half is the public key bytes for the enclave quorum encryption key
 	if len(publicKeyBytes) != 130 {
 		return nil, eris.New("invalid public key length")
 	}
