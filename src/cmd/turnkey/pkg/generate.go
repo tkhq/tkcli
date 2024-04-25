@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
-	"github.com/tkhq/go-sdk/pkg/encryption_key"
+	"github.com/tkhq/go-sdk/pkg/encryptionkey"
 	"github.com/tkhq/go-sdk/pkg/store/local"
 )
 
@@ -93,7 +93,7 @@ var encryptionKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to read encryption key name"))
 		}
 
-		encryptionKey, err := encryption_key.New(User, Organization)
+		encryptionKey, err := encryptionkey.New(User, Organization)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to create encryption keypair"))
 		}
@@ -114,7 +114,7 @@ var encryptionKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to store new encryption keypair"))
 		}
 
-		localStore, ok := encryptionKeyStore.(*local.Store[encryption_key.Key, encryption_key.Metadata])
+		localStore, ok := encryptionKeyStore.(*local.Store[encryptionkey.Key, encryptionkey.Metadata])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}

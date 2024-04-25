@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/tkhq/go-sdk/pkg/apikey"
-	"github.com/tkhq/go-sdk/pkg/encryption_key"
+	"github.com/tkhq/go-sdk/pkg/encryptionkey"
 	"github.com/tkhq/go-sdk/pkg/store"
 	"github.com/tkhq/go-sdk/pkg/store/local"
 )
@@ -31,7 +31,7 @@ var (
 
 	apiKeyStore store.Store[apikey.Key, apikey.Metadata]
 
-	encryptionKeyStore store.Store[encryption_key.Key, encryption_key.Metadata]
+	encryptionKeyStore store.Store[encryptionkey.Key, encryptionkey.Metadata]
 
 	// ApiKeyName is the name of the key with which we are operating.
 	ApiKeyName string
@@ -80,7 +80,7 @@ func basicSetup(cmd *cobra.Command) {
 	}
 
 	if encryptionKeyStore == nil {
-		localEncryptionKeyStore := local.New[encryption_key.Key, encryption_key.Metadata]()
+		localEncryptionKeyStore := local.New[encryptionkey.Key, encryptionkey.Metadata]()
 
 		if err := localEncryptionKeyStore.SetKeysDirectory(encryptionKeysDirectory); err != nil {
 			OutputError(eris.Wrap(err, "failed to obtain key storage location"))

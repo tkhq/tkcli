@@ -9,7 +9,7 @@ import (
 
 	"github.com/tkhq/go-sdk/pkg/api/client/wallets"
 	"github.com/tkhq/go-sdk/pkg/api/models"
-	"github.com/tkhq/go-sdk/pkg/encryption_key"
+	"github.com/tkhq/go-sdk/pkg/encryptionkey"
 	"github.com/tkhq/go-sdk/pkg/util"
 )
 
@@ -155,7 +155,7 @@ var walletExportCmd = &cobra.Command{
 		}
 
 		tkPublicKey := EncryptionKeypair.GetPublicKey()
-		kemPublicKey, err := encryption_key.DecodeTurnkeyPublicKey(tkPublicKey)
+		kemPublicKey, err := encryptionkey.DecodeTurnkeyPublicKey(tkPublicKey)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to decode encryption public key"))
 		}

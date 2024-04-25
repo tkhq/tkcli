@@ -4,7 +4,7 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
-	"github.com/tkhq/go-sdk/pkg/encryption_key"
+	"github.com/tkhq/go-sdk/pkg/encryptionkey"
 )
 
 var (
@@ -12,7 +12,7 @@ var (
 	exportBundlePath string
 
 	// EncryptionKeypair is the loaded Encryption Keypair.
-	EncryptionKeypair *encryption_key.Key
+	EncryptionKeypair *encryptionkey.Key
 )
 
 func init() {
@@ -44,7 +44,7 @@ var decryptCmd = &cobra.Command{
 
 		// get encryption key
 		tkPrivateKey := EncryptionKeypair.GetPrivateKey()
-		kemPrivateKey, err := encryption_key.DecodeTurnkeyPrivateKey(tkPrivateKey)
+		kemPrivateKey, err := encryptionkey.DecodeTurnkeyPrivateKey(tkPrivateKey)
 		if err != nil {
 			OutputError(eris.Wrap(err, "failed to decode encryption private key"))
 		}
