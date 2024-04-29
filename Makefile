@@ -199,8 +199,9 @@ build-local:
 	popd;
 
 .PHONY: reproduce
-reproduce: clean default
-	diff digests.txt digests-dist.txt \
+reproduce: clean default digests.txt
+	@diff digests.txt digests-dist.txt \
+	&& echo "Digests are identical" \
 	|| echo "Warning: digests.txt and digests-dist.txt differ"
 	
 .PHONY: $(DIST_DIR)

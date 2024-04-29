@@ -57,7 +57,7 @@ func TestHelpText(t *testing.T) {
 	assert.Contains(t, out, "Available Commands:")
 }
 
-func TestKeygenInTmpFolder(t *testing.T) {
+func TestAPIKeygenInTmpFolder(t *testing.T) {
 	orgID := uuid.New()
 
 	tmpDir, err := os.MkdirTemp(TempDir, "keys")
@@ -83,7 +83,34 @@ func TestKeygenInTmpFolder(t *testing.T) {
 	assert.Equal(t, parsedOut["privateKeyFile"], tmpDir+"/mykey.private")
 }
 
-func TestKeygenDetectExistingKey(t *testing.T) {
+func TestEncryptionKeygenInTmpFolder(t *testing.T) {
+	orgID := uuid.New()
+	userID := uuid.New()
+
+	tmpDir, err := os.MkdirTemp(TempDir, "encryption-keys")
+	assert.Nil(t, err)
+
+	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()
+
+	out, err := RunCliWithArgs(t, []string{"generate", "encryption-key", "--encryption-keys-folder", tmpDir, "--encryption-key-name", "mykey", "--organization", orgID.String(), "--user", userID.String()})
+	assert.Nil(t, err)
+
+	assert.FileExists(t, tmpDir+"/mykey.public")
+	assert.FileExists(t, tmpDir+"/mykey.private")
+
+	publicKeyData, err := os.ReadFile(tmpDir + "/mykey.public")
+	assert.Nil(t, err)
+
+	var parsedOut map[string]string
+
+	assert.Nil(t, json.Unmarshal([]byte(out), &parsedOut))
+
+	assert.Equal(t, parsedOut["publicKey"], string(publicKeyData))
+	assert.Equal(t, parsedOut["publicKeyFile"], tmpDir+"/mykey.public")
+	assert.Equal(t, parsedOut["privateKeyFile"], tmpDir+"/mykey.private")
+}
+
+func TestAPIKeygenDetectExistingKey(t *testing.T) {
 	orgID := uuid.New()
 
 	tmpDir, err := os.MkdirTemp(TempDir, "keys")
@@ -100,7 +127,30 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 	assert.FileExists(t, tmpDir+"/myexistingkey.public")
 	assert.FileExists(t, tmpDir+"/myexistingkey.private")
 
-	_, err = RunCliWithArgs(t, []string{"gen", "--organization", orgID.String(), "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
+	_, err = RunCliWithArgs(t, []string{"generate", "api-key", "--organization", orgID.String(), "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "exit status 1")
+}
+
+func TestEncryptionKeygenDetectExistingKey(t *testing.T) {
+	orgID := uuid.New()
+	userID := uuid.New()
+
+	tmpDir, err := os.MkdirTemp(TempDir, "encryption-keys")
+	defer func() { assert.Nil(t, os.RemoveAll(tmpDir)) }()
+
+	assert.Nil(t, err)
+
+	err = os.WriteFile(tmpDir+"/myexistingkey.public", []byte("mykey.public"), 0o755)
+	assert.Nil(t, err)
+
+	err = os.WriteFile(tmpDir+"/myexistingkey.private", []byte("mykey.private"), 0o755)
+	assert.Nil(t, err)
+
+	assert.FileExists(t, tmpDir+"/myexistingkey.public")
+	assert.FileExists(t, tmpDir+"/myexistingkey.private")
+
+	_, err = RunCliWithArgs(t, []string{"generate", "encryption-key", "--organization", orgID.String(), "--user", userID.String(), "--encryption-keys-folder", tmpDir, "--encryption-key-name", "myexistingkey"})
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit status 1")
 }

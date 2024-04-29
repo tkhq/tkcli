@@ -18,17 +18,26 @@ import (
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
+	"github.com/tkhq/go-sdk/pkg/apikey"
+	"github.com/tkhq/go-sdk/pkg/encryptionkey"
 	"github.com/tkhq/go-sdk/pkg/store"
 	"github.com/tkhq/go-sdk/pkg/store/local"
 )
 
 var (
-	rootKeysDirectory string
+	apiKeysDirectory string
 
-	keyStore store.Store
+	encryptionKeysDirectory string
 
-	// KeyName is the name of the key with which we are operating.
-	KeyName string
+	apiKeyStore store.Store[apikey.Key, apikey.Metadata]
+
+	encryptionKeyStore store.Store[encryptionkey.Key, encryptionkey.Metadata]
+
+	// ApiKeyName is the name of the key with which we are operating.
+	ApiKeyName string
+
+	// EncryptionKeyName is the name of the key with which we are operating.
+	EncryptionKeyName string
 
 	apiHost string
 
@@ -36,12 +45,15 @@ var (
 	Organization string
 )
 
-// Turnkey Signer enclave's public key.
+// Turnkey Signer enclave's quorum public key.
 const signerPublicKey = "04ca7c0d624c75de6f34af342e87a21e0d8c83efd1bd5b5da0c0177c147f744fba6f01f9f37356f9c617659aafa55f6e0af8d169a8f054d153ab3201901fb63ecb04cf288fe433cc4e1aa0ce1632feac4ea26bf2f5a09dcfe5a42c398e06898710330f0572882f4dbdf0f5304b8fc8703acd69adca9a4bbf7f5d00d20a5e364b2569"
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&rootKeysDirectory, "keys-folder", "d", local.DefaultKeysDir(), "directory in which to locate keys")
-	rootCmd.PersistentFlags().StringVarP(&KeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
+	rootCmd.PersistentFlags().StringVarP(&apiKeysDirectory, "keys-folder", "d", local.DefaultAPIKeysDir(), "directory in which to locate API keys")
+	// todo(olivia): create default keys dir for encryption-keys
+	rootCmd.PersistentFlags().StringVar(&encryptionKeysDirectory, "encryption-keys-folder", local.DefaultEncryptionKeysDir(), "directory in which to locate encryption keys")
+	rootCmd.PersistentFlags().StringVarP(&ApiKeyName, "key-name", "k", "default", "name of API key with which to interact with the Turnkey API service")
+	rootCmd.PersistentFlags().StringVar(&EncryptionKeyName, "encryption-key-name", "default", "name of encryption key with which to interact with the Turnkey API service")
 	rootCmd.PersistentFlags().StringVar(&apiHost, "host", "api.turnkey.com", "hostname of the API server")
 
 	rootCmd.PersistentFlags().StringVar(&Organization, "organization", "", "organization ID to be used")
@@ -57,14 +69,24 @@ func basicSetup(cmd *cobra.Command) {
 		OutputError(err)
 	}
 
-	if keyStore == nil {
-		localKeyStore := local.New()
+	if apiKeyStore == nil {
+		localApiKeyStore := local.New[apikey.Key, apikey.Metadata]()
 
-		if err := localKeyStore.SetKeysDirectory(rootKeysDirectory); err != nil {
-			OutputError(eris.Wrap(err, "failed to obtain key storage location"))
+		if err := localApiKeyStore.SetAPIKeysDirectory(apiKeysDirectory); err != nil {
+			OutputError(eris.Wrap(err, "failed to obtain API key storage location"))
 		}
 
-		keyStore = localKeyStore
+		apiKeyStore = localApiKeyStore
+	}
+
+	if encryptionKeyStore == nil {
+		localEncryptionKeyStore := local.New[encryptionkey.Key, encryptionkey.Metadata]()
+
+		if err := localEncryptionKeyStore.SetEncryptionKeysDirectory(encryptionKeysDirectory); err != nil {
+			OutputError(eris.Wrap(err, "failed to obtain encryption key storage location"))
+		}
+
+		encryptionKeyStore = localEncryptionKeyStore
 	}
 }
 
@@ -119,12 +141,12 @@ func detectAndMoveDeprecatedDefaultKeysDirOnMacOs() error {
 		return nil
 	}
 
-	deprecatedDir := local.DeprecatedDefaultKeysDir()
+	deprecatedDir := local.DeprecatedDefaultAPIKeysDir()
 	if deprecatedDir == "" {
 		return nil
 	}
 
-	newDir := local.DefaultKeysDir()
+	newDir := local.DefaultAPIKeysDir()
 	fmt.Printf("Legacy keys directory detected; will migrate keys to new location\n- Legacy: %s\n- New: %s\n\n", deprecatedDir, newDir)
 
 	err := filepath.WalkDir(deprecatedDir, func(path string, d fs.DirEntry, err error) error {
@@ -230,6 +252,7 @@ func hexToPublicKey(hexString string) (*ecdsa.PublicKey, error) {
 		return nil, err
 	}
 
+	// second half is the public key bytes for the enclave quorum encryption key
 	if len(publicKeyBytes) != 130 {
 		return nil, eris.New("invalid public key length")
 	}

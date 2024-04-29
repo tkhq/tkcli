@@ -13,7 +13,7 @@ import (
 
 var (
 	// user is the user ID to import wallets and private keys with.
-	user string
+	User string
 
 	// Filepath to write the import bundle to.
 	importBundlePath string
@@ -33,7 +33,7 @@ func init() {
 	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-output", "", "filepath to read the encrypted bundle from.")
 	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-input", "", "filepath to read the plaintext from that will be encrypted.")
 	encryptCmd.Flags().StringVar(&keyFormat, "key-format", "mnemonic", "optional formatting to apply to the plaintext before it is encrypted.")
-	encryptCmd.Flags().StringVar(&user, "user", "", "ID of user to encrypting the plaintext.")
+	encryptCmd.Flags().StringVar(&User, "user", "", "ID of user to encrypting the plaintext.")
 
 	rootCmd.AddCommand(encryptCmd)
 }
@@ -42,6 +42,10 @@ var encryptCmd = &cobra.Command{
 	Use:   "encrypt",
 	Short: "Encrypt a plaintext",
 	Long:  `Encrypt a plaintext into a bundle to be imported to a Turnkey secure enclave.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadEncryptionKeypair("")
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if importBundlePath == "" {
 			OutputError(eris.New("--import-bundle-input must be specified"))
@@ -98,7 +102,7 @@ var encryptCmd = &cobra.Command{
 		}
 
 		// encrypt plaintext
-		clientSendMsg, err := encryptClient.Encrypt(plaintextBytes, []byte(importBundle), Organization, user)
+		clientSendMsg, err := encryptClient.Encrypt(plaintextBytes, []byte(importBundle), Organization, User)
 		if err != nil {
 			OutputError(err)
 		}

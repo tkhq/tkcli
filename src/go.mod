@@ -10,8 +10,8 @@ require (
 	github.com/rotisserie/eris v0.5.4
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	github.com/tkhq/go-sdk v0.0.0-20240417220516-6789f2ee4179
-	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240417220516-6789f2ee4179
+	github.com/tkhq/go-sdk v0.0.0-20240429154636-0a294ff69070
+	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240429154636-0a294ff69070
 	gopkg.in/yaml.v3 v3.0.1
 )
 

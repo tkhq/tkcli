@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	"github.com/rotisserie/eris"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/tkhq/go-sdk/pkg/api/client/wallets"
 	"github.com/tkhq/go-sdk/pkg/api/models"
+	"github.com/tkhq/go-sdk/pkg/encryptionkey"
 	"github.com/tkhq/go-sdk/pkg/util"
 )
 
@@ -22,10 +24,13 @@ var (
 func init() {
 	walletCreateCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet.")
 
-	walletInitImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the wallet")
+	walletExportCmd.Flags().StringVar(&walletNameOrID, "name", "", "name or ID of wallet to export.")
+	walletExportCmd.Flags().StringVar(&exportBundlePath, "export-bundle-output", "", "filepath to write the export bundle to.")
+
+	walletInitImportCmd.Flags().StringVar(&User, "user", "", "ID of user to importing the wallet")
 	walletInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-output", "", "filepath to write the import bundle to.")
 
-	walletImportCmd.Flags().StringVar(&user, "user", "", "ID of user to importing the wallet")
+	walletImportCmd.Flags().StringVar(&User, "user", "", "ID of user to importing the wallet")
 	walletImportCmd.Flags().StringVar(&walletNameOrID, "name", "", "name to be applied to the wallet.")
 	walletImportCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-input", "", "filepath to read the encrypted bundle from.")
 
@@ -41,6 +46,7 @@ func init() {
 	walletAccountsCmd.AddCommand(walletAccountCreateCmd)
 	walletsCmd.AddCommand(walletCreateCmd)
 	walletsCmd.AddCommand(walletsListCmd)
+	walletsCmd.AddCommand(walletExportCmd)
 	walletsCmd.AddCommand(walletInitImportCmd)
 	walletsCmd.AddCommand(walletImportCmd)
 	walletsCmd.AddCommand(walletAccountsCmd)
@@ -54,6 +60,7 @@ var walletsCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
+		LoadEncryptionKeypair("")
 		LoadClient()
 	},
 	Aliases: []string{},
@@ -125,11 +132,81 @@ var walletsListCmd = &cobra.Command{
 	},
 }
 
+var walletExportCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export a wallet",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if walletNameOrID == "" {
+			OutputError(eris.New("--name must be specified"))
+		}
+
+		if EncryptionKeyName == "" {
+			OutputError(eris.New("--encryption-key-name must be specified"))
+		}
+
+		if exportBundlePath == "" {
+			OutputError(eris.New("export bundle path must be specified"))
+		}
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		wallet, err := lookupWallet(walletNameOrID)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to lookup wallet"))
+		}
+
+		tkPublicKey := EncryptionKeypair.GetPublicKey()
+		kemPublicKey, err := encryptionkey.DecodeTurnkeyPublicKey(tkPublicKey)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to decode encryption public key"))
+		}
+		kemPublicKeyBytes, err := (*kemPublicKey).MarshalBinary()
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to marshal encryption public key"))
+		}
+		targetPublicKey := hex.EncodeToString(kemPublicKeyBytes)
+
+		activity := string(models.ActivityTypeExportWallet)
+
+		params := wallets.NewExportWalletParams()
+		params.SetBody(&models.ExportWalletRequest{
+			OrganizationID: &Organization,
+			Parameters: &models.ExportWalletIntent{
+				WalletID:        wallet.WalletID,
+				TargetPublicKey: &targetPublicKey,
+			},
+			TimestampMs: util.RequestTimestamp(),
+			Type:        &activity,
+		})
+
+		if err := params.Body.Validate(nil); err != nil {
+			OutputError(eris.Wrap(err, "request validation failed"))
+		}
+
+		resp, err := APIClient.V0().Wallets.ExportWallet(params, APIClient.Authenticator)
+		if err != nil {
+			OutputError(eris.Wrap(err, "request failed"))
+		}
+
+		if !resp.IsSuccess() {
+			OutputError(eris.Errorf("failed to export wallet: %s", resp.Error()))
+		}
+
+		exportBundle := resp.Payload.Activity.Result.ExportWalletResult.ExportBundle
+		err = writeFile(*exportBundle, exportBundlePath)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to write export bundle to file"))
+		}
+
+		exportedWalletID := resp.Payload.Activity.Result.ExportWalletResult.WalletID
+		Output(exportedWalletID)
+	},
+}
+
 var walletInitImportCmd = &cobra.Command{
 	Use:   "init-import",
 	Short: "Initialize wallet import",
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if user == "" {
+		if User == "" {
 			OutputError(eris.New("--user must be specified"))
 		}
 
@@ -144,7 +221,7 @@ var walletInitImportCmd = &cobra.Command{
 		params.SetBody(&models.InitImportWalletRequest{
 			OrganizationID: &Organization,
 			Parameters: &models.InitImportWalletIntent{
-				UserID: &user,
+				UserID: &User,
 			},
 			TimestampMs: util.RequestTimestamp(),
 			Type:        &activity,
@@ -175,7 +252,7 @@ var walletImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
-		if user == "" {
+		if User == "" {
 			OutputError(eris.New("--user must be specified"))
 		}
 
@@ -199,7 +276,7 @@ var walletImportCmd = &cobra.Command{
 		params.SetBody(&models.ImportWalletRequest{
 			OrganizationID: &Organization,
 			Parameters: &models.ImportWalletIntent{
-				UserID:          &user,
+				UserID:          &User,
 				WalletName:      &walletNameOrID,
 				EncryptedBundle: &encryptedBundle,
 				Accounts:        []*models.WalletAccountParams{},
