@@ -190,12 +190,16 @@ github.com/tkhq/go-sdk v0.0.0-20240424191015-ed73b2a6714d h1:Fks0r/TtnnhXD2TxP7t
 github.com/tkhq/go-sdk v0.0.0-20240424191015-ed73b2a6714d/go.mod h1:NgCPbnpGdhx+31NLwmK3iC6UftT7I70dbKXVbblVpjk=
 github.com/tkhq/go-sdk v0.0.0-20240429152307-ed3619757dc3 h1:/UyUO4gDCJkEU41x75El3duhQ/7nRuOfHEPakjjpDK0=
 github.com/tkhq/go-sdk v0.0.0-20240429152307-ed3619757dc3/go.mod h1:NgCPbnpGdhx+31NLwmK3iC6UftT7I70dbKXVbblVpjk=
+github.com/tkhq/go-sdk v0.0.0-20240429154636-0a294ff69070 h1:33+OwgULLDluJDxdxjnL6zyJgg3wWZbr6//8kjqb3Q4=
+github.com/tkhq/go-sdk v0.0.0-20240429154636-0a294ff69070/go.mod h1:NgCPbnpGdhx+31NLwmK3iC6UftT7I70dbKXVbblVpjk=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240424182346-feb92f1d2f52 h1:XQaUYa/l3SVVykk7gV9+xihmzbp+VDwAZng0BQ2QaW8=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240424182346-feb92f1d2f52/go.mod h1:BvoxNhFz61TSwjbULvHYdeV0aS68qkcHXpGkJFVkzrw=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240424191015-ed73b2a6714d h1:bb6SnXl819EqBv5QhEn5wUZHTIdsLYdx9v04KcsCXho=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240424191015-ed73b2a6714d/go.mod h1:BvoxNhFz61TSwjbULvHYdeV0aS68qkcHXpGkJFVkzrw=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240429152307-ed3619757dc3 h1:faQ1L5IoSYsCnUDJMGse40eo6/VloMoAzeIyPs5vcb0=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240429152307-ed3619757dc3/go.mod h1:BvoxNhFz61TSwjbULvHYdeV0aS68qkcHXpGkJFVkzrw=
+github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240429154636-0a294ff69070 h1:0t804AkowFXHPAEkr2WsDCOvShPzIe61Q0EYebSdmNw=
+github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240429154636-0a294ff69070/go.mod h1:BvoxNhFz61TSwjbULvHYdeV0aS68qkcHXpGkJFVkzrw=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.0.2/go.mod h1:1WAq6h33pAW+iRreB34OORO2Nf7qel3VV3fjBj+hCSs=
 github.com/xdg-go/scram v1.1.1/go.mod h1:RaEWvsqvNKKvBPvcKeFjrG2cJqOkHTiyTpzz23ni57g=
