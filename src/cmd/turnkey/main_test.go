@@ -100,7 +100,7 @@ func TestKeygenDetectExistingKey(t *testing.T) {
 	assert.FileExists(t, tmpDir+"/myexistingkey.public")
 	assert.FileExists(t, tmpDir+"/myexistingkey.private")
 
-	_, err = RunCliWithArgs(t, []string{"gen", "--organization", orgID.String(), "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
+	_, err = RunCliWithArgs(t, []string{"generate", "api-key", "--organization", orgID.String(), "--keys-folder", tmpDir, "--key-name", "myexistingkey"})
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "exit status 1")
 }
