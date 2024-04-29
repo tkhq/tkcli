@@ -107,8 +107,18 @@ func LoadEncryptionKeypair(name string) {
 		Organization = encryptionKey.Organization
 	}
 
-	// If org is _still_ empty, the API key is not usable.
+	// If org is _still_ empty, the encryption key is not usable.
 	if Organization == "" {
 		OutputError(eris.New("failed to associate the encryption key with an organization; please manually specify the organization ID"))
+	}
+
+	// If we haven't had the user explicitly set try to load it from key metadata.
+	if User == "" {
+		User = encryptionKey.User
+	}
+
+	// If user is _still_ empty, the encryption key is not usable.
+	if User == "" {
+		OutputError(eris.New("failed to associate the encryption key with a user; please manually specify the user ID"))
 	}
 }
