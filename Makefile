@@ -6,7 +6,7 @@ KEYS := \
 	66039AA59D823C8BD68DB062D3EC673DF9843E7B \
 	DE050A451E6FAF94C677B58B9361DEC647A087BD
 
-LOCAL_BUILD_DIR := 'build'
+LOCAL_BUILD_DIR := build
 SRC_DIR := src
 KEY_DIR := fetch/keys
 OUT_DIR := out
@@ -194,9 +194,7 @@ $(OUT_DIR)/release.env: | $(OUT_DIR)
 
 .PHONY: build-local
 build-local:
-	pushd $(shell git rev-parse --show-toplevel)/src/cmd/turnkey; \
-	go build -o ../$(LOCAL_BUILD_DIR)/turnkey; \
-	popd;
+	go build -o ./$(LOCAL_BUILD_DIR)/turnkey ./src/cmd/turnkey
 
 .PHONY: reproduce
 reproduce: clean default digests.txt
