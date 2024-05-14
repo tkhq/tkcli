@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"crypto/ecdsa"
 	"encoding/hex"
 	"encoding/json"
 
@@ -26,6 +27,9 @@ var (
 
 	// Format to apply to the plaintext key before it's encrypted: `mnemonic`, `hexadecimal`, `solana`. Defaults to `mnemonic`.
 	keyFormat string
+
+	// Signer quorum key in hex, uncompressed format
+	signerPublicKeyOverride string
 )
 
 func init() {
@@ -34,6 +38,7 @@ func init() {
 	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-input", "", "filepath to read the plaintext from that will be encrypted.")
 	encryptCmd.Flags().StringVar(&keyFormat, "key-format", "mnemonic", "optional formatting to apply to the plaintext before it is encrypted.")
 	encryptCmd.Flags().StringVar(&User, "user", "", "ID of user to encrypting the plaintext.")
+	encryptCmd.Flags().StringVar(&signerPublicKeyOverride, "signer-quorum-key", "", "optional override for the signer quorum key. This option should be used for testing only. Leave this value empty for production encryptions.")
 
 	rootCmd.AddCommand(encryptCmd)
 }
@@ -67,12 +72,17 @@ var encryptCmd = &cobra.Command{
 		}
 
 		// set up enclave encrypt client
-		signerPublic, err := hexToPublicKey(signerPublicKey)
+		var signerKey *ecdsa.PublicKey
+		if signerPublicKeyOverride != "" {
+			signerKey, err = hexToPublicKey(signerPublicKeyOverride)
+		} else {
+			signerKey, err = hexToPublicKey(signerProductionPublicKey)
+		}
 		if err != nil {
 			OutputError(err)
 		}
 
-		encryptClient, err := enclave_encrypt.NewEnclaveEncryptClient(signerPublic)
+		encryptClient, err := enclave_encrypt.NewEnclaveEncryptClient(signerKey)
 		if err != nil {
 			OutputError(err)
 		}

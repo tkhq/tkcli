@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"crypto/ecdsa"
+
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
@@ -8,7 +10,7 @@ import (
 )
 
 var (
-	// Filepath to write the export bundle to.
+	// Filepath to read the export bundle from.
 	exportBundlePath string
 
 	// EncryptionKeypair is the loaded Encryption Keypair.
@@ -18,6 +20,7 @@ var (
 func init() {
 	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to read the export bundle from.")
 	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-output", "", "optional filepath to write the plaintext from that will be decrypted.")
+	decryptCmd.Flags().StringVar(&signerPublicKeyOverride, "signer-quorum-key", "", "optional override for the signer quorum key. This option should be used for testing only. Leave this value empty for production decryptions.")
 
 	rootCmd.AddCommand(decryptCmd)
 }
@@ -49,13 +52,18 @@ var decryptCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to decode encryption private key"))
 		}
 
-		// set up enclave encrypt client
-		signerPublic, err := hexToPublicKey(signerPublicKey)
+		var signerKey *ecdsa.PublicKey
+		if signerPublicKeyOverride != "" {
+			signerKey, err = hexToPublicKey(signerPublicKeyOverride)
+		} else {
+			signerKey, err = hexToPublicKey(signerProductionPublicKey)
+		}
 		if err != nil {
 			OutputError(err)
 		}
 
-		encryptClient, err := enclave_encrypt.NewEnclaveEncryptClientFromTargetKey(signerPublic, *kemPrivateKey)
+		// set up enclave encrypt client
+		encryptClient, err := enclave_encrypt.NewEnclaveEncryptClientFromTargetKey(signerKey, *kemPrivateKey)
 		if err != nil {
 			OutputError(err)
 		}
@@ -81,7 +89,7 @@ var decryptCmd = &cobra.Command{
 	},
 }
 
-// LoadEncryptionKeypair require-loads the keypair referenced by the given name or as referenced form the global KeyName variable, if name is empty.
+// LoadEncryptionKeypair require-loads the keypair referenced by the given name or as referenced from the global EncryptionKeyName variable, if name is empty.
 func LoadEncryptionKeypair(name string) {
 	if name == "" {
 		name = EncryptionKeyName
@@ -117,8 +125,6 @@ func LoadEncryptionKeypair(name string) {
 		User = encryptionKey.User
 	}
 
-	// If user is _still_ empty, the encryption key is not usable.
-	if User == "" {
-		OutputError(eris.New("failed to associate the encryption key with a user; please manually specify the user ID"))
-	}
+	// If user is _still_ empty, the encryption key is still usable in some cases where user ID isn't needed (export)
+	// Hence we do not error out here if encryptionKey.User is empty.
 }
