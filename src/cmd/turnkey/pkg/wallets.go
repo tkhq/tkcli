@@ -60,8 +60,8 @@ var walletsCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
-		LoadEncryptionKeypair("")
 		LoadClient()
+		LoadEncryptionKeypair("")
 	},
 	Aliases: []string{},
 }
@@ -145,7 +145,7 @@ var walletExportCmd = &cobra.Command{
 		}
 
 		if exportBundlePath == "" {
-			OutputError(eris.New("export bundle path must be specified"))
+			OutputError(eris.New("--export-bundle-output must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

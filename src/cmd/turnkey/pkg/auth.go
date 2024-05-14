@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"regexp"
+
 	"github.com/rotisserie/eris"
 
 	"github.com/tkhq/go-sdk"
@@ -53,7 +55,11 @@ func LoadKeypair(name string) {
 
 // LoadClient creates an API client from the preloaded API keypair.
 func LoadClient() {
-	transportConfig := client.DefaultTransportConfig().WithHost(apiHost)
+	scheme := "https"
+	if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(apiHost) {
+		scheme = "http"
+	}
+	transportConfig := client.DefaultTransportConfig().WithHost(apiHost).WithSchemes([]string{scheme})
 
 	APIClient = &sdk.Client{
 		Client:        client.NewHTTPClientWithConfig(nil, transportConfig),

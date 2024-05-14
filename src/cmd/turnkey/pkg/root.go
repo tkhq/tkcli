@@ -46,7 +46,7 @@ var (
 )
 
 // Turnkey Signer enclave's quorum public key.
-const signerPublicKey = "04ca7c0d624c75de6f34af342e87a21e0d8c83efd1bd5b5da0c0177c147f744fba6f01f9f37356f9c617659aafa55f6e0af8d169a8f054d153ab3201901fb63ecb04cf288fe433cc4e1aa0ce1632feac4ea26bf2f5a09dcfe5a42c398e06898710330f0572882f4dbdf0f5304b8fc8703acd69adca9a4bbf7f5d00d20a5e364b2569"
+const signerProductionPublicKey = "04cf288fe433cc4e1aa0ce1632feac4ea26bf2f5a09dcfe5a42c398e06898710330f0572882f4dbdf0f5304b8fc8703acd69adca9a4bbf7f5d00d20a5e364b2569"
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&apiKeysDirectory, "keys-folder", "d", local.DefaultAPIKeysDir(), "directory in which to locate API keys")
@@ -253,10 +253,9 @@ func hexToPublicKey(hexString string) (*ecdsa.PublicKey, error) {
 	}
 
 	// second half is the public key bytes for the enclave quorum encryption key
-	if len(publicKeyBytes) != 130 {
-		return nil, eris.New("invalid public key length")
+	if len(publicKeyBytes) != 65 {
+		return nil, eris.Errorf("invalid public key length. Expected 65 bytes but got %d (hex string: \"%s\")", len(publicKeyBytes), publicKeyBytes)
 	}
-	encryptionPublicKeyBytes := publicKeyBytes[65:130]
 
 	// init curve instance
 	curve := elliptic.P256()
@@ -265,14 +264,14 @@ func hexToPublicKey(hexString string) (*ecdsa.PublicKey, error) {
 	byteLen := (curve.Params().BitSize + 7) / 8
 
 	// ensure the public key bytes have the correct length
-	if len(encryptionPublicKeyBytes) != 1+2*byteLen {
+	if len(publicKeyBytes) != 1+2*byteLen {
 		return nil, eris.New("invalid encryption public key length")
 	}
 
 	// extract X and Y coordinates from the public key bytes
 	// ignore first byte (prefix)
-	x := new(big.Int).SetBytes(encryptionPublicKeyBytes[1 : 1+byteLen])
-	y := new(big.Int).SetBytes(encryptionPublicKeyBytes[1+byteLen:])
+	x := new(big.Int).SetBytes(publicKeyBytes[1 : 1+byteLen])
+	y := new(big.Int).SetBytes(publicKeyBytes[1+byteLen:])
 
 	return &ecdsa.PublicKey{
 		Curve: curve,
