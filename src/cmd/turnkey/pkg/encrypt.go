@@ -33,8 +33,8 @@ var (
 )
 
 func init() {
-	encryptCmd.Flags().StringVar(&importBundlePath, "import-bundle-input", "", "filepath to write the import bundle to.")
-	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-output", "", "filepath to read the encrypted bundle from.")
+	encryptCmd.Flags().StringVar(&importBundlePath, "import-bundle-input", "", "filepath to read the import bundle from (result of init-import).")
+	encryptCmd.Flags().StringVar(&encryptedBundlePath, "encrypted-bundle-output", "", "filepath to write the encrypted bundle to (posted in the final import).")
 	encryptCmd.Flags().StringVar(&plaintextPath, "plaintext-input", "", "filepath to read the plaintext from that will be encrypted.")
 	encryptCmd.Flags().StringVar(&keyFormat, "key-format", "mnemonic", "optional formatting to apply to the plaintext before it is encrypted.")
 	encryptCmd.Flags().StringVar(&User, "user", "", "ID of user to encrypting the plaintext.")
