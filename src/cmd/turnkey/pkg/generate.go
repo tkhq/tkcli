@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"fmt"
+
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 
@@ -9,7 +11,12 @@ import (
 	"github.com/tkhq/go-sdk/pkg/store/local"
 )
 
+var (
+	curveType string
+)
+
 func init() {
+	apiKeyCmd.Flags().StringVar(&curveType, "curve", "p256", "curve type for API key; p256 and secp256k1 currently supported")
 	generateCmd.AddCommand(apiKeyCmd)
 
 	encryptionKeyCmd.Flags().StringVar(&User, "user", "", "ID of user to generating the encryption key")
@@ -40,9 +47,26 @@ var apiKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to read API key name"))
 		}
 
-		apiKey, err := apikey.New(Organization)
+		curveType, err := cmd.Flags().GetString("curve")
 		if err != nil {
-			OutputError(eris.Wrap(err, "failed to create API keypair"))
+			OutputError(eris.Wrap(err, "failed to read curve type"))
+		}
+
+		var apiKey *apikey.Key
+
+		switch curveType {
+		default:
+			OutputError(fmt.Errorf("invalid curve type: %s; supported types are p256 and secp256k1", curveType))
+		case "p256":
+			apiKey, err = apikey.New(Organization, apikey.SchemeP256)
+			if err != nil {
+				OutputError(eris.Wrap(err, "failed to create API keypair"))
+			}
+		case "secp256k1":
+			apiKey, err = apikey.New(Organization, apikey.SchemeSECP256K1)
+			if err != nil {
+				OutputError(eris.Wrap(err, "failed to create API keypair"))
+			}
 		}
 
 		if name == "-" {
@@ -54,6 +78,7 @@ var apiKeyCmd = &cobra.Command{
 
 		apiKey.Metadata.Name = name
 		apiKey.Metadata.PublicKey = apiKey.TkPublicKey
+		apiKey.Metadata.Scheme = apiKey.Scheme
 		apiKey.Metadata.Organizations = []string{Organization}
 
 		if err = apiKeyStore.Store(name, apiKey); err != nil {
