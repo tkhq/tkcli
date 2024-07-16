@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	apiKeyCmd.Flags().StringVar(&curveType, "curve", "p256", "curve type for API key; p256 and secp256k1 currently supported")
+	apiKeyCmd.Flags().StringVar(&curveType, "curve", "p256", "curve type for API key; p256, secp256k1, and ed25519 currently supported")
 	generateCmd.AddCommand(apiKeyCmd)
 
 	encryptionKeyCmd.Flags().StringVar(&User, "user", "", "ID of user to generating the encryption key")
@@ -56,7 +56,7 @@ var apiKeyCmd = &cobra.Command{
 
 		switch curveType {
 		default:
-			OutputError(fmt.Errorf("invalid curve type: %s; supported types are p256 and secp256k1", curveType))
+			OutputError(fmt.Errorf("invalid curve type: %s; supported types are p256, secp256k1, and ed25519", curveType))
 		case "p256":
 			apiKey, err = apikey.New(Organization, apikey.SchemeP256)
 			if err != nil {
@@ -64,6 +64,11 @@ var apiKeyCmd = &cobra.Command{
 			}
 		case "secp256k1":
 			apiKey, err = apikey.New(Organization, apikey.SchemeSECP256K1)
+			if err != nil {
+				OutputError(eris.Wrap(err, "failed to create API keypair"))
+			}
+		case "ed25519":
+			apiKey, err = apikey.New(Organization, apikey.SchemeED25519)
 			if err != nil {
 				OutputError(eris.Wrap(err, "failed to create API keypair"))
 			}
