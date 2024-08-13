@@ -4,8 +4,6 @@ go 1.21
 
 toolchain go1.21.0
 
-replace github.com/tkhq/go-sdk => /Users/robin/src/code/go-sdk
-
 require (
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/google/uuid v1.3.1
