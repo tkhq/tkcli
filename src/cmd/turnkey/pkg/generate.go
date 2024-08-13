@@ -58,17 +58,17 @@ var apiKeyCmd = &cobra.Command{
 		default:
 			OutputError(fmt.Errorf("invalid curve type: %s; supported types are p256, secp256k1, and ed25519", curveType))
 		case "p256":
-			apiKey, err = apikey.New(Organization, apikey.SchemeP256)
+			apiKey, err = apikey.New(Organization, apikey.WithScheme(apikey.SchemeP256))
 			if err != nil {
 				OutputError(eris.Wrap(err, "failed to create API keypair"))
 			}
 		case "secp256k1":
-			apiKey, err = apikey.New(Organization, apikey.SchemeSECP256K1)
+			apiKey, err = apikey.New(Organization, apikey.WithScheme(apikey.SchemeSECP256K1))
 			if err != nil {
 				OutputError(eris.Wrap(err, "failed to create API keypair"))
 			}
 		case "ed25519":
-			apiKey, err = apikey.New(Organization, apikey.SchemeED25519)
+			apiKey, err = apikey.New(Organization, apikey.WithScheme(apikey.SchemeED25519))
 			if err != nil {
 				OutputError(eris.Wrap(err, "failed to create API keypair"))
 			}
