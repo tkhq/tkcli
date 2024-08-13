@@ -29,9 +29,9 @@ var (
 
 	encryptionKeysDirectory string
 
-	apiKeyStore store.Store[apikey.Key, apikey.Metadata]
+	apiKeyStore store.Store[*apikey.Key, apikey.Metadata]
 
-	encryptionKeyStore store.Store[encryptionkey.Key, encryptionkey.Metadata]
+	encryptionKeyStore store.Store[*encryptionkey.Key, encryptionkey.Metadata]
 
 	// ApiKeyName is the name of the key with which we are operating.
 	ApiKeyName string
@@ -70,7 +70,7 @@ func basicSetup(cmd *cobra.Command) {
 	}
 
 	if apiKeyStore == nil {
-		localApiKeyStore := local.New[apikey.Key, apikey.Metadata]()
+		localApiKeyStore := local.New[*apikey.Key, apikey.Metadata]()
 
 		if err := localApiKeyStore.SetAPIKeysDirectory(apiKeysDirectory); err != nil {
 			OutputError(eris.Wrap(err, "failed to obtain API key storage location"))
@@ -80,7 +80,7 @@ func basicSetup(cmd *cobra.Command) {
 	}
 
 	if encryptionKeyStore == nil {
-		localEncryptionKeyStore := local.New[encryptionkey.Key, encryptionkey.Metadata]()
+		localEncryptionKeyStore := local.New[*encryptionkey.Key, encryptionkey.Metadata]()
 
 		if err := localEncryptionKeyStore.SetEncryptionKeysDirectory(encryptionKeysDirectory); err != nil {
 			OutputError(eris.Wrap(err, "failed to obtain encryption key storage location"))

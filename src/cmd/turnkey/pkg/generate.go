@@ -90,7 +90,7 @@ var apiKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to store new API keypair"))
 		}
 
-		localStore, ok := apiKeyStore.(*local.Store[apikey.Key, apikey.Metadata])
+		localStore, ok := apiKeyStore.(*local.Store[*apikey.Key, apikey.Metadata])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
@@ -144,7 +144,7 @@ var encryptionKeyCmd = &cobra.Command{
 			OutputError(eris.Wrap(err, "failed to store new encryption keypair"))
 		}
 
-		localStore, ok := encryptionKeyStore.(*local.Store[encryptionkey.Key, encryptionkey.Metadata])
+		localStore, ok := encryptionKeyStore.(*local.Store[*encryptionkey.Key, encryptionkey.Metadata])
 		if !ok {
 			OutputError(eris.Wrap(err, "unhandled keystore type: expected *local.Store"))
 		}
