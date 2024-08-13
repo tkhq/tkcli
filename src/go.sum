@@ -189,6 +189,10 @@ github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
+github.com/tkhq/go-sdk v0.0.0-20240813182504-228a50933080 h1:Yhc2J2GCB0SDbLBVwK1ZlrYNiHVuwHGCU+N9CdJz4WQ=
+github.com/tkhq/go-sdk v0.0.0-20240813182504-228a50933080/go.mod h1:NgCPbnpGdhx+31NLwmK3iC6UftT7I70dbKXVbblVpjk=
+github.com/tkhq/go-sdk v0.0.0-20240813203011-ed45fe0d5c27 h1:1Tm6Z2uD9THuycnXtkNbTMf07Owdm071fV5JcKLsAQE=
+github.com/tkhq/go-sdk v0.0.0-20240813203011-ed45fe0d5c27/go.mod h1:2372WQ2x5SWlXmFBygP8PaNcR225Pn8Nd2WmzT9E35Y=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240513225018-5ebfb539ec1e h1:6TQn08QGF615Bt2LRNv1MwlI5qL9NlpO2A/DIKX8MUo=
 github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240513225018-5ebfb539ec1e/go.mod h1:BvoxNhFz61TSwjbULvHYdeV0aS68qkcHXpGkJFVkzrw=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
