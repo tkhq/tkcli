@@ -4,15 +4,13 @@ go 1.21
 
 toolchain go1.21.0
 
-replace github.com/tkhq/go-sdk => /Users/robin/src/code/go-sdk
-
 require (
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/google/uuid v1.3.1
 	github.com/rotisserie/eris v0.5.4
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	github.com/tkhq/go-sdk v0.0.0-20240513225018-5ebfb539ec1e
+	github.com/tkhq/go-sdk v0.0.0-20240813182504-228a50933080
 	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240513225018-5ebfb539ec1e
 	gopkg.in/yaml.v3 v3.0.1
 )
