@@ -19,6 +19,7 @@ var (
 	walletAccountCurve         string
 	walletAccountPathFormat    string
 	walletAccountPath          string
+	walletAccountAddress       string
 )
 
 func init() {
@@ -26,6 +27,9 @@ func init() {
 
 	walletExportCmd.Flags().StringVar(&walletNameOrID, "name", "", "name or ID of wallet to export.")
 	walletExportCmd.Flags().StringVar(&exportBundlePath, "export-bundle-output", "", "filepath to write the export bundle to.")
+
+	walletAccountExportCmd.Flags().StringVar(&walletAccountAddress, "address", "", "address of wallet account to export.")
+	walletAccountExportCmd.Flags().StringVar(&exportBundlePath, "export-bundle-output", "", "filepath to write the export bundle to.")
 
 	walletInitImportCmd.Flags().StringVar(&User, "user", "", "ID of user to importing the wallet")
 	walletInitImportCmd.Flags().StringVar(&importBundlePath, "import-bundle-output", "", "filepath to write the import bundle to.")
@@ -199,6 +203,71 @@ var walletExportCmd = &cobra.Command{
 
 		exportedWalletID := resp.Payload.Activity.Result.ExportWalletResult.WalletID
 		Output(exportedWalletID)
+	},
+}
+
+var walletAccountExportCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export a wallet account",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if walletAccountAddress == "" {
+			OutputError(eris.New("--address must be specified"))
+		}
+
+		if EncryptionKeyName == "" {
+			OutputError(eris.New("--encryption-key-name must be specified"))
+		}
+
+		if exportBundlePath == "" {
+			OutputError(eris.New("--export-bundle-output must be specified"))
+		}
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		tkPublicKey := EncryptionKeypair.GetPublicKey()
+		kemPublicKey, err := encryptionkey.DecodeTurnkeyPublicKey(tkPublicKey)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to decode encryption public key"))
+		}
+		kemPublicKeyBytes, err := (*kemPublicKey).MarshalBinary()
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to marshal encryption public key"))
+		}
+		targetPublicKey := hex.EncodeToString(kemPublicKeyBytes)
+
+		activity := string(models.ActivityTypeExportWalletAccount)
+
+		params := wallets.NewExportWalletAccountParams()
+		params.SetBody(&models.ExportWalletAccountRequest{
+			OrganizationID: &Organization,
+			Parameters: &models.ExportWalletAccountIntent{
+				Address:         &walletAccountAddress,
+				TargetPublicKey: &targetPublicKey,
+			},
+			TimestampMs: util.RequestTimestamp(),
+			Type:        &activity,
+		})
+
+		if err := params.Body.Validate(nil); err != nil {
+			OutputError(eris.Wrap(err, "request validation failed"))
+		}
+
+		resp, err := APIClient.V0().Wallets.ExportWalletAccount(params, APIClient.Authenticator)
+		if err != nil {
+			OutputError(eris.Wrap(err, "request failed"))
+		}
+
+		if !resp.IsSuccess() {
+			OutputError(eris.Errorf("failed to export wallet account: %s", resp.Error()))
+		}
+
+		exportBundle := resp.Payload.Activity.Result.ExportWalletAccountResult.ExportBundle
+		err = writeFile(*exportBundle, exportBundlePath)
+		if err != nil {
+			OutputError(eris.Wrap(err, "failed to write export bundle to file"))
+		}
+
+		exportedWalletAccountAddress := resp.Payload.Activity.Result.ExportWalletAccountResult.Address
+		Output(exportedWalletAccountAddress)
 	},
 }
 
