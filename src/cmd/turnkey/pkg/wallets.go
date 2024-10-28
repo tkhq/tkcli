@@ -261,8 +261,7 @@ var walletAccountExportCmd = &cobra.Command{
 		}
 
 		exportBundle := resp.Payload.Activity.Result.ExportWalletAccountResult.ExportBundle
-		err = writeFile(*exportBundle, exportBundlePath)
-		if err != nil {
+		if err := writeFile(*exportBundle, exportBundlePath); err != nil {
 			OutputError(eris.Wrap(err, "failed to write export bundle to file"))
 		}
 
