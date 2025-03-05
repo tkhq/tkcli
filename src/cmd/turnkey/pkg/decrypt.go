@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"crypto/ecdsa"
+	"encoding/hex"
 
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
@@ -74,7 +75,7 @@ var decryptCmd = &cobra.Command{
 			OutputError(err)
 		}
 
-		plaintext := string(plaintextBytes)
+		plaintext := hex.EncodeToString(plaintextBytes)
 
 		// output the plaintext if no filepath is passed
 		if plaintextPath == "" {
