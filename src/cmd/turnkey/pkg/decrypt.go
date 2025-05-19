@@ -3,6 +3,7 @@ package pkg
 import (
 	"crypto/ecdsa"
 	"encoding/hex"
+	"fmt"
 
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/rotisserie/eris"
@@ -77,20 +78,22 @@ var decryptCmd = &cobra.Command{
 		// decrypt ciphertext
 		plaintextBytes, err := encryptClient.Decrypt([]byte(exportBundle), Organization)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Errorf("unable to decrypt export bundle: %v", err))
 		}
 
 		plaintext := string(plaintextBytes)
 
 		// apply formatting, if applicable
 		if solanaAddress != "" {
+			hexEncodedPlaintext := hex.EncodeToString(plaintextBytes)
+
 			decodedAddressBytes := base58.Decode(solanaAddress)
 			decodedAddress := hex.EncodeToString(decodedAddressBytes)
 
-			combinedHex := plaintext + decodedAddress
+			combinedHex := fmt.Sprintf("%s%s", hexEncodedPlaintext, decodedAddress)
 			combinedBytes, err := hex.DecodeString(combinedHex)
 			if err != nil {
-				OutputError(err)
+				OutputError(eris.Errorf("unable to decode combined hex string: %v", err))
 			}
 
 			plaintext = base58.Encode(combinedBytes)
@@ -104,7 +107,7 @@ var decryptCmd = &cobra.Command{
 
 		err = writeFile(plaintext, plaintextPath)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Errorf("unable to write plaintext secret to file: %v", err))
 		}
 	},
 }
