@@ -2,7 +2,10 @@ package pkg
 
 import (
 	"crypto/ecdsa"
+	"encoding/hex"
+	"fmt"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
@@ -15,12 +18,16 @@ var (
 
 	// EncryptionKeypair is the loaded Encryption Keypair.
 	EncryptionKeypair *encryptionkey.Key
+
+	// Solana address, required for exporting Solana private keys in the proper format
+	solanaAddress string
 )
 
 func init() {
 	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to read the export bundle from.")
 	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-output", "", "optional filepath to write the plaintext from that will be decrypted.")
 	decryptCmd.Flags().StringVar(&signerPublicKeyOverride, "signer-quorum-key", "", "optional override for the signer quorum key. This option should be used for testing only. Leave this value empty for production decryptions.")
+	decryptCmd.Flags().StringVar(&solanaAddress, "solana-address", "", "optional solana address, for use when exporting solana private keys.")
 
 	rootCmd.AddCommand(decryptCmd)
 }
@@ -71,10 +78,26 @@ var decryptCmd = &cobra.Command{
 		// decrypt ciphertext
 		plaintextBytes, err := encryptClient.Decrypt([]byte(exportBundle), Organization)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Errorf("unable to decrypt export bundle: %v", err))
 		}
 
 		plaintext := string(plaintextBytes)
+
+		// apply formatting, if applicable
+		if solanaAddress != "" {
+			hexEncodedPlaintext := hex.EncodeToString(plaintextBytes)
+
+			decodedAddressBytes := base58.Decode(solanaAddress)
+			decodedAddress := hex.EncodeToString(decodedAddressBytes)
+
+			combinedHex := fmt.Sprintf("%s%s", hexEncodedPlaintext, decodedAddress)
+			combinedBytes, err := hex.DecodeString(combinedHex)
+			if err != nil {
+				OutputError(eris.Errorf("unable to decode combined hex string: %v", err))
+			}
+
+			plaintext = base58.Encode(combinedBytes)
+		}
 
 		// output the plaintext if no filepath is passed
 		if plaintextPath == "" {
@@ -84,7 +107,7 @@ var decryptCmd = &cobra.Command{
 
 		err = writeFile(plaintext, plaintextPath)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Errorf("unable to write plaintext secret to file: %v", err))
 		}
 	},
 }

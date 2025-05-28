@@ -48,6 +48,7 @@ func init() {
 
 	walletAccountsCmd.AddCommand(walletAccountsListCmd)
 	walletAccountsCmd.AddCommand(walletAccountCreateCmd)
+	walletAccountsCmd.AddCommand(walletAccountExportCmd)
 	walletsCmd.AddCommand(walletCreateCmd)
 	walletsCmd.AddCommand(walletsListCmd)
 	walletsCmd.AddCommand(walletExportCmd)
