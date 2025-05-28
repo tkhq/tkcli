@@ -1,6 +1,6 @@
 # Turnkey CLI
 
-![Go Build Status](https://github.com/tkhq/tkcli/actions/workflows/go-build.yml/badge.svg)
+[![Go Build Status](https://github.com/tkhq/tkcli/actions/workflows/go-build.yml/badge.svg)](https://github.com/tkhq/tkcli/actions/workflows/go-build.yml)
 
 ## Installation
 
