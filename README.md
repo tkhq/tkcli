@@ -11,9 +11,10 @@ Please check our work to whatever extent appropriate for your use case.
 ### Prerequisites
 
 The Makefile assumes the presence of a few basic tools:
- - `make`
- - `bash`
- - `Docker`
+
+- `make`
+- `bash`
+- `Docker`
 
 ### Blind Trust
 
@@ -29,52 +30,52 @@ all the time.
 
 #### Download
 
-| Version | OS    | Architecture | Download                                                                                      |
-|---------|-------|--------------|-----------------------------------------------------------------------------------------------|
-| v1.1.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.linux-x86_64)    |
-| v1.1.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.linux-aarch64)  |
-| v1.1.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-x86_64)  |
-| v1.1.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-aarch64)|
-| v1.1.3  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.linux-x86_64)    |
-| v1.1.3  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.linux-aarch64)  |
-| v1.1.3  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-x86_64)  |
-| v1.1.3  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-aarch64)|
-| v1.1.2  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.linux-x86_64)    |
-| v1.1.2  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.linux-aarch64)  |
-| v1.1.2  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.darwin-x86_64)  |
-| v1.1.2  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.darwin-aarch64)|
-| v1.1.1  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.linux-x86_64)    |
-| v1.1.1  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.linux-aarch64)  |
-| v1.1.1  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.darwin-x86_64)  |
-| v1.1.1  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.darwin-aarch64)|
-| v1.0.5  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-x86_64)    |
-| v1.0.5  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-aarch64)  |
-| v1.0.5  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-x86_64)  |
-| v1.0.5  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-aarch64)|
-| v1.0.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-x86_64)    |
-| v1.0.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-aarch64)  |
-| v1.0.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-x86_64)  |
-| v1.0.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-aarch64)|
-| v1.0.3  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.linux-x86_64)    |
-| v1.0.3  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.linux-aarch64)  |
-| v1.0.3  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.darwin-x86_64)  |
-| v1.0.3  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.darwin-aarch64)|
-| v1.0.2  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.linux-x86_64)    |
-| v1.0.2  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.linux-aarch64)  |
-| v1.0.2  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.darwin-x86_64)  |
-| v1.0.2  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.darwin-aarch64)|
-| v1.0.1  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.linux-x86_64)    |
-| v1.0.1  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.linux-aarch64)  |
-| v1.0.1  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.darwin-x86_64)  |
-| v1.0.1  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.darwin-aarch64)|
-| v1.0.0  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.linux-x86_64)    |
-| v1.0.0  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.linux-aarch64)  |
-| v1.0.0  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.darwin-x86_64)  |
-| v1.0.0  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.darwin-aarch64)|
-| v0.3.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.linux-x86_64)    |
-| v0.3.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.linux-aarch64)  |
-| v0.3.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.darwin-x86_64)  |
-| v0.3.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.darwin-aarch64)|
+| Version | OS    | Architecture | Download                                                                                       |
+| ------- | ----- | ------------ | ---------------------------------------------------------------------------------------------- |
+| v1.1.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.linux-x86_64)     |
+| v1.1.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.linux-aarch64)   |
+| v1.1.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-x86_64)   |
+| v1.1.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-aarch64) |
+| v1.1.3  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.linux-x86_64)     |
+| v1.1.3  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.linux-aarch64)   |
+| v1.1.3  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-x86_64)   |
+| v1.1.3  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-aarch64) |
+| v1.1.2  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.linux-x86_64)     |
+| v1.1.2  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.linux-aarch64)   |
+| v1.1.2  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.darwin-x86_64)   |
+| v1.1.2  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.2/dist/turnkey.darwin-aarch64) |
+| v1.1.1  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.linux-x86_64)     |
+| v1.1.1  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.linux-aarch64)   |
+| v1.1.1  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.darwin-x86_64)   |
+| v1.1.1  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.1/dist/turnkey.darwin-aarch64) |
+| v1.0.5  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-x86_64)     |
+| v1.0.5  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.linux-aarch64)   |
+| v1.0.5  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-x86_64)   |
+| v1.0.5  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.5/dist/turnkey.darwin-aarch64) |
+| v1.0.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-x86_64)     |
+| v1.0.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.linux-aarch64)   |
+| v1.0.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-x86_64)   |
+| v1.0.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.4/dist/turnkey.darwin-aarch64) |
+| v1.0.3  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.linux-x86_64)     |
+| v1.0.3  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.linux-aarch64)   |
+| v1.0.3  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.darwin-x86_64)   |
+| v1.0.3  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.3/dist/turnkey.darwin-aarch64) |
+| v1.0.2  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.linux-x86_64)     |
+| v1.0.2  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.linux-aarch64)   |
+| v1.0.2  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.darwin-x86_64)   |
+| v1.0.2  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.2/dist/turnkey.darwin-aarch64) |
+| v1.0.1  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.linux-x86_64)     |
+| v1.0.1  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.linux-aarch64)   |
+| v1.0.1  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.darwin-x86_64)   |
+| v1.0.1  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.1/dist/turnkey.darwin-aarch64) |
+| v1.0.0  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.linux-x86_64)     |
+| v1.0.0  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.linux-aarch64)   |
+| v1.0.0  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.darwin-x86_64)   |
+| v1.0.0  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.0.0/dist/turnkey.darwin-aarch64) |
+| v0.3.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.linux-x86_64)     |
+| v0.3.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.linux-aarch64)   |
+| v0.3.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.darwin-x86_64)   |
+| v0.3.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v0.3.4/dist/turnkey.darwin-aarch64) |
 
 #### Git
 
@@ -115,24 +116,24 @@ To follow these steps please install [git-lfs][gl] and [git-sig][gs].
 
 1. Clone repo
 
-    ```sh
-    git clone https://github.com/tkhq/tkcli
-    cd tkcli
-    ```
+   ```sh
+   git clone https://github.com/tkhq/tkcli
+   cd tkcli
+   ```
 
 2. Review binary signatures
 
-    ```sh
-    git sig verify
-    ```
+   ```sh
+   git sig verify
+   ```
 
-    Note: See Trust section below for expected keys/signers
+   Note: See Trust section below for expected keys/signers
 
 3. Install binary
 
-    ```
-    make install
-    ```
+   ```
+   make install
+   ```
 
 ### Zero Trust
 
@@ -146,46 +147,46 @@ to attempt to force one or more of us to tamper with the software.
 
 1. Clone repo
 
-    ```sh
-    git clone https://github.com/tkhq/tkcli
-    cd tkcli
-    ```
+   ```sh
+   git clone https://github.com/tkhq/tkcli
+   cd tkcli
+   ```
 
 2. Review source
 
-    * Ideal: Review the entire supply chain is recommended for high risk uses
-    * Minimal: review the "attest" "sign" and "verify" targets in the Makefile
+   - Ideal: Review the entire supply chain is recommended for high risk uses
+   - Minimal: review the "attest" "sign" and "verify" targets in the Makefile
 
 3. Reproduce binaries
 
-    ```sh
-    make reproduce
-    ```
+   ```sh
+   make reproduce
+   ```
 
-    Note: See Trust section below for expected keys/signers
+   Note: See Trust section below for expected keys/signers
 
 4. Install binaries
 
-    ```sh
-    make install
-    ```
+   ```sh
+   make install
+   ```
 
 5. Upload signature
 
-    While this step is totally optional, if you took the time to verify our
-    binaries we would welcome you signing them and submitting your signature so
-    we have public evidence third parties are checking our work.
+   While this step is totally optional, if you took the time to verify our
+   binaries we would welcome you signing them and submitting your signature so
+   we have public evidence third parties are checking our work.
 
-    **NOTE**: this additionally uses Github's official CLI tool, [gh](https://github.com/cli/cli).
+   **NOTE**: this additionally uses Github's official CLI tool, [gh](https://github.com/cli/cli).
 
-    ```sh
-    gh repo fork
-    git add dist/*
-    git commit -m "add signature"
-    git sig add
-    git push origin main
-    gh pr create
-    ```
+   ```sh
+   gh repo fork
+   git add dist/*
+   git commit -m "add signature"
+   git sig add
+   git push origin main
+   gh pr create
+   ```
 
 ## Usage
 
@@ -252,6 +253,7 @@ make build-local
 ```
 
 Note that you may need to do the following:
+
 - Install `git-lfs`: https://git-lfs.com
 - Setup: `git lfs install`
 
@@ -338,7 +340,7 @@ To address both problems we take the following steps:
 
 To learn who signed the current release run:
 
-```git sig verify --threshold 2```
+`git sig verify --threshold 2`
 
 Commits will be signed by at least one of the keys under the signers section
 below.
@@ -352,10 +354,10 @@ to be owned by.
 
 ### Signers
 
-| Name             | PGP Fingerprint                                                                          |
-|------------------|------------------------------------------------------------------------------------------|
-| Andrew Min       |[DE05 0A45 1E6F AF94 C677 B58B 9361 DEC6 47A0 87BD](https://keyoxide.org/9361DEC647A087BD)|
-| Arnaud Brousseau |[6870 5ACF 41E8 ECDE E292 5A42 4AAB 800C FFA3 065A](https://keyoxide.org/4AAB800CFFA3065A)|
-| Keyan Zhang      |[0211 6F38 FB32 9E98 65A1 D08B 5880 CFD7 A7D9 5342](https://keyoxide.org/5880CFD7A7D95342)|
-| Lance Vick       |[6B61 ECD7 6088 748C 7059 0D55 E90A 4013 36C8 AAA9](https://keyoxide.org/E90A401336C8AAA9)|
-| Seán C McCord    |[39B2 095B 61DD 23EE E1BF 883A 8A1F 0484 90D2 3AFD](https://keyoxide.org/8A1F048490D23AFD)|
+| Name             | PGP Fingerprint                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| Andrew Min       | [DE05 0A45 1E6F AF94 C677 B58B 9361 DEC6 47A0 87BD](https://keyoxide.org/9361DEC647A087BD) |
+| Arnaud Brousseau | [6870 5ACF 41E8 ECDE E292 5A42 4AAB 800C FFA3 065A](https://keyoxide.org/4AAB800CFFA3065A) |
+| Keyan Zhang      | [0211 6F38 FB32 9E98 65A1 D08B 5880 CFD7 A7D9 5342](https://keyoxide.org/5880CFD7A7D95342) |
+| Lance Vick       | [6B61 ECD7 6088 748C 7059 0D55 E90A 4013 36C8 AAA9](https://keyoxide.org/E90A401336C8AAA9) |
+| Seán C McCord    | [39B2 095B 61DD 23EE E1BF 883A 8A1F 0484 90D2 3AFD](https://keyoxide.org/8A1F048490D23AFD) |
