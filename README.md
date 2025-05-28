@@ -31,6 +31,10 @@ all the time.
 
 | Version | OS    | Architecture | Download                                                                                      |
 |---------|-------|--------------|-----------------------------------------------------------------------------------------------|
+| v1.1.4  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.linux-x86_64)    |
+| v1.1.4  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.linux-aarch64)  |
+| v1.1.4  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-x86_64)  |
+| v1.1.4  | MacOS | aarch64      | [turnkey.darwin-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-aarch64)|
 | v1.1.3  | Linux | x86_64       | [turnkey.linux-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.linux-x86_64)    |
 | v1.1.3  | Linux | aarch64      | [turnkey.linux-aarch64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.linux-aarch64)  |
 | v1.1.3  | MacOS | x86_64       | [turnkey.darwin-x86_64](https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-x86_64)  |
