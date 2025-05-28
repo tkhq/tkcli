@@ -1,20 +1,20 @@
 class Turnkey < Formula
   desc "Turnkey CLI"
   homepage "https://github.com/tkhq/tkcli"
-  version "v1.1.3"
+  version "v1.1.4"
   license "Apache License 2.0"
 
   if Hardware::CPU.arm?
-    url "https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-aarch64", using: CurlDownloadStrategy
-    sha256 "01ab04b339665e62223015b7fcf8a8189956dc967967eaa7007856b69b1bf609"
+    url "https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-aarch64", using: CurlDownloadStrategy
+    sha256 "e91b356d6e79d5788e4db9a2bedf7bee6432933b2a640b931596ea1ee79bce30"
 
     def install
       bin.install "turnkey.darwin-aarch64" => "turnkey"
     end
   end
   if Hardware::CPU.intel?
-    url "https://github.com/tkhq/tkcli/raw/v1.1.3/dist/turnkey.darwin-x86_64", using: CurlDownloadStrategy
-    sha256 "175db6f89e62eb192509600d63425333c43d283dbe2370bf2ca74a5b786fa808"
+    url "https://github.com/tkhq/tkcli/raw/v1.1.4/dist/turnkey.darwin-x86_64", using: CurlDownloadStrategy
+    sha256 "e5ef1e881879d1f53514f82860b3cf6d0b2f3d8decb3ef68831606552156e516"
 
     def install
       bin.install "turnkey.darwin-x86_64" => "turnkey"
