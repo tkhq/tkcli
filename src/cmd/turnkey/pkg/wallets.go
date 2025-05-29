@@ -66,7 +66,6 @@ var walletsCmd = &cobra.Command{
 		basicSetup(cmd)
 		LoadKeypair("")
 		LoadClient()
-		LoadEncryptionKeypair("")
 	},
 	Aliases: []string{},
 }
@@ -140,6 +139,12 @@ var walletsListCmd = &cobra.Command{
 var walletExportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export a wallet",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadClient()
+		LoadEncryptionKeypair("")
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
 			OutputError(eris.New("--name must be specified"))
@@ -210,6 +215,12 @@ var walletExportCmd = &cobra.Command{
 var walletAccountExportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export a wallet account",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadClient()
+		LoadEncryptionKeypair("")
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletAccountAddress == "" {
 			OutputError(eris.New("--address must be specified"))
@@ -274,6 +285,12 @@ var walletAccountExportCmd = &cobra.Command{
 var walletInitImportCmd = &cobra.Command{
 	Use:   "init-import",
 	Short: "Initialize wallet import",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadClient()
+		LoadEncryptionKeypair("")
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if User == "" {
 			OutputError(eris.New("--user must be specified"))
@@ -320,6 +337,12 @@ var walletInitImportCmd = &cobra.Command{
 var walletImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a wallet",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadClient()
+		LoadEncryptionKeypair("")
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if User == "" {
 			OutputError(eris.New("--user must be specified"))

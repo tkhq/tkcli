@@ -124,11 +124,11 @@ func LoadEncryptionKeypair(name string) {
 
 	encryptionKey, err := encryptionKeyStore.Load(name)
 	if err != nil {
-		OutputError(err)
+		OutputError(eris.Wrap(err, "encryption key not found, run `turnkey generate encryption-key` to create one"))
 	}
 
 	if encryptionKey == nil {
-		OutputError(eris.New("Encryption key not loaded"))
+		OutputError(eris.New("encryption key not loaded"))
 	}
 
 	EncryptionKeypair = encryptionKey
