@@ -53,7 +53,6 @@ var privateKeysCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		basicSetup(cmd)
 		LoadKeypair("")
-		LoadEncryptionKeypair("")
 		LoadClient()
 	},
 	Aliases: []string{"pk"},
@@ -160,6 +159,12 @@ var privateKeysListCmd = &cobra.Command{
 var privateKeyExportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export a private key",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadEncryptionKeypair("")
+		LoadClient()
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if privateKeyNameOrID == "" {
 			OutputError(eris.New("--id must be specified"))
@@ -230,6 +235,12 @@ var privateKeyExportCmd = &cobra.Command{
 var privateKeyInitImportCmd = &cobra.Command{
 	Use:   "init-import",
 	Short: "Initialize private key import",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadEncryptionKeypair("")
+		LoadClient()
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if User == "" {
 			OutputError(eris.New("--user must be specified"))
@@ -276,6 +287,12 @@ var privateKeyInitImportCmd = &cobra.Command{
 var privateKeyImportCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import a private key",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		basicSetup(cmd)
+		LoadKeypair("")
+		LoadEncryptionKeypair("")
+		LoadClient()
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if User == "" {
 			OutputError(eris.New("--user must be specified"))
