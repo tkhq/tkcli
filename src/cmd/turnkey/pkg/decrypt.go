@@ -124,7 +124,7 @@ func LoadEncryptionKeypair(name string) {
 
 	encryptionKey, err := encryptionKeyStore.Load(name)
 	if err != nil {
-		OutputError(err)
+		OutputError(eris.Wrap(err, "Encryption key not found, try to generate one "))
 	}
 
 	if encryptionKey == nil {
