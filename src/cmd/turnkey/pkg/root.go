@@ -2,14 +2,10 @@ package pkg
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"io/fs"
-	"math/big"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -241,41 +237,4 @@ func checkExists(path string) (bool, error) {
 	}
 
 	return true, nil
-}
-
-// Convert a hex-encoded string to an ECDSA P-256 public key.
-// This key is used in encryption and decryption of data transferred to
-// and from Turnkey secure enclaves.
-func hexToPublicKey(hexString string) (*ecdsa.PublicKey, error) {
-	publicKeyBytes, err := hex.DecodeString(hexString)
-	if err != nil {
-		return nil, err
-	}
-
-	// second half is the public key bytes for the enclave quorum encryption key
-	if len(publicKeyBytes) != 65 {
-		return nil, eris.Errorf("invalid public key length. Expected 65 bytes but got %d (hex string: \"%s\")", len(publicKeyBytes), publicKeyBytes)
-	}
-
-	// init curve instance
-	curve := elliptic.P256()
-
-	// curve's bitsize converted to length in bytes
-	byteLen := (curve.Params().BitSize + 7) / 8
-
-	// ensure the public key bytes have the correct length
-	if len(publicKeyBytes) != 1+2*byteLen {
-		return nil, eris.New("invalid encryption public key length")
-	}
-
-	// extract X and Y coordinates from the public key bytes
-	// ignore first byte (prefix)
-	x := new(big.Int).SetBytes(publicKeyBytes[1 : 1+byteLen])
-	y := new(big.Int).SetBytes(publicKeyBytes[1+byteLen:])
-
-	return &ecdsa.PublicKey{
-		Curve: curve,
-		X:     x,
-		Y:     y,
-	}, nil
 }
