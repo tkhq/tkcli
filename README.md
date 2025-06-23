@@ -84,7 +84,7 @@ all the time.
 #### Git
 
 ```sh
-git clone https://github.com/thkq/tkcli
+git clone https://github.com/tkhq/tkcli
 cd tkcli
 # This installs in  ~/.local/bin; make sure this is in your $PATH!
 make install
