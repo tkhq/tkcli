@@ -8,7 +8,7 @@ require (
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/google/uuid v1.3.1
 	github.com/rotisserie/eris v0.5.4
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.10.1
 	github.com/stretchr/testify v1.8.4
 	github.com/tkhq/go-sdk v0.0.0-20240813203011-ed45fe0d5c27
 	github.com/tkhq/go-sdk/pkg/enclave_encrypt v0.0.0-20240513225018-5ebfb539ec1e
@@ -41,7 +41,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	go.mongodb.org/mongo-driver v1.12.1 // indirect
 	go.opentelemetry.io/otel v1.19.0 // indirect
 	go.opentelemetry.io/otel/metric v1.19.0 // indirect
