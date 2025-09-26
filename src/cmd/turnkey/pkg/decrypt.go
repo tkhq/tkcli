@@ -3,7 +3,9 @@ package pkg
 import (
 	"crypto/ecdsa"
 	"encoding/hex"
+	"fmt"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/rotisserie/eris"
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
@@ -19,13 +21,17 @@ var (
 
 	// Controls whether output is UTF-8 string or hex string
 	hexOutput bool
+
+	// Solana address, required for exporting Solana private keys in the proper format
+	solanaAddress string
 )
 
 func init() {
 	decryptCmd.Flags().StringVar(&exportBundlePath, "export-bundle-input", "", "filepath to read the export bundle from.")
 	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-output", "", "optional filepath to write the plaintext from that will be decrypted.")
 	decryptCmd.Flags().StringVar(&signerPublicKeyOverride, "signer-quorum-key", "", "optional override for the signer quorum key. This option should be used for testing only. Leave this value empty for production decryptions.")
-	decryptCmd.Flags().BoolVar(&hexOutput, "hex-output", false, "when true, outputs as hex-encoded string (useful for binary data like private keys); when false (default), outputs as UTF-8 text (suitable for mnemonics and text)")
+	decryptCmd.Flags().StringVar(&solanaAddress, "solana-address", "", "optional solana address, for use when exporting solana private keys.")
+  decryptCmd.Flags().BoolVar(&hexOutput, "hex-output", false, "when true, outputs as hex-encoded string (useful for binary data like private keys); when false (default), outputs as UTF-8 text (suitable for mnemonics and text)")
 
 	rootCmd.AddCommand(decryptCmd)
 }
@@ -76,7 +82,7 @@ var decryptCmd = &cobra.Command{
 		// decrypt ciphertext
 		plaintextBytes, err := encryptClient.Decrypt([]byte(exportBundle), Organization)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Errorf("unable to decrypt export bundle: %v", err))
 		}
 
 		var plaintext string
@@ -84,6 +90,22 @@ var decryptCmd = &cobra.Command{
 			plaintext = hex.EncodeToString(plaintextBytes)
 		} else {
 			plaintext = string(plaintextBytes)
+		}
+
+		// apply formatting, if applicable
+		if solanaAddress != "" {
+			hexEncodedPlaintext := hex.EncodeToString(plaintextBytes)
+
+			decodedAddressBytes := base58.Decode(solanaAddress)
+			decodedAddress := hex.EncodeToString(decodedAddressBytes)
+
+			combinedHex := fmt.Sprintf("%s%s", hexEncodedPlaintext, decodedAddress)
+			combinedBytes, err := hex.DecodeString(combinedHex)
+			if err != nil {
+				OutputError(eris.Errorf("unable to decode combined hex string: %v", err))
+			}
+
+			plaintext = base58.Encode(combinedBytes)
 		}
 
 		// output the plaintext if no filepath is passed
@@ -94,7 +116,7 @@ var decryptCmd = &cobra.Command{
 
 		err = writeFile(plaintext, plaintextPath)
 		if err != nil {
-			OutputError(err)
+			OutputError(eris.Errorf("unable to write plaintext secret to file: %v", err))
 		}
 	},
 }
@@ -111,11 +133,11 @@ func LoadEncryptionKeypair(name string) {
 
 	encryptionKey, err := encryptionKeyStore.Load(name)
 	if err != nil {
-		OutputError(err)
+		OutputError(eris.Wrap(err, "encryption key not found, run `turnkey generate encryption-key` to create one"))
 	}
 
 	if encryptionKey == nil {
-		OutputError(eris.New("Encryption key not loaded"))
+		OutputError(eris.New("encryption key not loaded"))
 	}
 
 	EncryptionKeypair = encryptionKey
