@@ -215,6 +215,49 @@ Click on "Create API keys and follow the prompts to add the generated public API
 - If you would like to manually copy your locally-stored public/private API key files (e.g. `default.public`, `default.private`), you will have to save the files without newlines (which occupy extra bytes). For example, for VIM, use `:set binary noeol` or `:set binary noendofline` before writing.
 - Only P-256 keys (`API_KEY_CURVE_P256`) are currently supported.
 
+### Create a Wallet
+
+Wallets are collections of cryptographic key pairs typically used for sending and receiving digital assets. To create on, we need to provide a name:
+
+```sh
+turnkey wallets create --name default --key-name default
+```
+
+### Create an Ethereum account
+
+To create a cryptographic key pair on our new Wallet, we neet to pass our desired address format:
+
+```sh
+turnkey wallets accounts create --wallet default --address-format ADDRESS_FORMAT_ETHEREUM --key-name default
+```
+
+This command will produce an Ethereum address (e.g. `0x08cb1216C95149DF66978b574E484869512CE2bF`) that we'll need to sign a transaction. You can see your new Wallet account with:
+
+```sh
+turnkey wallets accounts list --wallet default --key-name default
+```
+
+### Sign a Transaction
+
+Now you can sign an Ethereum transaction with this new address with our [`sign_transaction` endpoint](https://docs.turnkey.com/api-reference/signing/sign-transaction). Make sure to replace the `unsignedTransaction` below with your own. You can use our [simple transaction generator](https://build.tx.xyz/) if you need a quick transaction for testing:
+
+```json
+turnkey request --path /public/v1/submit/sign_transaction --body '{
+    "timestampMs": "'"$(date +%s)"'000",
+    "type": "ACTIVITY_TYPE_SIGN_TRANSACTION_V2",
+    "organizationId": "'"$ORGANIZATION_ID"'",
+    "parameters": {
+      "type": "TRANSACTION_TYPE_ETHEREUM",
+      "signWith": "<Your Ethereum address>",
+      "unsignedTransaction": "<Your Transaction>"
+    }
+}' --key-name default
+```
+
+### Next Steps
+
+See the [official docs](https://docs.turnkey.com/sdks/cli#next-steps) for additional usage information and examples.
+
 ## Building
 
 ### Build for all platforms
