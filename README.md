@@ -157,7 +157,6 @@ to attempt to force one or more of us to tamper with the software.
    ```
 
 2. Review source
-
    - Ideal: Review the entire supply chain is recommended for high risk uses
    - Minimal: review the "attest" "sign" and "verify" targets in the Makefile
 
@@ -194,10 +193,10 @@ to attempt to force one or more of us to tamper with the software.
 
 ## Usage
 
-Create a new API key:
+### Generate a new API key
 
 ```sh
-$ turnkey generate api-key --organization $ORGANIZATION_ID
+$ turnkey generate api-key --organization $ORGANIZATION_ID --key-name default
 {
    "privateKeyFile": "/Users/andrew/Library/Application Support/turnkey/keys/default.private",
    "publicKey": "0236f17892a4649d97b2e4a4ad3c22d815e4e77848a0b8e4a5b0956ae4d6be382e",
@@ -205,34 +204,16 @@ $ turnkey generate api-key --organization $ORGANIZATION_ID
 }
 ```
 
-Make an API request (using the default API key created above):
+### Add your public API key
 
-```sh
-$ turnkey request --path /api/v1/sign --body '{"payload": "hello from TKHQ"}'
-{
-    "result": "I am a teapot"
-}
-```
+As an authenticated user on the Turnkey dashboard, navigate to your user page by clicking on "User Details" in the user dropdown menu.
 
-If you need to sign a request with a different key, use the `--key-name` and/or `--keys-folder` flags:
+Click on "Create API keys and follow the prompts to add the generated public API key. You'll be required to authenticate with the same authenticator used during onboarding. After this succeeds, you should be all set to interact with our API.
 
-```sh
-$ turnkey request --path /api/v1/sign --body '{"payload": "hello from TKHQ"}' --keys-folder /path/to/keys --key-name another-key
-{
-    "result": "I am a teapot"
-}
-```
+#### Notes
 
-Create, but do not _post_ a request:
-
-```sh
-$ turnkey request --no-post --path /api/v1/sign --body '{"payload": "hello from TKHQ"}'
-{
-    "curlCommand": "curl -X POST -d'{\"payload\": \"hello from TKHQ\"}' -H'X-Stamp: eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ' -v 'https://coordinator-beta.turnkey.io/api/v1/sign'",
-    "message": "{\"payload\": \"hello from TKHQ\"}",
-    "stamp": "eyJwdWJsaWNLZXkiOiIwM2JmMTYyNTc2ZWI4ZGZlY2YzM2Q5Mjc1ZDA5NTk1Mjg0ZjZjNGRmMGRiNjE1NmMzYzU4Mjc3Nzg4NmEwZWUwYWMiLCJzaWduYXR1cmUiOiIzMDQ0MDIyMDZiMmRlYmIwYjA3YmYwMDJlMjI1ZmQ4NTgzZjZmNGUxNGE5YTUxYWRiYWJjNDAyYzY5YTZlN2Q4N2ViNWNjMDgwMjIwMjE0ZTdkMGJlODFjMGYyNDEyOWE0MmNkZGFlOTUxYTBmZTViMGM1Mzc3YjM2NzZiOTUyNDgyNmYwODdhMWU4ZiIsInNjaGVtZSI6IlNJR05BVFVSRV9TQ0hFTUVfVEtfQVBJX1AyNTYifQ"
-}
-```
+- If you would like to manually copy your locally-stored public/private API key files (e.g. `default.public`, `default.private`), you will have to save the files without newlines (which occupy extra bytes). For example, for VIM, use `:set binary noeol` or `:set binary noendofline` before writing.
+- Only P-256 keys (`API_KEY_CURVE_P256`) are currently supported.
 
 ## Building
 
