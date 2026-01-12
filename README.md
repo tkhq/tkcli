@@ -241,7 +241,7 @@ turnkey wallets accounts list --wallet default --key-name default
 
 Now you can sign an Ethereum transaction with this new address with our [`sign_transaction` endpoint](https://docs.turnkey.com/api-reference/signing/sign-transaction). Make sure to replace the `unsignedTransaction` below with your own. You can use our [simple transaction generator](https://build.tx.xyz/) if you need a quick transaction for testing:
 
-```json
+```sh
 turnkey request --path /public/v1/submit/sign_transaction --body '{
     "timestampMs": "'"$(date +%s)"'000",
     "type": "ACTIVITY_TYPE_SIGN_TRANSACTION_V2",
