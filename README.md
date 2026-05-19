@@ -305,7 +305,7 @@ git sig add
 Once enough signatures have been collected, the following command should succeed:
 
 ```sh
-git sig verify --threshold 2
+git sig verify --threshold 1
 ```
 
 Finally, post the new release on Github with a changelog and update the Homebrew tap.
@@ -340,12 +340,9 @@ To address both problems we take the following steps:
 
 To learn who signed the current release run:
 
-`git sig verify --threshold 2`
+`git sig verify --threshold 1`
 
-Commits will be signed by at least one of the keys under the signers section
-below.
-
-Released binaries should be signed by at least two of them signifying
+Released binaries should be signed by at least one of them signifying
 successful reproducible builds.
 
 We encourage you to review the below keyoxide links and any available
@@ -358,6 +355,4 @@ to be owned by.
 | ---------------- | ------------------------------------------------------------------------------------------ |
 | Andrew Min       | [DE05 0A45 1E6F AF94 C677 B58B 9361 DEC6 47A0 87BD](https://keyoxide.org/9361DEC647A087BD) |
 | Arnaud Brousseau | [6870 5ACF 41E8 ECDE E292 5A42 4AAB 800C FFA3 065A](https://keyoxide.org/4AAB800CFFA3065A) |
-| Keyan Zhang      | [0211 6F38 FB32 9E98 65A1 D08B 5880 CFD7 A7D9 5342](https://keyoxide.org/5880CFD7A7D95342) |
-| Lance Vick       | [6B61 ECD7 6088 748C 7059 0D55 E90A 4013 36C8 AAA9](https://keyoxide.org/E90A401336C8AAA9) |
 | Seán C McCord    | [39B2 095B 61DD 23EE E1BF 883A 8A1F 0484 90D2 3AFD](https://keyoxide.org/8A1F048490D23AFD) |
