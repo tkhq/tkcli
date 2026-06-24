@@ -223,7 +223,7 @@ func readFile(path string) (string, error) {
 
 // Writes the given content to a file at the specified path.
 func writeFile(content string, path string) error {
-	err := os.WriteFile(path, []byte(content), 0644)
+	err := os.WriteFile(path, []byte(content), 0600)
 	if err != nil {
 		return eris.Wrap(err, "error writing file")
 	}
