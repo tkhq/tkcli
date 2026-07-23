@@ -1,8 +1,7 @@
 {
   description = "tkcli devshell";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # localstack is broken right now (2023-01-25) in unstable, due to a missing dependency
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -25,35 +24,37 @@
            vendorSha256 = "sha256-g7htGfU6C2rzfu8hAn6SGr0ZRwB8ZzSf9CgHYmdupE8=";
         };
 
+        go = pkgs.go_1_21;
+
         tkbuild = pkgs.writeScriptBin "build" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
-          ${pkgs.go}/bin/go build -o $(go env GOPATH)/bin/turnkey
-          ${pkgs.go}/bin/go build -o ../out/turnkey.linux-x86_64 # hack for local CLI go test
+          ${go}/bin/go build -o $(${go}/bin/go env GOPATH)/bin/turnkey ./cmd/turnkey
+          ${go}/bin/go build -o ../out/turnkey.linux-x86_64 ./cmd/turnkey # hack for local CLI go test
         '';
 
         tklint = pkgs.writeScriptBin "lint" ''
           #!/bin/sh
           pushd $(git rev-parse --show-toplevel)/src
-          ${pkgs.go}/bin/go mod tidy
+          ${go}/bin/go mod tidy
           ${pkgs.gofumpt}/bin/gofumpt -w *.go ./cmd/*
           ${gci}/bin/gci write --skip-generated -s standard -s default -s "Prefix(github.com/tkhq)" .
           ${pkgs.golangci-lint}/bin/golangci-lint run ./...
-          ${pkgs.go}/bin/go build -o ../out/turnkey.linux-x86_64 # hack for local CLI go test
-          ${pkgs.go}/bin/go test -v ./...
+          ${go}/bin/go build -o ../out/turnkey.linux-x86_64 ./cmd/turnkey # hack for local CLI go test
+          ${go}/bin/go test -v ./...
         '';
       in
       {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            bashInteractive
-            envsubst
+          packages = [
+            pkgs.bashInteractive
+            pkgs.envsubst
             gci
-            gofumpt
-            golangci-lint
+            pkgs.gofumpt
+            pkgs.golangci-lint
             go
-            go-swagger
-            go-tools
+            pkgs.go-swagger
+            pkgs.go-tools
             tkbuild
             tklint
           ];
