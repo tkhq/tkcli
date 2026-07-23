@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tkhq/go-sdk/pkg/enclave_encrypt"
 	"github.com/tkhq/go-sdk/pkg/encryptionkey"
+	"github.com/tkhq/go-sdk/pkg/util"
 )
 
 var (
@@ -61,9 +62,9 @@ var decryptCmd = &cobra.Command{
 
 		var signerKey *ecdsa.PublicKey
 		if signerPublicKeyOverride != "" {
-			signerKey, err = hexToPublicKey(signerPublicKeyOverride)
+			signerKey, err = util.HexToPublicKey(signerPublicKeyOverride)
 		} else {
-			signerKey, err = hexToPublicKey(signerProductionPublicKey)
+			signerKey, err = util.HexToPublicKey(signerProductionPublicKey)
 		}
 		if err != nil {
 			OutputError(err)
