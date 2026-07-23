@@ -19,6 +19,9 @@ var (
 	// EncryptionKeypair is the loaded Encryption Keypair.
 	EncryptionKeypair *encryptionkey.Key
 
+	// Controls whether output is UTF-8 string or hex string
+	hexOutput bool
+
 	// Solana address, required for exporting Solana private keys in the proper format
 	solanaAddress string
 )
@@ -28,6 +31,7 @@ func init() {
 	decryptCmd.Flags().StringVar(&plaintextPath, "plaintext-output", "", "optional filepath to write the plaintext from that will be decrypted.")
 	decryptCmd.Flags().StringVar(&signerPublicKeyOverride, "signer-quorum-key", "", "optional override for the signer quorum key. This option should be used for testing only. Leave this value empty for production decryptions.")
 	decryptCmd.Flags().StringVar(&solanaAddress, "solana-address", "", "optional solana address, for use when exporting solana private keys.")
+  decryptCmd.Flags().BoolVar(&hexOutput, "hex-output", false, "when true, outputs as hex-encoded string (useful for binary data like private keys); when false (default), outputs as UTF-8 text (suitable for mnemonics and text)")
 
 	rootCmd.AddCommand(decryptCmd)
 }
@@ -81,7 +85,12 @@ var decryptCmd = &cobra.Command{
 			OutputError(eris.Errorf("unable to decrypt export bundle: %v", err))
 		}
 
-		plaintext := string(plaintextBytes)
+		var plaintext string
+		if hexOutput {
+			plaintext = hex.EncodeToString(plaintextBytes)
+		} else {
+			plaintext = string(plaintextBytes)
+		}
 
 		// apply formatting, if applicable
 		if solanaAddress != "" {
