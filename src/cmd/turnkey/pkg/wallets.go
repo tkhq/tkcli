@@ -502,7 +502,7 @@ var walletAccountsListCmd = &cobra.Command{
 	Short: "Return accounts for the wallet",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if walletNameOrID == "" {
-			OutputError(eris.New("--name must be specified"))
+			OutputError(eris.New("--wallet must be specified"))
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
