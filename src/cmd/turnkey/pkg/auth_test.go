@@ -27,7 +27,10 @@ func TestAPIClientDoesNotFollowRedirectToOtherHost(t *testing.T) {
 
 	apiClient := newAPIClient("http", strings.TrimPrefix(origin.URL, "http://"))
 
-	_, err := apiClient.Sessions.GetWhoami(&sessions.GetWhoamiParams{Context: context.Background()}, nil)
+	_, err := apiClient.Sessions.GetWhoami(&sessions.GetWhoamiParams{
+		Context:    context.Background(),
+		HTTPClient: &http.Client{},
+	}, nil)
 	assert.Error(t, err)
 	assert.Equal(t, int32(0), otherRequests.Load())
 }

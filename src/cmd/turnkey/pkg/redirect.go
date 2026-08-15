@@ -15,7 +15,7 @@ func newHTTPClient() *http.Client {
 }
 
 func checkRedirect(req *http.Request, via []*http.Request) error {
-	if len(via) >= 10 {
+	if len(via) > 10 {
 		return eris.New("stopped after 10 redirects")
 	}
 

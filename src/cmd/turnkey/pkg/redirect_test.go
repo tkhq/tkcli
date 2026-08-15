@@ -1,12 +1,28 @@
 package pkg
 
 import (
+	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestCheckRedirectLimit(t *testing.T) {
+	origin, err := url.Parse("https://example.com")
+	require.NoError(t, err)
+
+	redirect := &http.Request{
+		URL:      origin,
+		Response: &http.Response{StatusCode: http.StatusTemporaryRedirect},
+	}
+	previous := make([]*http.Request, 11)
+	previous[0] = &http.Request{URL: origin}
+
+	require.NoError(t, checkRedirect(redirect, previous[:10]))
+	assert.EqualError(t, checkRedirect(redirect, previous), "stopped after 10 redirects")
+}
 
 func TestEffectiveOrigin(t *testing.T) {
 	for rawURL, expected := range map[string]string{
