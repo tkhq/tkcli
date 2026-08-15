@@ -111,9 +111,7 @@ func post(ctx context.Context, protocol string, host string, path string, body [
 
 	req.Header.Set("X-Stamp", stamp)
 
-	client := http.Client{}
-
-	response, err := client.Do(req)
+	response, err := newHTTPClient().Do(req)
 	if err != nil {
 		return nil, eris.Wrap(err, "error while sending HTTP POST request")
 	}

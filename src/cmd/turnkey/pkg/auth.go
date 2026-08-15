@@ -3,6 +3,8 @@ package pkg
 import (
 	"regexp"
 
+	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/rotisserie/eris"
 
 	"github.com/tkhq/go-sdk"
@@ -59,11 +61,26 @@ func LoadClient() {
 	if pattern := regexp.MustCompile(`^localhost:\d+$`); pattern.MatchString(apiHost) {
 		scheme = "http"
 	}
-	transportConfig := client.DefaultTransportConfig().WithHost(apiHost).WithSchemes([]string{scheme})
-
 	APIClient = &sdk.Client{
-		Client:        client.NewHTTPClientWithConfig(nil, transportConfig),
+		Client:        newAPIClient(scheme, apiHost),
 		Authenticator: &sdk.Authenticator{Key: APIKeypair},
 		APIKey:        APIKeypair,
 	}
+}
+
+func newAPIClient(scheme string, host string) *client.TurnkeyAPI {
+	transport := httptransport.NewWithClient(host, client.DefaultBasePath, []string{scheme}, newHTTPClient())
+
+	return client.New(redirectTransport{transport}, nil)
+}
+
+type redirectTransport struct {
+	runtime.ClientTransport
+}
+
+func (t redirectTransport) Submit(operation *runtime.ClientOperation) (interface{}, error) {
+	request := *operation
+	request.Client = nil
+
+	return t.ClientTransport.Submit(&request)
 }
