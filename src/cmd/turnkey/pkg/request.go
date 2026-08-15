@@ -102,19 +102,6 @@ func stampHeader(stamp string) string {
 	return fmt.Sprintf("X-Stamp: %s", stamp)
 }
 
-func checkRedirect(req *http.Request, via []*http.Request) error {
-	if len(via) >= 10 {
-		return eris.New("stopped after 10 redirects")
-	}
-
-	origin := via[0].URL
-	if !strings.EqualFold(req.URL.Scheme, origin.Scheme) || !strings.EqualFold(req.URL.Host, origin.Host) {
-		return eris.Errorf("refusing to follow redirect from %s://%s to %s", origin.Scheme, origin.Host, req.URL.Redacted())
-	}
-
-	return nil
-}
-
 func post(ctx context.Context, protocol string, host string, path string, body []byte, stamp string) (*http.Response, error) {
 	url := fmt.Sprintf("%s://%s%s", protocol, host, path)
 
@@ -125,7 +112,18 @@ func post(ctx context.Context, protocol string, host string, path string, body [
 
 	req.Header.Set("X-Stamp", stamp)
 
-	client := http.Client{CheckRedirect: checkRedirect}
+	client := http.Client{CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		if len(via) >= 10 {
+			return eris.New("stopped after 10 redirects")
+		}
+
+		origin := via[0].URL
+		if !strings.EqualFold(req.URL.Scheme, origin.Scheme) || !strings.EqualFold(req.URL.Host, origin.Host) {
+			return eris.Errorf("refusing to follow redirect from %s://%s to %s", origin.Scheme, origin.Host, req.URL.Redacted())
+		}
+
+		return nil
+	}}
 
 	response, err := client.Do(req)
 	if err != nil {

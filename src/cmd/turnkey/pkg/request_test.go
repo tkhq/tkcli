@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
+	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -14,32 +14,23 @@ import (
 )
 
 func TestPostFollowsRedirectOnSameHost(t *testing.T) {
-	var gotStamp string
-	var gotBody []byte
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/initial", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/final", http.StatusTemporaryRedirect)
 	})
 	mux.HandleFunc("/final", func(w http.ResponseWriter, r *http.Request) {
-		gotStamp = r.Header.Get("X-Stamp")
-		gotBody, _ = io.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
+		require.NoError(t, err)
+		assert.Equal(t, "test-stamp", r.Header.Get("X-Stamp"))
+		assert.Equal(t, []byte(`{"a":1}`), body)
 	})
 
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	serverURL, err := url.Parse(server.URL)
+	response, err := post(context.Background(), "http", strings.TrimPrefix(server.URL, "http://"), "/initial", []byte(`{"a":1}`), "test-stamp")
 	require.NoError(t, err)
-
-	response, err := post(context.Background(), "http", serverURL.Host, "/initial", []byte(`{"a":1}`), "test-stamp")
-	require.NoError(t, err)
-
-	defer response.Body.Close() //nolint: errcheck
-
-	assert.Equal(t, http.StatusOK, response.StatusCode)
-	assert.Equal(t, "test-stamp", gotStamp)
-	assert.Equal(t, []byte(`{"a":1}`), gotBody)
+	require.NoError(t, response.Body.Close())
 }
 
 func TestPostDoesNotFollowRedirectToOtherHost(t *testing.T) {
@@ -55,14 +46,7 @@ func TestPostDoesNotFollowRedirectToOtherHost(t *testing.T) {
 	}))
 	defer origin.Close()
 
-	originURL, err := url.Parse(origin.URL)
-	require.NoError(t, err)
-
-	response, err := post(context.Background(), "http", originURL.Host, "/", []byte(`{"a":1}`), "test-stamp")
-	if response != nil {
-		response.Body.Close() //nolint: errcheck
-	}
-
+	_, err := post(context.Background(), "http", strings.TrimPrefix(origin.URL, "http://"), "/", []byte(`{"a":1}`), "test-stamp")
 	assert.Error(t, err)
 	assert.Equal(t, int32(0), otherRequests.Load())
 }
