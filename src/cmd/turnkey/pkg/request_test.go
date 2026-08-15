@@ -33,6 +33,25 @@ func TestPostFollowsRedirectOnSameHost(t *testing.T) {
 	require.NoError(t, response.Body.Close())
 }
 
+func TestPostDoesNotFollowMethodChangingRedirect(t *testing.T) {
+	var finalRequests atomic.Int32
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/initial", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/final", http.StatusFound)
+	})
+	mux.HandleFunc("/final", func(w http.ResponseWriter, r *http.Request) {
+		finalRequests.Add(1)
+	})
+
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	_, err := post(context.Background(), "http", strings.TrimPrefix(server.URL, "http://"), "/initial", []byte(`{"a":1}`), "test-stamp")
+	assert.Error(t, err)
+	assert.Equal(t, int32(0), finalRequests.Load())
+}
+
 func TestPostDoesNotFollowRedirectToOtherHost(t *testing.T) {
 	var otherRequests atomic.Int32
 
